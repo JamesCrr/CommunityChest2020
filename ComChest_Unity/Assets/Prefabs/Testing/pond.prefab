@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2827907338791760296
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 580001586068229857}
+  m_Layer: 0
+  m_Name: BottomLeftRef
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &580001586068229857
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2827907338791760296}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.5, y: -1.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8087078274990301746}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3718290648318956424
 GameObject:
   m_ObjectHideFlags: 0
@@ -338,6 +368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8087078274990301746}
   - component: {fileID: 409152399896579856}
+  - component: {fileID: 4883353912148725753}
   m_Layer: 0
   m_Name: pond
   m_TagString: Untagged
@@ -365,6 +396,7 @@ Transform:
   - {fileID: 1526553053639146739}
   - {fileID: 7495581510373450979}
   - {fileID: 1422934630330367862}
+  - {fileID: 580001586068229857}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -379,6 +411,22 @@ SortingGroup:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
+--- !u!114 &4883353912148725753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5188171270950037353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f15bc94f88557734585dc3652ecb7030, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BuildingSize: {x: 3, y: 3}
+  m_BottomLeftRef: {fileID: 580001586068229857}
+  m_DrawDebug: 0
+  m_DebugColor: {r: 0, g: 0, b: 1, a: 1}
 --- !u!1 &5426677245450137757
 GameObject:
   m_ObjectHideFlags: 0

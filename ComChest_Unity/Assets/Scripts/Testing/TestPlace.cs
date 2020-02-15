@@ -25,11 +25,13 @@ public class TestPlace : MonoBehaviour
         {
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             worldPos.z = 0.0f;
-            Vector3Int gridPos = targetTileMap.WorldToCell(worldPos);
-            pondBrush.PlaceGO(targetTileMap, targetTileMap.gameObject, gridPos, 0);
+            Vector3Int gridPos = gridLayout.WorldToCell(worldPos);
 
-            GameObject newObject = pondBrush.GetGOInCell(targetTileMap, targetTileMap.transform, gridPos);
-            Debug.Log(newObject.name);
+            MapManager.GetInstance().PlaceBuilding(BuildingDataBase.BUILDINGS.B_POND, gridPos + (gridLayout.cellSize * 0.5f));
+
+            //pondBrush.PlaceGO(targetTileMap, targetTileMap.gameObject, gridPos, 0);
+            //GameObject newObject = pondBrush.GetGOInCell(targetTileMap, targetTileMap.transform, gridPos);
+            //Debug.Log(newObject.name);
         }
 
     }
