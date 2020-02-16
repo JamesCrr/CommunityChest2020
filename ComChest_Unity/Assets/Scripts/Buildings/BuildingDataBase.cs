@@ -7,11 +7,13 @@ public class BuildingDataBase : MonoBehaviour
     public enum BUILDINGS        // To reference all possible Buildings
     {
         B_POND,
+        B_DIRT,
+        B_GRASSHOLE,
 
         B_TOTAL
     }
     [SerializeField]        // Temporary storage of Buildings (ONLY In the Editor)
-    List<BuildingDataEntry> listOfBuildings = new List<BuildingDataEntry>();
+    List<BaseBuildingsClass> listOfBuildings = new List<BaseBuildingsClass>();
     // To Store all possible Buildings when running
     Dictionary<BUILDINGS, BaseBuildingsClass> dictOfBuildings = new Dictionary<BUILDINGS, BaseBuildingsClass>();
 
@@ -32,9 +34,9 @@ public class BuildingDataBase : MonoBehaviour
         for (int i = 0; i < (int)BUILDINGS.B_TOTAL; ++i)
         {
             counter = 0;
-            foreach (BuildingDataEntry dataEntry in listOfBuildings)
+            foreach (BaseBuildingsClass baseBuilding in listOfBuildings)
             {
-                if (dataEntry.GetBuildingID() == (BUILDINGS)i)
+                if (baseBuilding.GetBuildingID() == (BUILDINGS)i)
                     counter++;
             }
             if (counter > 1)
@@ -44,26 +46,24 @@ public class BuildingDataBase : MonoBehaviour
             }
         }
         // If no duplicates, convert to Dictionary
-        foreach (BuildingDataEntry dataEntry in listOfBuildings)
-        {
-            dictOfBuildings[dataEntry.GetBuildingID()] = dataEntry.GetBuildingObject();
-        }
+        foreach (BaseBuildingsClass baseBuilding in listOfBuildings)
+            dictOfBuildings[baseBuilding.GetBuildingID()] = baseBuilding;
         listOfBuildings.Clear();
     }
 
-    public GameObject GetBuildingGO(BuildingDataBase.BUILDINGS buildingType) { return dictOfBuildings[buildingType].gameObject; }
-    public BaseBuildingsClass GetBuildingCom(BuildingDataBase.BUILDINGS buildingType) { return dictOfBuildings[buildingType]; }
+    public GameObject GetBuildingGO(BUILDINGS buildingType) { return dictOfBuildings[buildingType].gameObject; }
+    public BaseBuildingsClass GetBuildingCom(BUILDINGS buildingType) { return dictOfBuildings[buildingType]; }
 
 }
 
-[System.Serializable]
-public class BuildingDataEntry
-{
-    [SerializeField]
-    BuildingDataBase.BUILDINGS buildingID = BuildingDataBase.BUILDINGS.B_POND;
-    [SerializeField]
-    BaseBuildingsClass buildingObject = null;
+//[System.Serializable]
+//public class BuildingDataEntry
+//{
+//    [SerializeField]
+//    BuildingDataBase.BUILDINGS buildingID = BuildingDataBase.BUILDINGS.B_POND;
+//    [SerializeField]
+//    BaseBuildingsClass buildingObject = null;
 
-    public BuildingDataBase.BUILDINGS GetBuildingID() { return buildingID; }
-    public BaseBuildingsClass GetBuildingObject() { return buildingObject; }
-}
+//    public BuildingDataBase.BUILDINGS GetBuildingID() { return buildingID; }
+//    public BaseBuildingsClass GetBuildingObject() { return buildingObject; }
+//}

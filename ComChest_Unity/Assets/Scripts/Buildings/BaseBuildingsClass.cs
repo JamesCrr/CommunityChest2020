@@ -7,6 +7,10 @@ public class BaseBuildingsClass : MonoBehaviour
     [Header("Building Data")]
     [SerializeField]
     Vector2Int m_BuildingSize = Vector2Int.zero;
+    [SerializeField]
+    BuildingDataBase.BUILDINGS m_BuildingID = BuildingDataBase.BUILDINGS.B_TOTAL;
+    [SerializeField]
+    SpriteRenderer m_BuildingSpriteRenderer = null;
     [Header("Collision")]
     [SerializeField]
     Transform m_BottomLeftRef = null;
@@ -16,8 +20,10 @@ public class BaseBuildingsClass : MonoBehaviour
     [SerializeField]
     Color m_DebugColor = Color.blue;
 
+    public SpriteRenderer GetBuildingSpriteRenderer() { return m_BuildingSpriteRenderer; }
+    public BuildingDataBase.BUILDINGS GetBuildingID() { return m_BuildingID; }
     public Vector2Int GetBuildingSize() { return m_BuildingSize; }
-    public Vector3 GetBottomLeftRefPosition() { return m_BottomLeftRef.localPosition; }
+    public Vector3 GetBottomLeftRefPosition() { return m_BottomLeftRef.position; }
 
     private void OnDrawGizmos()
     {

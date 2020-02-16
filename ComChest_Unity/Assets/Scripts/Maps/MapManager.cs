@@ -31,7 +31,11 @@ public class MapManager : MonoBehaviour
         CreateNewMap(MapDataBase.MAPS.M_GRASS);
     }
 
-
+    /// <summary>
+    /// Creates a new TileMap 
+    /// </summary>
+    /// <param name="mapType"></param>
+    /// <returns></returns>
     public bool CreateNewMap(MapDataBase.MAPS mapType)
     {
         // Create new Tilemap, parented under and positioned at m_GridGO
@@ -44,55 +48,67 @@ public class MapManager : MonoBehaviour
         m_GridTakenArray.Capacity = totalSize;     // Set the capactiy to prevent calling Array.Resize() multiple times
         for (int i = 0; i < totalSize; ++i)
             m_GridTakenArray.Add(false);
+        // Center the Camera to the map
+        Vector3 centerMapWorldPos = m_GridGO.CellToWorld((Vector3Int)m_currentMap.GetMapSize() / 2);
+        centerMapWorldPos += m_GridGO.cellSize * 0.5f;
+        centerMapWorldPos.z = -10.0f;
+        Camera.main.transform.position = centerMapWorldPos;
 
         return true;
     }
-
+    /// <summary>
+    /// Tries to place a Building into the Grid from it's world Position.
+    /// Returns null if Unable to, returns the newly created GO otherwise
+    /// </summary>
+    /// <param name="buildingType">What kind of Building to place</param>
+    /// <param name="buildingWorldPos">Where should you place it in the world</param>
+    /// <returns></returns>
     public GameObject PlaceBuilding(BuildingDataBase.BUILDINGS buildingType, Vector3 buildingWorldPos)
     {
         BaseBuildingsClass buildingCom = BuildingDataBase.GetInstance().GetBuildingCom(buildingType);
         Vector3 buildingBottomLeftWorldPos = buildingWorldPos + buildingCom.GetBottomLeftRefPosition();
-        Vector2Int buildingGridPos = (Vector2Int)m_GridGO.WorldToCell(buildingBottomLeftWorldPos);
         Vector2Int buildingSize = buildingCom.GetBuildingSize();
-        Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
+        //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
         // Can we place it there?
         if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
             return null;
         // Set all the grids taken by new building to true
-        Vector2Int testGridPos = buildingGridPos;
-        int arrayIndex = Convert2DToIntIndex(buildingGridPos);
-        for (int yAxis = 0; yAxis < buildingSize.y; ++yAxis)
-        {
-            testGridPos.y += yAxis;
-            for (int xAxis = 0; xAxis < buildingSize.x; ++xAxis)
-            {
-                testGridPos.x = buildingGridPos.x + xAxis;
-                arrayIndex = Convert2DToIntIndex(testGridPos);
-                m_GridTakenArray[arrayIndex] = true;
-            }
-            // Reset checking Position
-            testGridPos = buildingGridPos;
-        }
+        SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
 
         return Instantiate(buildingCom.gameObject, buildingWorldPos, Quaternion.identity);
     }
+    public GameObject PlaceBuilding(BaseBuildingsClass activeBuildingCom)
+    {
+        Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftRefPosition();
+        Vector2Int buildingSize = activeBuildingCom.GetBuildingSize();
+        //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
+        // Can we place it there?
+        if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
+            return null;
+        // Set all the grids taken by new building to true
+        SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
 
+        return activeBuildingCom.gameObject;
+    }
+
+
+    #region Misc
     /// <summary>
     /// Checks if any of the spots the building will occupy, is already taken
     /// </summary>
-    /// <param name="buildingBottomLeftWorldPos">The world Position of the Building GO, Origin should be at Bottom Left</param>
-    /// <param name="gridDimensions">How many grids does this building take</param>
-    /// <returns></returns>
-    bool CanPlaceBuilding(Vector3 buildingBottomLeftWorldPos, Vector2Int gridDimensions)
+    /// <param name="buildingBottomLeftWorldPos">Bottom Left Corner of the Building</param>
+    /// <param name="buildingSize">How many grids does this building take</param>
+    /// <returns>True if can place Building</returns>
+    public bool CanPlaceBuilding(Vector3 buildingBottomLeftWorldPos, Vector2Int buildingSize)
     {
         Vector2Int buildingGridPos = (Vector2Int)m_GridGO.WorldToCell(buildingBottomLeftWorldPos);
         Vector2Int testGridPos = buildingGridPos;
         int arrayIndex;
       
-        for (int yAxis = 0; yAxis < gridDimensions.y; ++yAxis)
+        for (int yAxis = 0; yAxis < buildingSize.y; ++yAxis)
         {
             testGridPos.y += yAxis;
-            for (int xAxis = 0; xAxis < gridDimensions.x; ++xAxis)
+            for (int xAxis = 0; xAxis < buildingSize.x; ++xAxis)
             {
                 testGridPos.x = buildingGridPos.x + xAxis;
                 // Out of Scope?
@@ -103,7 +119,7 @@ public class MapManager : MonoBehaviour
                 arrayIndex = Convert2DToIntIndex(testGridPos);
                 if (m_GridTakenArray[arrayIndex])
                 {
-                    Debug.Log("SPOT TAKEN");
+                    //Debug.Log("SPOT TAKEN");
                     return false;
                 }
             }
@@ -111,6 +127,32 @@ public class MapManager : MonoBehaviour
             testGridPos = buildingGridPos;
         }
         return true;
+    }
+    /// <summary>
+    /// Sets the GridTakenArray's values. Starts from GridPos of buildingBottomLeftWorldPos
+    /// </summary>
+    /// <param name="buildingBottomLeftWorldPos">Bottom Left Corner of the Building</param>
+    /// <param name="buildingSize">How many grids does this building take</param>
+    /// <param name="valueToSet">What value to Set for all those grids</param>
+    void SetGridTakenArray(Vector3 buildingBottomLeftWorldPos, Vector2Int buildingSize, bool valueToSet)
+    {
+        // Loop through from buildingBottomLeftWorldPos
+        Vector2Int buildingGridPos = (Vector2Int)m_GridGO.WorldToCell(buildingBottomLeftWorldPos);
+        Vector2Int testGridPos = buildingGridPos;
+        int arrayIndex = Convert2DToIntIndex(buildingGridPos);
+        // Go through the entire area the building occupies
+        for (int yAxis = 0; yAxis < buildingSize.y; ++yAxis)
+        {
+            testGridPos.y += yAxis;
+            for (int xAxis = 0; xAxis < buildingSize.x; ++xAxis)
+            {
+                testGridPos.x = buildingGridPos.x + xAxis;
+                arrayIndex = Convert2DToIntIndex(testGridPos);
+                m_GridTakenArray[arrayIndex] = valueToSet;
+            }
+            // Reset checking Position
+            testGridPos = buildingGridPos;
+        }
     }
 
     int Convert2DToIntIndex(Vector2Int v2Index) 
@@ -126,5 +168,9 @@ public class MapManager : MonoBehaviour
         result.x = arrayIndex - (result.y * m_currentMap.GetMapSize().x);
         return result;
     }
+    #endregion
 
+    #region Getters
+    public Grid GetGrid() { return m_GridGO; }
+    #endregion
 }
