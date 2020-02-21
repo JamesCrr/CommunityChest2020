@@ -19,8 +19,6 @@ public class MobileInput : MonoBehaviour
     // Lists of Touches that are currently active
     List<MobileTouch> m_listOfActiveTouches = new List<MobileTouch>();
 
-    // Main Camera
-    Camera m_mainCamera = null;
     [Header("Mobile UI Parent")]
     [SerializeField]
     GameObject m_mobileUIParent = null;
@@ -41,7 +39,6 @@ public class MobileInput : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
         m_Raycaster = m_mobileUIParent.GetComponent<GraphicRaycaster>();
-        m_mainCamera = Camera.main;
 
         // Create new MobileTouch and add into list
         MobileTouch newTouch = new MobileTouch();
@@ -57,7 +54,7 @@ public class MobileInput : MonoBehaviour
     private void Update()
     { 
         // Any touches on the screen
-        if (Input.touches.Length < 1)
+        if (Input.touchCount < 1)
             return;
 
         MobileTouch activeTouch = null;
@@ -73,20 +70,20 @@ public class MobileInput : MonoBehaviour
                         MobileTouch newTouch = GetDeactivatedMobileTouch();
                         // Activate the Touch Object
                         newTouch.ActivateTouch(Input.touches[i].fingerId, Input.touches[i]);
-                        newTouch.startTouch = Input.touches[i].position;
-                        newTouch.lastTouchedPos = newTouch.startTouch;
-                        // Get Collided GO
-                        CheckCollidedWithUI(newTouch);
+                        newTouch.startTouchPos = Input.touches[i].position;
+                        newTouch.lastTouchedPos = newTouch.startTouchPos;
 
-                        Debug.Log(i + ": ENTERED");
+                        //Debug.Log(i + ": ENTERED");
                     }
                     break;
                 case TouchPhase.Moved:          // Touch moved on the screen
                     {
+                        //CheckCollidedWithGO(activeTouch);
+
                         activeTouch.lastTouchedPos = Input.touches[i].position;
-                        activeTouch.swipeDelta = activeTouch.lastTouchedPos - activeTouch.startTouch;
+                        activeTouch.swipeDelta = Input.touches[i].deltaPosition;
                         // Passed Deadzone?
-                        if (activeTouch.swipeDelta.sqrMagnitude < (35*35))
+                        if (activeTouch.swipeDelta.sqrMagnitude < (15*15))
                         {
                             activeTouch.swipeDelta = Vector2.zero;
                             activeTouch.isSwiping = false;
@@ -101,12 +98,12 @@ public class MobileInput : MonoBehaviour
                             if (activeTouch.swipeDelta.x < 0)
                             {
                                 activeTouch.swipeLeft = true;
-                                Debug.Log(i + ": LEFTT");
+                                //Debug.Log(i + ": LEFTT");
                             }
                             else
                             {
                                 activeTouch.swipeRight = true;
-                                Debug.Log(i + ": RIGHTTT");
+                                //Debug.Log(i + ": RIGHTTT");
                             }
                         }
                         else
@@ -115,12 +112,12 @@ public class MobileInput : MonoBehaviour
                             if (activeTouch.swipeDelta.y < 0)
                             {
                                 activeTouch.swipeDown = true;
-                                Debug.Log(i + ": DOOWN");
+                                //Debug.Log(i + ": DOOWN");
                             }
                             else
                             {
                                 activeTouch.swipeUp = true;
-                                Debug.Log(i + ": UPP");
+                                //Debug.Log(i + ": UPP");
                             }
                         }
 
@@ -128,9 +125,9 @@ public class MobileInput : MonoBehaviour
                     break;
                 case TouchPhase.Stationary:     // Still touching the screen, but hasn’t moved since the last frame
                     {
-                        // No longer swiping
-                        //activeTouch.ResetSwipe();
                         activeTouch.lastTouchedPos = Input.touches[i].position;
+                        activeTouch.startTouchPos = activeTouch.lastTouchedPos;
+                        //Debug.Log(Camera.main.ScreenToViewportPoint(activeTouch.lastTouchedPos));
                     }
                     break;
                 case TouchPhase.Ended:
@@ -144,57 +141,6 @@ public class MobileInput : MonoBehaviour
 
         }
 
-        #region Swiping
-        //// Calculate the Distance
-        //swipeDelta = Vector2.zero;
-        //if(isDragging)
-        //{
-        //    if (Input.touches.Length > 0)
-        //        swipeDelta = Input.touches[0].position - startTouch;
-        //    else if (Input.GetMouseButton(0))
-        //        swipeDelta = (Vector2)Input.mousePosition - startTouch;
-        //}
-
-        //// Check if we crossed the deadZone
-        //if(swipeDelta.magnitude > 50)
-        //{
-        //    // Check which direction was the swipe
-        //    float x = swipeDelta.x;
-        //    float y = swipeDelta.y;
-
-        //    // Check which direction was the largest
-        //    if (Mathf.Abs(x) > Mathf.Abs(y))
-        //    {
-        //        // Left or Right
-        //        if (x < 0)
-        //        {
-        //            swipeLeft = true;
-        //            //Debug.Log("LEFTT");
-        //        }
-        //        else
-        //        {
-        //            swipeRight = true;
-        //            //Debug.Log("RIGHTTT");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // Up or Down
-        //        if (y < 0)
-        //        {
-        //            swipeDown = true;
-        //            //Debug.Log("DOOWN");
-        //        }
-        //        else
-        //        {
-        //            swipeUp = true;
-        //            //Debug.Log("UPP");
-        //        }
-        //    }
-
-        //    Reset();
-        //}
-        #endregion
     }
 #endif
 
@@ -221,6 +167,20 @@ public class MobileInput : MonoBehaviour
         }
 
         // return result
+        return newTouch.currentSelectedGO;
+    }
+    GameObject CheckCollidedWithGO(MobileTouch newTouch)
+    {
+        // Reset selected GO
+        newTouch.currentSelectedGO = null;
+
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(newTouch.lastTouchedPos);
+        if (Physics.Raycast(ray, out hit))
+        {
+            newTouch.currentSelectedGO = hit.transform.gameObject;
+            Debug.Log(newTouch.currentSelectedGO.name);
+        }
         return newTouch.currentSelectedGO;
     }
     MobileTouch GetDeactivatedMobileTouch()
@@ -252,19 +212,80 @@ public class MobileInput : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns the Mobile Touch that is currently touching the objectTouching
+    /// FOR CANVAS GameObject ONLY..
+    /// Returns whether any Mobile Touch is currently touching the objToTouch
     /// </summary>
-    /// <param name="objectTouching"></param>
+    /// <param name="objToTouch"></param>
     /// <returns></returns>
-    public MobileTouch GetMobileTouch_TouchingMe(GameObject objectTouching)
+    public bool IsFingerTouching_UI(GameObject objToTouch)
     {
         for (int i = 0; i < m_listOfActiveTouches.Count; ++i)
         {
-            if (m_listOfActiveTouches[i].currentSelectedGO == objectTouching)
-                return m_listOfActiveTouches[i];
+            if (!m_listOfActiveTouches[i].activated)
+                continue;
+            if (CheckCollidedWithUI(m_listOfActiveTouches[i]) == objToTouch)
+                return true;
         }
-        return null;
+        return false;
     }
+    public bool IsFingerTouching_UI(GameObject objToTouch, int fingerID)
+    {
+        if (CheckCollidedWithUI(m_listOfActiveTouches[fingerID]) == objToTouch)
+            return true;
+        return false;
+    }
+    /// <summary>
+    /// Returns whether any Mobile Touch is currently touching the objToTouch
+    /// </summary>
+    /// <param name="objToTouch"></param>
+    /// <returns></returns>
+    public bool IsFingerTouching_GO(GameObject objToTouch)
+    {
+        for (int i = 0; i < m_listOfActiveTouches.Count; ++i)
+        {
+            if (!m_listOfActiveTouches[i].activated)
+                continue;
+            if (CheckCollidedWithGO(m_listOfActiveTouches[i]) == objToTouch)
+                return true;
+        }
+        return false;
+    }
+    public bool IsFingerTouching_GO(GameObject objToTouch, int fingerID)
+    {
+        if (CheckCollidedWithGO(m_listOfActiveTouches[fingerID]) == objToTouch)
+            return true;
+        return false;
+    }
+
+    /// <summary>
+    /// Returns how many fingers are Touching the screen in this Frame
+    /// </summary>
+    /// <returns></returns>
+    public int GetTouchCount() { return Input.touchCount; }
+    /// <summary>
+    /// Returns the difference between Starting and Current Pixel position of a Finger touching the screen
+    /// </summary>
+    /// <param name="fingerID"></param>
+    /// <returns></returns>
+    public Vector2 GetSwipeDelta(int fingerID = 0)
+    {
+        if (!m_listOfActiveTouches[fingerID].activated)
+            return Vector2.zero;
+        return m_listOfActiveTouches[fingerID].swipeDelta;
+    }
+    public Vector2 GetLastTouchedPosition(int fingerID = 0)
+    {
+        if (!m_listOfActiveTouches[fingerID].activated)
+            return Vector2.zero;
+        return m_listOfActiveTouches[fingerID].lastTouchedPos;
+    }
+    public Vector2 GetStartTouchPosition(int fingerID = 0)
+    {
+        if (!m_listOfActiveTouches[fingerID].activated)
+            return Vector2.zero;
+        return m_listOfActiveTouches[fingerID].startTouchPos;
+    }
+
 }
 
 public class MobileTouch
@@ -280,13 +301,13 @@ public class MobileTouch
     // Input Related
     public bool swipeLeft, swipeRight, swipeUp, swipeDown;
     public bool isSwiping;
-    public Vector2 startTouch, swipeDelta, lastTouchedPos;
+    public Vector2 startTouchPos, lastTouchedPos, swipeDelta;
 
     public MobileTouch()
     {
         currentSelectedGO = null;
         isSwiping = swipeLeft = swipeRight = swipeUp = swipeDown = false;
-        startTouch = swipeDelta = lastTouchedPos = Vector2.zero;
+        startTouchPos = swipeDelta = lastTouchedPos = Vector2.zero;
     }
 
     public void ResetSwipe()
@@ -306,7 +327,7 @@ public class MobileTouch
     {
         fingerID = -1;
         currentSelectedGO = null;
-        startTouch = lastTouchedPos = Vector2.zero;
+        startTouchPos = lastTouchedPos = Vector2.zero;
         ResetSwipe();
 
         activated = false;

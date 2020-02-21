@@ -1,39 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor.Tilemaps;
-using UnityEngine.Tilemaps;
 
-public class TestPlace : MonoBehaviour
+public class PlayerInput : MonoBehaviour
 {
+    // Camera
+    [SerializeField]
+    float minZoomOut = 3;
+    [SerializeField]
+    float maxZoomOut = 6;
+    Vector3 targetCameraPosition;
+    // Placment
     BaseBuildingsClass selectedBuilding = null;
-    bool brushActive = false;
-    bool eraserActive = false;
+    bool brushActive = true;
 
     // Start is called before the first frame update
     void Start()
     {
         selectedBuilding = Instantiate(BuildingDataBase.GetInstance().GetBuildingGO(BuildingDataBase.BUILDINGS.B_POND), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
         selectedBuilding.gameObject.SetActive(false);
+
+        targetCameraPosition = Camera.main.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Q))
-        {
-            brushActive = !brushActive;
-            if(brushActive)
-                eraserActive = false;
-        }
-        else if(Input.GetKeyUp(KeyCode.E))
-        {
-            eraserActive = !eraserActive;
-            if(eraserActive)
-                brushActive = false;
-        }
-
-        MoveCamera();
+        DetectInput();
 
         if (brushActive)
         {
@@ -104,19 +97,67 @@ public class TestPlace : MonoBehaviour
 
     }
 
-    void MoveCamera()
-    {
-        float moveSpeed = 10.0f;
-        Vector3 cameraPos = Camera.main.transform.position;
-        if (Input.GetKey("left"))
-            cameraPos.x -= moveSpeed * Time.deltaTime;
-        else if(Input.GetKey("right"))
-            cameraPos.x += moveSpeed * Time.deltaTime;
-        if (Input.GetKey("up"))
-            cameraPos.y += moveSpeed * Time.deltaTime;
-        else if (Input.GetKey("down"))
-            cameraPos.y -= moveSpeed * Time.deltaTime;
-        Camera.main.transform.position = cameraPos;
-    }
 
+    void DetectInput()
+    {
+        // Check for Input
+        if (MobileInput.GetInstance().GetTouchCount() < 1)
+            return;
+        // Move Camera or Building?
+        if (!MobileInput.GetInstance().IsFingerTouching_GO(selectedBuilding.gameObject))
+            UpdateCamera();
+        else
+        {
+
+        }
+
+    }
+    void UpdateCamera()
+    {
+        // Slerp Camera towards TargetPos
+        Camera.main.transform.position = Vector3.Slerp(Camera.main.transform.position, targetCameraPosition, Time.deltaTime * 20.0f);
+
+        if (MobileInput.GetInstance().GetTouchCount() == 1)
+            MoveCameraInput();
+        else
+            ZoomCameraInput();
+    }
+    void MoveCameraInput()
+    {
+        //float moveSpeed = 10.0f;
+        //Vector3 cameraPos = Camera.main.transform.position;
+        //if (Input.GetKey("left"))
+        //    cameraPos.x -= moveSpeed * Time.deltaTime;
+        //else if(Input.GetKey("right"))
+        //    cameraPos.x += moveSpeed * Time.deltaTime;
+        //if (Input.GetKey("up"))
+        //    cameraPos.y += moveSpeed * Time.deltaTime;
+        //else if (Input.GetKey("down"))
+        //    cameraPos.y -= moveSpeed * Time.deltaTime;
+        //Camera.main.transform.position = cameraPos;
+
+        float moveSpeed = 15.0f;
+        Vector2 swipeDelta = MobileInput.GetInstance().GetSwipeDelta();
+        swipeDelta.Normalize();
+        swipeDelta = -swipeDelta * moveSpeed * Time.deltaTime;
+        targetCameraPosition += (Vector3)swipeDelta;
+    }
+    void ZoomCameraInput()
+    {
+        Vector2 curZeroPos = MobileInput.GetInstance().GetLastTouchedPosition();
+        Vector2 swipeDeltaZero = MobileInput.GetInstance().GetSwipeDelta();
+        Vector2 prevZeroPos = curZeroPos - swipeDeltaZero;
+
+        Vector2 curOnePos = MobileInput.GetInstance().GetLastTouchedPosition(1);
+        Vector2 swipeDeltaOne = MobileInput.GetInstance().GetSwipeDelta(1);
+        Vector2 prevOnePos = curOnePos - swipeDeltaOne;
+
+        float prevDist = (prevZeroPos - prevOnePos).sqrMagnitude;
+        float curDist = (curZeroPos - curOnePos).sqrMagnitude;
+        float zoomDiff = curDist - prevDist;
+        zoomDiff *= 0.00001f;
+
+        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - zoomDiff, minZoomOut, maxZoomOut);
+
+    }
 }
