@@ -13,6 +13,8 @@ public class BaseBuildingsClass : MonoBehaviour
     SpriteRenderer m_BuildingSpriteRenderer = null;
     [Header("Collision")]
     [SerializeField]
+    GameObject m_SpriteObject = null;
+    [SerializeField]
     Transform m_BottomLeftRef = null;
     [Header("Debug")]
     [SerializeField]
@@ -22,6 +24,7 @@ public class BaseBuildingsClass : MonoBehaviour
 
     public SpriteRenderer GetBuildingSpriteRenderer() { return m_BuildingSpriteRenderer; }
     public BuildingDataBase.BUILDINGS GetBuildingID() { return m_BuildingID; }
+    public GameObject GetSpriteObject() { return m_SpriteObject; }
     public Vector2Int GetBuildingSize() { return m_BuildingSize; }
     public Vector3 GetBottomLeftRefPosition() { return m_BottomLeftRef.position; }
 

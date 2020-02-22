@@ -40,6 +40,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7207273156226522367}
   - component: {fileID: 8884377570552227366}
+  - component: {fileID: 5482889515906695805}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -111,6 +112,32 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!61 &5482889515906695805
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4893591309194892837}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 3, y: 3}
+    newSize: {x: 3, y: 3}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 3, y: 3}
+  m_EdgeRadius: 0
 --- !u!1 &5188171270950037353
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,6 +198,7 @@ MonoBehaviour:
   m_BuildingSize: {x: 3, y: 3}
   m_BuildingID: 0
   m_BuildingSpriteRenderer: {fileID: 8884377570552227366}
+  m_SpriteObject: {fileID: 4893591309194892837}
   m_BottomLeftRef: {fileID: 580001586068229857}
   m_DrawDebug: 0
   m_DebugColor: {r: 0, g: 0, b: 1, a: 1}

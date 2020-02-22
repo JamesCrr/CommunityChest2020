@@ -44,9 +44,11 @@ public class MobileInput : MonoBehaviour
         MobileTouch newTouch = new MobileTouch();
         MobileTouch newTouch2 = new MobileTouch();
         MobileTouch newTouch3 = new MobileTouch();
+        MobileTouch newTouch4 = new MobileTouch();
         m_listOfActiveTouches.Add(newTouch);
         m_listOfActiveTouches.Add(newTouch2);
         m_listOfActiveTouches.Add(newTouch3);
+        m_listOfActiveTouches.Add(newTouch4);
 #endif
     }
 
@@ -69,7 +71,7 @@ public class MobileInput : MonoBehaviour
                     {
                         MobileTouch newTouch = GetDeactivatedMobileTouch();
                         // Activate the Touch Object
-                        newTouch.ActivateTouch(Input.touches[i].fingerId, Input.touches[i]);
+                        newTouch.ActivateTouch(Input.touches[i].fingerId);
                         newTouch.startTouchPos = Input.touches[i].position;
                         newTouch.lastTouchedPos = newTouch.startTouchPos;
 
@@ -126,7 +128,6 @@ public class MobileInput : MonoBehaviour
                 case TouchPhase.Stationary:     // Still touching the screen, but hasn’t moved since the last frame
                     {
                         activeTouch.lastTouchedPos = Input.touches[i].position;
-                        activeTouch.startTouchPos = activeTouch.lastTouchedPos;
                         //Debug.Log(Camera.main.ScreenToViewportPoint(activeTouch.lastTouchedPos));
                     }
                     break;
@@ -144,7 +145,7 @@ public class MobileInput : MonoBehaviour
     }
 #endif
 
-    GameObject CheckCollidedWithUI(MobileTouch newTouch)
+    GameObject CheckTouchingUI(MobileTouch newTouch)
     {
         // Reset selected GO
         newTouch.currentSelectedGO = null;
@@ -169,18 +170,25 @@ public class MobileInput : MonoBehaviour
         // return result
         return newTouch.currentSelectedGO;
     }
-    GameObject CheckCollidedWithGO(MobileTouch newTouch)
+    GameObject CheckTouchingGO(MobileTouch newTouch, int layerMaskID = 0)
     {
         // Reset selected GO
         newTouch.currentSelectedGO = null;
 
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(newTouch.lastTouchedPos);
-        if (Physics.Raycast(ray, out hit))
+        // If it hits something...
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(newTouch.lastTouchedPos), Vector2.zero, 20.0f, 1 << layerMaskID);
+        if (hit.collider != null)
         {
             newTouch.currentSelectedGO = hit.transform.gameObject;
             Debug.Log(newTouch.currentSelectedGO.name);
         }
+
+        //RaycastHit hit;
+        //Ray ray = Camera.main.ScreenPointToRay(newTouch.lastTouchedPos);
+        //if (Physics2D.Raycast(ray, out hit, 200.0f, 1 << layerMaskID))
+        //{
+           
+        //}
         return newTouch.currentSelectedGO;
     }
     MobileTouch GetDeactivatedMobileTouch()
@@ -201,15 +209,7 @@ public class MobileInput : MonoBehaviour
         }
         return null;
     }
-    void RemoveMobileTouch(int newFingerID)
-    {
-        for (int i = 0; i < m_listOfActiveTouches.Count; ++i)
-        {
-            if (m_listOfActiveTouches[i].fingerID == newFingerID)
-                m_listOfActiveTouches[i].DeactivateTouch();
-            return;
-        }
-    }
+
 
     /// <summary>
     /// FOR CANVAS GameObject ONLY..
@@ -223,14 +223,14 @@ public class MobileInput : MonoBehaviour
         {
             if (!m_listOfActiveTouches[i].activated)
                 continue;
-            if (CheckCollidedWithUI(m_listOfActiveTouches[i]) == objToTouch)
+            if (CheckTouchingUI(m_listOfActiveTouches[i]) == objToTouch)
                 return true;
         }
         return false;
     }
     public bool IsFingerTouching_UI(GameObject objToTouch, int fingerID)
     {
-        if (CheckCollidedWithUI(m_listOfActiveTouches[fingerID]) == objToTouch)
+        if (CheckTouchingUI(m_listOfActiveTouches[fingerID]) == objToTouch)
             return true;
         return false;
     }
@@ -239,29 +239,41 @@ public class MobileInput : MonoBehaviour
     /// </summary>
     /// <param name="objToTouch"></param>
     /// <returns></returns>
-    public bool IsFingerTouching_GO(GameObject objToTouch)
+    public bool IsFingerTouching_GO(GameObject objToTouch, int layerMaskID = 0)
     {
         for (int i = 0; i < m_listOfActiveTouches.Count; ++i)
         {
             if (!m_listOfActiveTouches[i].activated)
                 continue;
-            if (CheckCollidedWithGO(m_listOfActiveTouches[i]) == objToTouch)
+            if (CheckTouchingGO(m_listOfActiveTouches[i], layerMaskID) == objToTouch)
                 return true;
         }
         return false;
     }
-    public bool IsFingerTouching_GO(GameObject objToTouch, int fingerID)
+    public bool IsFingerTouching_GO(GameObject objToTouch, int fingerID, int layerMaskID = 0)
     {
-        if (CheckCollidedWithGO(m_listOfActiveTouches[fingerID]) == objToTouch)
+        if (CheckTouchingGO(m_listOfActiveTouches[fingerID], layerMaskID) == objToTouch)
             return true;
         return false;
     }
 
     /// <summary>
-    /// Returns how many fingers are Touching the screen in this Frame
+    /// Returns how many fingers are Touching the screen in this Frame.
+    /// EVEN IF they are ending or canceling
     /// </summary>
     /// <returns></returns>
     public int GetTouchCount() { return Input.touchCount; }
+    /// <summary>
+    /// Returns a Touch Object's current Touching Phase
+    /// </summary>
+    /// <param name="fingerID"></param>
+    /// <returns></returns>
+    public TouchPhase GetTouchPhase(int fingerID = 0) 
+    {
+        if (!m_listOfActiveTouches[fingerID].activated)
+            return TouchPhase.Began;
+        return Input.touches[fingerID].phase;
+    }
     /// <summary>
     /// Returns the difference between Starting and Current Pixel position of a Finger touching the screen
     /// </summary>
@@ -295,7 +307,6 @@ public class MobileTouch
 
     // Storing the game object we collided with
     public GameObject currentSelectedGO;
-    public Touch touchObject;
     // Identifier
     public int fingerID;
     // Input Related
@@ -316,10 +327,9 @@ public class MobileTouch
         swipeDelta = Vector2.zero;
     }
 
-    public void ActivateTouch(int newFingerID, Touch newTouchObject)
+    public void ActivateTouch(int newFingerID)
     {
         fingerID = newFingerID;
-        touchObject = newTouchObject;
 
         activated = true;
     }

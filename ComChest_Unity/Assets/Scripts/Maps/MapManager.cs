@@ -10,6 +10,9 @@ public class MapManager : MonoBehaviour
     BaseMapClass m_currentMap;
     List<bool> m_GridTakenArray;
 
+    public delegate void MapGeneratedAction();      // Map Generated Action
+    public static event MapGeneratedAction OnMapGenerated;
+
     static MapManager m_Instance = null;
     public static MapManager GetInstance() { return m_Instance; }
     private void Awake()
@@ -53,6 +56,9 @@ public class MapManager : MonoBehaviour
         centerMapWorldPos += m_GridGO.cellSize * 0.5f;
         centerMapWorldPos.z = -10.0f;
         Camera.main.transform.position = centerMapWorldPos;
+
+        // Fire the Map Generated Event
+        OnMapGenerated();
 
         return true;
     }
