@@ -361,6 +361,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MinZoomOut: 3
   m_MaxZoomOut: 6
+  m_baseBuildingGO: {fileID: 5262389215657745914, guid: a0a79597acd784b479b7c7b6d7f41499,
+    type: 3}
 --- !u!4 &378641286
 Transform:
   m_ObjectHideFlags: 0
@@ -742,6 +744,12 @@ MonoBehaviour:
   - {fileID: 4883353912148725753, guid: 8a55cdbff01249446995fddfb153504a, type: 3}
   - {fileID: 1725835483958434821, guid: d00008053b1ea2c499f01f39da7e19fb, type: 3}
   - {fileID: 8152826587419499638, guid: 2698f05408e08524f9c7e099e08ab952, type: 3}
+  listOfBuildingSO:
+  - {fileID: 11400000, guid: b279fff1f43753e4592ecb24dcccebd0, type: 2}
+  - {fileID: 11400000, guid: 72bc919e25fc72d4792147d15e67202b, type: 2}
+  - {fileID: 11400000, guid: 3b72c063c5e288a4183dea8f1aa4a8ec, type: 2}
+  - {fileID: 11400000, guid: 6f78ca6834e371e4a80391fc5ff75780, type: 2}
+  - {fileID: 11400000, guid: 53aac3e2290315041a9d898f4f8ca122, type: 2}
 --- !u!1 &1806399969
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,13 +9,15 @@ public class BuildingDataBase : MonoBehaviour
         B_POND,
         B_DIRT,
         B_GRASSHOLE,
+        B_DECO,
+        B_LAVA,
 
         B_TOTAL
     }
     [SerializeField]        // Temporary storage of Buildings (ONLY In the Editor)
-    List<BaseBuildingsClass> listOfBuildings = new List<BaseBuildingsClass>();
+    List<BuildingData> listOfBuildingSO = new List<BuildingData>();
     // To Store all possible Buildings when running
-    Dictionary<BUILDINGS, BaseBuildingsClass> dictOfBuildings = new Dictionary<BUILDINGS, BaseBuildingsClass>();
+    Dictionary<BUILDINGS, BuildingData> dictOfBuildingSO = new Dictionary<BUILDINGS, BuildingData>();
 
     static BuildingDataBase m_Instance = null;
     public static BuildingDataBase GetInstance() { return m_Instance; }
@@ -34,7 +36,7 @@ public class BuildingDataBase : MonoBehaviour
         for (int i = 0; i < (int)BUILDINGS.B_TOTAL; ++i)
         {
             counter = 0;
-            foreach (BaseBuildingsClass baseBuilding in listOfBuildings)
+            foreach (BuildingData baseBuilding in listOfBuildingSO)
             {
                 if (baseBuilding.GetBuildingID() == (BUILDINGS)i)
                     counter++;
@@ -46,14 +48,15 @@ public class BuildingDataBase : MonoBehaviour
             }
         }
         // If no duplicates, convert to Dictionary
-        foreach (BaseBuildingsClass baseBuilding in listOfBuildings)
-            dictOfBuildings[baseBuilding.GetBuildingID()] = baseBuilding;
-        listOfBuildings.Clear();
+        foreach (BuildingData baseBuilding in listOfBuildingSO)
+            dictOfBuildingSO[baseBuilding.GetBuildingID()] = baseBuilding;
+        listOfBuildingSO.Clear();
     }
 
-    public GameObject GetBuildingGO(BUILDINGS buildingType) { return dictOfBuildings[buildingType].gameObject; }
-    public BaseBuildingsClass GetBuildingCom(BUILDINGS buildingType) { return dictOfBuildings[buildingType]; }
+    //public GameObject GetBuildingGO(BUILDINGS buildingType) { return dictOfBuildings[buildingType].gameObject; }
+    //public BaseBuildingsClass GetBuildingCom(BUILDINGS buildingType) { return dictOfBuildings[buildingType]; }
 
+    public BuildingData GetBuildingData(BUILDINGS buildingType) { return dictOfBuildingSO[buildingType]; }
 }
 
 //[System.Serializable]

@@ -69,23 +69,23 @@ public class MapManager : MonoBehaviour
     /// <param name="buildingType">What kind of Building to place</param>
     /// <param name="buildingWorldPos">Where should you place it in the world</param>
     /// <returns></returns>
-    public GameObject PlaceBuilding(BuildingDataBase.BUILDINGS buildingType, Vector3 buildingWorldPos)
-    {
-        BaseBuildingsClass buildingCom = BuildingDataBase.GetInstance().GetBuildingCom(buildingType);
-        Vector3 buildingBottomLeftWorldPos = buildingWorldPos + buildingCom.GetBottomLeftRefPosition();
-        Vector2Int buildingSize = buildingCom.GetBuildingSize();
-        //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
-        // Can we place it there?
-        if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
-            return null;
-        // Set all the grids taken by new building to true
-        SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
+    //public GameObject PlaceBuilding(BuildingDataBase.BUILDINGS buildingType, Vector3 buildingWorldPos)
+    //{
+    //    BaseBuildingsClass buildingCom = BuildingDataBase.GetInstance().GetBuildingCom(buildingType);
+    //    Vector3 buildingBottomLeftWorldPos = buildingWorldPos + buildingCom.GetBottomLeftRefPosition();
+    //    Vector2Int buildingSize = buildingCom.GetBuildingSize();
+    //    //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
+    //    // Can we place it there?
+    //    if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
+    //        return null;
+    //    // Set all the grids taken by new building to true
+    //    SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
 
-        return Instantiate(buildingCom.gameObject, buildingWorldPos, Quaternion.identity);
-    }
+    //    return Instantiate(buildingCom.gameObject, buildingWorldPos, Quaternion.identity);
+    //}
     public GameObject PlaceBuilding(BaseBuildingsClass activeBuildingCom)
     {
-        Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftRefPosition();
+        Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftGridPosition();
         Vector2Int buildingSize = activeBuildingCom.GetBuildingSize();
         //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
         // Can we place it there?
