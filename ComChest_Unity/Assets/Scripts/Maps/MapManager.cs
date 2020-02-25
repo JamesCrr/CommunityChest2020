@@ -69,30 +69,31 @@ public class MapManager : MonoBehaviour
     /// <param name="buildingType">What kind of Building to place</param>
     /// <param name="buildingWorldPos">Where should you place it in the world</param>
     /// <returns></returns>
-    //public GameObject PlaceBuilding(BuildingDataBase.BUILDINGS buildingType, Vector3 buildingWorldPos)
-    //{
-    //    BaseBuildingsClass buildingCom = BuildingDataBase.GetInstance().GetBuildingCom(buildingType);
-    //    Vector3 buildingBottomLeftWorldPos = buildingWorldPos + buildingCom.GetBottomLeftRefPosition();
-    //    Vector2Int buildingSize = buildingCom.GetBuildingSize();
-    //    //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
-    //    // Can we place it there?
-    //    if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
-    //        return null;
-    //    // Set all the grids taken by new building to true
-    //    SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
-
-    //    return Instantiate(buildingCom.gameObject, buildingWorldPos, Quaternion.identity);
-    //}
-    public GameObject PlaceBuilding(BaseBuildingsClass activeBuildingCom)
+    public GameObject PlaceBuildingToGrid(BaseBuildingsClass activeBuildingCom, bool doChecking = false)
     {
         Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftGridPosition();
         Vector2Int buildingSize = activeBuildingCom.GetBuildingSize();
         //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
         // Can we place it there?
-        if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
-            return null;
+        if(doChecking)
+            if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
+                return null;
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
+
+        return activeBuildingCom.gameObject;
+    }
+    /// <summary>
+    /// Removes the Building from Grid by setting it's array spots back to untaken, then returns it
+    /// </summary>
+    /// <param name="activeBuildingCom"></param>
+    /// <returns></returns>
+    public GameObject RemoveBuildingFromGrid(BaseBuildingsClass activeBuildingCom)
+    {
+        Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftGridPosition();
+        Vector2Int buildingSize = activeBuildingCom.GetBuildingSize();
+        // Set all the grids taken by new building to true
+        SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, false);
 
         return activeBuildingCom.gameObject;
     }
@@ -105,6 +106,10 @@ public class MapManager : MonoBehaviour
     /// <param name="buildingBottomLeftWorldPos">Bottom Left Corner of the Building</param>
     /// <param name="buildingSize">How many grids does this building take</param>
     /// <returns>True if can place Building</returns>
+    public bool CanPlaceBuilding(BaseBuildingsClass activeBuildingCom)
+    {
+        return CanPlaceBuilding(activeBuildingCom.GetBottomLeftGridPosition(), activeBuildingCom.GetBuildingSize());
+    }
     public bool CanPlaceBuilding(Vector3 buildingBottomLeftWorldPos, Vector2Int buildingSize)
     {
         Vector2Int buildingGridPos = (Vector2Int)m_GridGO.WorldToCell(buildingBottomLeftWorldPos);

@@ -9,6 +9,7 @@ public class BaseBuildingsClass : MonoBehaviour
     SpriteRenderer m_BuildingSpriteRenderer = null;
     [SerializeField]
     BoxCollider2D m_Collider = null;
+    bool m_BuildingPlaced = false;
     [Header("Debug")]
     [SerializeField]
     bool m_DrawDebug = false;
@@ -32,16 +33,26 @@ public class BaseBuildingsClass : MonoBehaviour
         // Collider
         m_Collider.size = buildingData.GetBuildingSize();
         m_BottomLeftCornerOffset = buildingData.GetBottomLeftCorner_PositionOffset();
-
     }
 
+    // Sprite Renderer
     public GameObject GetSpriteGO() { return m_BuildingSpriteRenderer.gameObject; }
     public void SetSpriteObjectLayer(int newLayer) { m_BuildingSpriteRenderer.gameObject.layer = newLayer; }
     public void SetSpriteObjectColor(Color newColor) { m_BuildingSpriteRenderer.color = newColor; }
-
+    // Building Details
     public Vector2Int GetBuildingSize() { return m_BuildingSize; }
     public BuildingDataBase.BUILDINGS GetBuildingID() { return m_BuildingID; }
     public Vector2 GetBottomLeftGridPosition() { return (Vector2)transform.position + m_BottomLeftCornerOffset; }
+
+    // Called when you place a building down and remove the building
+    public virtual void BuildingPlaced()
+    {
+        m_BuildingPlaced = true;
+    }
+    public virtual void BuildingRemoved()
+    {
+        m_BuildingPlaced = false;
+    }
 
     private void OnDrawGizmos()
     {

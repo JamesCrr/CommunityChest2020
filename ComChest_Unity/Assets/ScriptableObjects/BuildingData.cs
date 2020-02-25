@@ -7,11 +7,15 @@ public class BuildingData : ScriptableObject
 {
     [Header("Building Data")]
     [SerializeField]
+    string m_BuildingName = "Unnamed_Building";
+    [SerializeField]
     Vector2Int m_BuildingSize = Vector2Int.zero;
     [SerializeField]
     Sprite m_BuildingSprite = null;
     [SerializeField]
     BuildingDataBase.BUILDINGS m_BuildingID = BuildingDataBase.BUILDINGS.B_TOTAL;
+    [SerializeField]
+    GameObject m_CustomBuildingObject = null;
     [Header("Collision")]
     Vector2 m_SpriteGO_OffsetPosition = Vector2.zero;
     Vector2 m_BottomLeftCorner_OffsetPosition = Vector2.zero;
@@ -42,9 +46,11 @@ public class BuildingData : ScriptableObject
 
     }
 
+    public string GetBuildingName() { return m_BuildingName; }
     public BuildingDataBase.BUILDINGS GetBuildingID() { return m_BuildingID; }
     public Sprite GetBuildingSprite() { return m_BuildingSprite; }
     public Vector2Int GetBuildingSize() { return m_BuildingSize; }
     public Vector2 GetSpriteGO_PositionOffset() { return m_SpriteGO_OffsetPosition; }
     public Vector2 GetBottomLeftCorner_PositionOffset() { return m_BottomLeftCorner_OffsetPosition; }
+    public GameObject GetOwnCustomBuildingObject() { return m_CustomBuildingObject; }
 }
