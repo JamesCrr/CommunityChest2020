@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c91cd46a181c05b408e70d257c560ddb, type: 3}
   m_Name: deco_SO
   m_EditorClassIdentifier: 
+  m_BuildingName: decoTest
   m_BuildingSize: {x: 1, y: 2}
   m_BuildingSprite: {fileID: 21300000, guid: 431ccbeaadcb99f43aa26f6adaaaadb9, type: 3}
   m_BuildingID: 3
+  m_CustomBuildingObject: {fileID: 0}

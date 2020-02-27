@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c91cd46a181c05b408e70d257c560ddb, type: 3}
   m_Name: dirt_SO
   m_EditorClassIdentifier: 
+  m_BuildingName: dirtTest
   m_BuildingSize: {x: 3, y: 3}
   m_BuildingSprite: {fileID: 21300000, guid: d9532d640ad06e44bbeba332a389b345, type: 3}
   m_BuildingID: 1
-  m_SpriteGO_OffsetPosition: {x: 0, y: 0}
-  m_BottomLeftCorner_OffsetPosition: {x: 0, y: 0}
+  m_CustomBuildingObject: {fileID: 0}
