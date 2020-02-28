@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(menuName = "Building")]
 public class BuildingData : ScriptableObject
@@ -19,6 +17,14 @@ public class BuildingData : ScriptableObject
     [Header("Collision")]
     Vector2 m_SpriteGO_OffsetPosition = Vector2.zero;
     Vector2 m_BottomLeftCorner_OffsetPosition = Vector2.zero;
+
+    //for resources
+    [Header("Resources Produced Data")]
+    [SerializeField]
+    float m_GenerateResourceTime = 0.0f;
+    [SerializeField]
+    BuildingDataBase.RESOURCES m_ResourceProduced = BuildingDataBase.RESOURCES.R_NONE;
+    Vector2 m_ResourceUIOffset;
 
     private void OnEnable()
     {
@@ -44,6 +50,8 @@ public class BuildingData : ScriptableObject
             m_BottomLeftCorner_OffsetPosition.y += 1.0f;
         }
 
+        //for resources
+        m_ResourceUIOffset = new Vector2(0.0f, halfBuildingSize.y);
     }
 
     public string GetBuildingName() { return m_BuildingName; }

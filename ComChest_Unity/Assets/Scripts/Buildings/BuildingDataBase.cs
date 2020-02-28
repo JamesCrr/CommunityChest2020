@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class BuildingDataBase : MonoBehaviour
@@ -14,6 +13,13 @@ public class BuildingDataBase : MonoBehaviour
 
         B_TOTAL
     }
+
+    public enum RESOURCES        //possible resources produced
+    {
+        R_NONE,
+        R_MONEY
+    }
+
     [SerializeField]        // Temporary storage of Buildings (ONLY In the Editor)
     List<BuildingData> listOfBuildingSO = new List<BuildingData>();
     // To Store all possible Buildings when running
