@@ -10,6 +10,8 @@ public class BuildingDataBase : MonoBehaviour
         B_GRASSHOLE,
         B_DECO,
         B_LAVA,
+        B_HOUSE,
+        B_SHOP,
 
         B_TOTAL
     }

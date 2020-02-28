@@ -63,4 +63,24 @@ public class BuildingData : ScriptableObject
     public Vector2 GetSpriteGO_PositionOffset() { return m_SpriteGO_OffsetPosition; }
     public Vector2 GetBottomLeftCorner_PositionOffset() { return m_BottomLeftCorner_OffsetPosition; }
     public GameObject GetOwnCustomBuildingObject() { return m_CustomBuildingObject; }
+
+    public float GetResourceTime
+    {
+        get { return m_GenerateResourceTime; }
+    }
+
+    public int GetAmtResource
+    {
+        get { return m_AmtResourceGiven; }
+    }
+
+    public BuildingDataBase.RESOURCES GetResourceTypeProduced
+    {
+        get { return m_ResourceProduced; }
+    }
+
+    public Vector2 GetResourceUIOffset
+    {
+        get { return m_ResourceUIOffset; }
+    }
 }
