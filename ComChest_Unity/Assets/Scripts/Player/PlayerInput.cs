@@ -38,12 +38,8 @@ public class PlayerInput : MonoBehaviour
         Camera.main.transform.position = Vector3.Slerp(Camera.main.transform.position, m_TargetCameraPosition, Time.deltaTime * 20.0f);
         SetPlacementBuildingToGridPosition();   // Move Building with Camera
 
-#if UNITY_STANDALONE
-        DEBUGMoveCameraInput();
-#else
         //Detect Fingers, for mobile input
         DetectFingerInput();
-#endif
 
         // Is Brush Active?
         if (m_BrushActive)

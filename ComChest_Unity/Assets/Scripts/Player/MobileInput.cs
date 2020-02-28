@@ -26,9 +26,7 @@ public class MobileInput : MonoBehaviour
     public static MobileInput GetInstance() { return m_Instance; }
     private void Awake()
     {
-#if UNITY_STANDALONE    // If we are playing in PC, disable mobileInput's Canvas
         m_mobileUIParent.SetActive(false);
-#elif UNITY_ANDROID || UNITY_IOS    // playing on Phones
 
         if (m_Instance != null)       // Make this a public Instance
         {
@@ -49,10 +47,9 @@ public class MobileInput : MonoBehaviour
         m_listOfActiveTouches.Add(newTouch2);
         m_listOfActiveTouches.Add(newTouch3);
         m_listOfActiveTouches.Add(newTouch4);
-#endif
     }
 
-#if UNITY_ANDROID || UNITY_IOS    // playing on Phones
+/*#if UNITY_ANDROID || UNITY_IOS*/    // playing on Phones
     private void Update()
     { 
         // Any touches on the screen
@@ -143,7 +140,7 @@ public class MobileInput : MonoBehaviour
         }
 
     }
-#endif
+//#endif
 
     GameObject CheckTouchingUI(MobileTouch newTouch)
     {
