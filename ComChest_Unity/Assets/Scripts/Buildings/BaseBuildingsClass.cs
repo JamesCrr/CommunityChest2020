@@ -22,7 +22,7 @@ public class BaseBuildingsClass : MonoBehaviour
     Vector2Int m_BuildingSize = Vector2Int.zero;
     Vector2 m_BottomLeftCornerOffset = Vector2.zero;
 
-    public void SetNewBuildingType(BuildingData buildingData)
+    public virtual void SetNewBuildingType(BuildingData buildingData)
     {
         // Other Data
         m_BuildingID = buildingData.GetBuildingID();
