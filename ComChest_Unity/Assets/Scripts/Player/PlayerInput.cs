@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -40,8 +38,12 @@ public class PlayerInput : MonoBehaviour
         Camera.main.transform.position = Vector3.Slerp(Camera.main.transform.position, m_TargetCameraPosition, Time.deltaTime * 20.0f);
         SetPlacementBuildingToGridPosition();   // Move Building with Camera
 
-        // Detect Fingers
+#if UNITY_STANDALONE
+        DEBUGMoveCameraInput();
+#else
+        //Detect Fingers, for mobile input
         DetectFingerInput();
+#endif
 
         // Is Brush Active?
         if (m_BrushActive)
@@ -172,18 +174,6 @@ public class PlayerInput : MonoBehaviour
     }
     void MoveCameraInput()
     {
-        //float moveSpeed = 10.0f;
-        //Vector3 cameraPos = Camera.main.transform.position;
-        //if (Input.GetKey("left"))
-        //    cameraPos.x -= moveSpeed * Time.deltaTime;
-        //else if(Input.GetKey("right"))
-        //    cameraPos.x += moveSpeed * Time.deltaTime;
-        //if (Input.GetKey("up"))
-        //    cameraPos.y += moveSpeed * Time.deltaTime;
-        //else if (Input.GetKey("down"))
-        //    cameraPos.y -= moveSpeed * Time.deltaTime;
-        //Camera.main.transform.position = cameraPos;
-
         float moveSpeed = 15.0f;
         Vector2 swipeDelta = MobileInput.GetInstance().GetSwipeDelta();
         swipeDelta.Normalize();
@@ -212,6 +202,21 @@ public class PlayerInput : MonoBehaviour
         Vector2 lastTouched_WorldPos = Camera.main.ScreenToWorldPoint(MobileInput.GetInstance().GetLastTouchedPosition());
         Vector2 startTouch_WorldPos = Camera.main.transform.position;//Camera.main.ScreenToWorldPoint(MobileInput.GetInstance().GetStartTouchPosition());
         m_BuildingPlacementOffset = lastTouched_WorldPos - startTouch_WorldPos;
+    }
+
+    void DEBUGMoveCameraInput()
+    {
+        float moveSpeed = 10.0f;
+        Vector3 cameraPos = Camera.main.transform.position;
+        if (Input.GetKey("left"))
+            cameraPos.x -= moveSpeed * Time.deltaTime;
+        else if (Input.GetKey("right"))
+            cameraPos.x += moveSpeed * Time.deltaTime;
+        if (Input.GetKey("up"))
+            cameraPos.y += moveSpeed * Time.deltaTime;
+        else if (Input.GetKey("down"))
+            cameraPos.y -= moveSpeed * Time.deltaTime;
+        Camera.main.transform.position = cameraPos;
     }
     #endregion
 
