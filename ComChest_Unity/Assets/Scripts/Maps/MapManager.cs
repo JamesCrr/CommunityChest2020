@@ -10,6 +10,9 @@ public class MapManager : MonoBehaviour
     BaseMapClass m_currentMap;
     List<bool> m_GridTakenArray;
 
+    [Tooltip("Testing Purposes")]
+    public GameObject GrassHole;
+
     public delegate void MapGeneratedAction();      // Map Generated Action
     public static event MapGeneratedAction OnMapGenerated;
 
@@ -60,6 +63,10 @@ public class MapManager : MonoBehaviour
         // Fire the Map Generated Event
         OnMapGenerated();
 
+        GameObject testObject =Instantiate(GrassHole, Camera.main.transform.position, Quaternion.identity);
+        Vector3 newPos = testObject.transform.position;
+        newPos.z = 0;
+        testObject.transform.position = newPos;
         return true;
     }
     /// <summary>

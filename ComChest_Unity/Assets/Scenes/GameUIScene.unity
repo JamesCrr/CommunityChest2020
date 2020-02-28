@@ -527,6 +527,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_GridGO: {fileID: 1806399970}
+  GrassHole: {fileID: 8854523677597856998, guid: 2698f05408e08524f9c7e099e08ab952,
+    type: 3}
 --- !u!4 &923503372
 Transform:
   m_ObjectHideFlags: 0

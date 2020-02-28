@@ -22,6 +22,6 @@ public class BuildingUIManager : SingletonBase<BuildingUIManager>
 
     public void CreateUI(BuildingData _buildData)
     {
-
+        currentUIObject = Instantiate(_buildData.GetUIObject(), this.transform);
     }
 }
