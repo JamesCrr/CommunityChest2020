@@ -24,6 +24,8 @@ public class BuildingData : ScriptableObject
     float m_GenerateResourceTime = 0.0f;
     [SerializeField]
     BuildingDataBase.RESOURCES m_ResourceProduced = BuildingDataBase.RESOURCES.R_NONE;
+    [SerializeField]
+    int m_AmtResourceGiven = 0;
     Vector2 m_ResourceUIOffset;
 
     private void OnEnable()

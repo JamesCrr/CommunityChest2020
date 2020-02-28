@@ -9,4 +9,16 @@ public class PlayerDataManager : SingletonBase<PlayerDataManager>
     {
         //TODO init from save file
     }
+
+    public int GetSetTotalMoney
+    {
+        get { return m_TotalMoney; }
+        set { m_TotalMoney = value; }
+    }
+
+    public int GetSetTotalPopulation
+    {
+        get { return GetSetTotalPopulation; }
+        set { GetSetTotalPopulation = value; }
+    }
 }

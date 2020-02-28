@@ -176,6 +176,14 @@ public class MobileInput : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(newTouch.lastTouchedPos), Vector2.zero, 20.0f, 1 << layerMaskID);
         if (hit.collider != null)
         {
+            GameObject gameObj = hit.transform.gameObject;
+
+            InteractableObjBase interactableObj = gameObj.GetComponent<InteractableObjBase>();
+            if (interactableObj != null)
+            {
+                interactableObj.OnInteract();
+            }
+
             newTouch.currentSelectedGO = hit.transform.gameObject;
             Debug.Log(newTouch.currentSelectedGO.name);
         }
