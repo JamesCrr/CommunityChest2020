@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 7019320270611990694}
   - component: {fileID: 7904139245557627472}
   - component: {fileID: 4841362531575382705}
-  m_Layer: 0
+  - component: {fileID: 667034430784658019}
+  m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,6 +109,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2, y: 2}
   m_EdgeRadius: 0
+--- !u!114 &667034430784658019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3910094254165822802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 563ea32e0e9d8664aacccb267d022570, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_buildClass: {fileID: 0}
 --- !u!1 &8854523677597856998
 GameObject:
   m_ObjectHideFlags: 0
@@ -119,8 +133,7 @@ GameObject:
   - component: {fileID: 4817324171192119741}
   - component: {fileID: 3984588254044871839}
   - component: {fileID: 5653008559225316432}
-  - component: {fileID: 3179017930886603165}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: grassHole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -171,16 +184,3 @@ MonoBehaviour:
   m_DebugColor: {r: 0, g: 0, b: 1, a: 1}
   m_BuildingID: 2
   m_BuildingSize: {x: 2, y: 2}
---- !u!114 &3179017930886603165
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8854523677597856998}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 563ea32e0e9d8664aacccb267d022570, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseBuildingClass: {fileID: 5653008559225316432}
