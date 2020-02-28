@@ -13,7 +13,12 @@ MonoBehaviour:
   m_Name: deco_SO
   m_EditorClassIdentifier: 
   m_BuildingName: decoTest
+  m_BuildingDescription: Decorations are important. Without these, how could one
+    even call themselves a cultured human?
   m_BuildingSize: {x: 1, y: 2}
   m_BuildingSprite: {fileID: 21300000, guid: 431ccbeaadcb99f43aa26f6adaaaadb9, type: 3}
   m_BuildingID: 3
   m_CustomBuildingObject: {fileID: 0}
+  m_GenerateResourceTime: 0
+  m_ResourceProduced: 0
+  m_AmtResourceGiven: 0

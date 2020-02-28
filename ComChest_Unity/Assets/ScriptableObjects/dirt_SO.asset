@@ -13,7 +13,11 @@ MonoBehaviour:
   m_Name: dirt_SO
   m_EditorClassIdentifier: 
   m_BuildingName: dirtTest
+  m_BuildingDescription: Common dirt. Could this be the start of a great foundation?
   m_BuildingSize: {x: 3, y: 3}
   m_BuildingSprite: {fileID: 21300000, guid: d9532d640ad06e44bbeba332a389b345, type: 3}
   m_BuildingID: 1
   m_CustomBuildingObject: {fileID: 0}
+  m_GenerateResourceTime: 0
+  m_ResourceProduced: 0
+  m_AmtResourceGiven: 0

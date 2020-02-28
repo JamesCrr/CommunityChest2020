@@ -167,8 +167,9 @@ GameObject:
   - component: {fileID: 1492777856938922808}
   - component: {fileID: 1492777856938922809}
   - component: {fileID: 1492777856938922790}
+  - component: {fileID: 4169103533769355528}
   m_Layer: 5
-  m_Name: BuildingButtonElement
+  m_Name: BuildingButtonElementBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -255,7 +256,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -273,7 +274,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1492777856938922809}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4169103533769355528}
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &4169103533769355528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1492777856938922788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 526ead4d8e8cf154fb3e90fc43f9af78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Thumbnail: {fileID: 1492777857902124233}
+  buildingName: {fileID: 1492777855920012105}
 --- !u!1 &1492777857902124343
 GameObject:
   m_ObjectHideFlags: 0

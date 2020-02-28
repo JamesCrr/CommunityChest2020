@@ -6,6 +6,7 @@ public class BuildingData : ScriptableObject
     [Header("Building Data")]
     [SerializeField]
     string m_BuildingName = "Unnamed_Building";
+    [SerializeField] string m_BuildingDescription;
     [SerializeField]
     Vector2Int m_BuildingSize = Vector2Int.zero;
     [SerializeField]
@@ -57,6 +58,7 @@ public class BuildingData : ScriptableObject
     }
 
     public string GetBuildingName() { return m_BuildingName; }
+    public string GetBuildingDescription() { return m_BuildingDescription; }
     public BuildingDataBase.BUILDINGS GetBuildingID() { return m_BuildingID; }
     public Sprite GetBuildingSprite() { return m_BuildingSprite; }
     public Vector2Int GetBuildingSize() { return m_BuildingSize; }

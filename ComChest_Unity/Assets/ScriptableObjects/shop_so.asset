@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: shop_so
   m_EditorClassIdentifier: 
   m_BuildingName: Shop
+  m_BuildingDescription: One needs a place that houses all the necessities. Perhaps
+    this shop could be that very solution.
   m_BuildingSize: {x: 3, y: 3}
   m_BuildingSprite: {fileID: 21300000, guid: 545e1edb8b24dfa4cb310bbf539782d6, type: 3}
   m_BuildingID: 5

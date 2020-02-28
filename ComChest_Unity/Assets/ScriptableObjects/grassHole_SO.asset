@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: grassHole_SO
   m_EditorClassIdentifier: 
   m_BuildingName: ghTest
+  m_BuildingDescription: Sometimes grass avoids these parts. Maybe a dog was here.
   m_BuildingSize: {x: 2, y: 2}
   m_BuildingSprite: {fileID: 21300000, guid: e60023d5b9288ce4d8ecfb827ac6cdec, type: 3}
   m_BuildingID: 2
   m_CustomBuildingObject: {fileID: 8854523677597856998, guid: 2698f05408e08524f9c7e099e08ab952,
     type: 3}
+  m_GenerateResourceTime: 0
+  m_ResourceProduced: 0
+  m_AmtResourceGiven: 0
