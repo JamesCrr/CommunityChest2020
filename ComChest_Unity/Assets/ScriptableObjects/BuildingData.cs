@@ -18,6 +18,12 @@ public class BuildingData : ScriptableObject
     Vector2 m_SpriteGO_OffsetPosition = Vector2.zero;
     Vector2 m_BottomLeftCorner_OffsetPosition = Vector2.zero;
 
+    [Header("UI Shiz")]
+    [SerializeField]
+    bool m_HasUI = false;
+    [SerializeField]
+    GameObject m_UIObject = null;
+
     //for resources
     [Header("Resources Produced Data")]
     [SerializeField]
@@ -83,4 +89,16 @@ public class BuildingData : ScriptableObject
     {
         get { return m_ResourceUIOffset; }
     }
+
+    public bool GetUIStatus()
+    {
+        return m_HasUI;
+    }
+
+    public GameObject GetUIObject()
+    {
+        return m_UIObject;
+    }
+   
+
 }
