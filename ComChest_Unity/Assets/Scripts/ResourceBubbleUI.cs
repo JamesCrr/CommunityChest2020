@@ -28,7 +28,8 @@ public class ResourceBubbleUI : InteractableObjBase
 
     public void OnEnable()
     {
-        m_ResourceSprite.sprite = m_ResourceSpriteStorage[m_ResourceType];
+        if (m_ResourceSpriteStorage.ContainsKey(m_ResourceType))
+            m_ResourceSprite.sprite = m_ResourceSpriteStorage[m_ResourceType];
     }
 
     public override void OnInteract()

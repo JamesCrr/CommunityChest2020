@@ -154,6 +154,17 @@ public class PlayerInput : MonoBehaviour
                 // Keep on moving that Object, DO NOT need to check again on next frame
                 m_MovingSomething = true;
             }
+
+            GameObject gameObj = MobileInput.GetInstance().CheckTouchingGO(0);
+            if (gameObj != null)
+            {
+                InteractableObjBase interactableObj = gameObj.GetComponent<InteractableObjBase>();
+                if (interactableObj != null)
+                {
+                    interactableObj.OnInteract();
+                }
+            }
+
             // Move that Object
             if (!m_MovingPlacementBuilding)
                 MoveCameraInput();

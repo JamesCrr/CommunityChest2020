@@ -167,7 +167,7 @@ public class MobileInput : MonoBehaviour
         // return result
         return newTouch.currentSelectedGO;
     }
-    GameObject CheckTouchingGO(MobileTouch newTouch, int layerMaskID = 0)
+    public GameObject CheckTouchingGO(MobileTouch newTouch, int layerMaskID = 0)
     {
         // Reset selected GO
         newTouch.currentSelectedGO = null;
@@ -176,14 +176,6 @@ public class MobileInput : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(newTouch.lastTouchedPos), Vector2.zero, 20.0f, 1 << layerMaskID);
         if (hit.collider != null)
         {
-            GameObject gameObj = hit.transform.gameObject;
-
-            InteractableObjBase interactableObj = gameObj.GetComponent<InteractableObjBase>();
-            if (interactableObj != null)
-            {
-                interactableObj.OnInteract();
-            }
-
             newTouch.currentSelectedGO = hit.transform.gameObject;
             Debug.Log(newTouch.currentSelectedGO.name);
         }
@@ -193,6 +185,28 @@ public class MobileInput : MonoBehaviour
         //if (Physics2D.Raycast(ray, out hit, 200.0f, 1 << layerMaskID))
         //{
            
+        //}
+        return newTouch.currentSelectedGO;
+    }
+    public GameObject CheckTouchingGO(int layerMaskID = 0)
+    {
+        MobileTouch newTouch = m_listOfActiveTouches[Input.touches[0].fingerId];
+        // Reset selected GO
+        newTouch.currentSelectedGO = null;
+
+        // If it hits something...
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(newTouch.lastTouchedPos), Vector2.zero, 20.0f, 1 << layerMaskID);
+        if (hit.collider != null)
+        {
+            newTouch.currentSelectedGO = hit.transform.gameObject;
+            Debug.Log(newTouch.currentSelectedGO.name);
+        }
+
+        //RaycastHit hit;
+        //Ray ray = Camera.main.ScreenPointToRay(newTouch.lastTouchedPos);
+        //if (Physics2D.Raycast(ray, out hit, 200.0f, 1 << layerMaskID))
+        //{
+
         //}
         return newTouch.currentSelectedGO;
     }
