@@ -15,10 +15,13 @@ MonoBehaviour:
   m_BuildingName: pondTest
   m_BuildingDescription: Nature comes in all forms. The pond is a perfect example
     of a good blend
-  m_BuildingSize: {x: 3, y: 3}
+  m_BuildingSpriteSize: {x: 3, y: 3}
+  m_BuildingSizeOnMap: {x: 3, y: 3}
   m_BuildingSprite: {fileID: 21300000, guid: 0821effac1d5bab4fa03770bbaa86843, type: 3}
   m_BuildingID: 0
   m_CustomBuildingObject: {fileID: 0}
+  m_HasUI: 0
+  m_UIObject: {fileID: 0}
   m_GenerateResourceTime: 0
   m_ResourceProduced: 0
   m_AmtResourceGiven: 0
