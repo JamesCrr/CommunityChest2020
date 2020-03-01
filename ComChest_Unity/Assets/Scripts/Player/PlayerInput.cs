@@ -41,6 +41,8 @@ public class PlayerInput : MonoBehaviour
         //Detect Fingers, for mobile input
         DetectFingerInput();
 
+        DEBUG_MoveCameraInput();
+
         // Is Brush Active?
         if (m_BrushActive)
         {
@@ -121,7 +123,7 @@ public class PlayerInput : MonoBehaviour
     void RenderPlacementBuilding()
     {
         // Darken if not able to place
-        if(MapManager.GetInstance().CanPlaceBuilding(m_PlacingBuilding.GetBottomLeftGridPosition(), m_PlacingBuilding.GetBuildingSize()))
+        if(MapManager.GetInstance().CanPlaceBuilding(m_PlacingBuilding.GetBottomLeftGridPosition(), m_PlacingBuilding.GetBuildingSizeOnMap()))
             m_PlacingBuilding.SetSpriteObjectColor(Color.white);
         else
             m_PlacingBuilding.SetSpriteObjectColor(Color.gray);
@@ -155,7 +157,7 @@ public class PlayerInput : MonoBehaviour
                 m_MovingSomething = true;
             }
 
-            GameObject gameObj = MobileInput.GetInstance().CheckTouchingGO(0);
+            GameObject gameObj = MobileInput.GetInstance().IsFingerTouching_GO();
             if (gameObj != null)
             {
                 InteractableObjBase interactableObj = gameObj.GetComponent<InteractableObjBase>();
@@ -211,19 +213,17 @@ public class PlayerInput : MonoBehaviour
         m_BuildingPlacementOffset = lastTouched_WorldPos - startTouch_WorldPos;
     }
 
-    void DEBUGMoveCameraInput()
+    void DEBUG_MoveCameraInput()
     {
         float moveSpeed = 10.0f;
-        Vector3 cameraPos = Camera.main.transform.position;
         if (Input.GetKey("left"))
-            cameraPos.x -= moveSpeed * Time.deltaTime;
+            m_TargetCameraPosition.x -= moveSpeed * Time.deltaTime;
         else if (Input.GetKey("right"))
-            cameraPos.x += moveSpeed * Time.deltaTime;
+            m_TargetCameraPosition.x += moveSpeed * Time.deltaTime;
         if (Input.GetKey("up"))
-            cameraPos.y += moveSpeed * Time.deltaTime;
+            m_TargetCameraPosition.y += moveSpeed * Time.deltaTime;
         else if (Input.GetKey("down"))
-            cameraPos.y -= moveSpeed * Time.deltaTime;
-        Camera.main.transform.position = cameraPos;
+            m_TargetCameraPosition.y -= moveSpeed * Time.deltaTime;
     }
     #endregion
 

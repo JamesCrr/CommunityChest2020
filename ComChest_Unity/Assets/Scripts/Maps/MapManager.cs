@@ -10,9 +10,6 @@ public class MapManager : MonoBehaviour
     BaseMapClass m_currentMap;
     List<bool> m_GridTakenArray;
 
-    [Tooltip("Testing Purposes")]
-    public GameObject GrassHole;
-
     public delegate void MapGeneratedAction();      // Map Generated Action
     public static event MapGeneratedAction OnMapGenerated;
 
@@ -63,10 +60,6 @@ public class MapManager : MonoBehaviour
         // Fire the Map Generated Event
         OnMapGenerated();
 
-        GameObject testObject =Instantiate(GrassHole, Camera.main.transform.position, Quaternion.identity);
-        Vector3 newPos = testObject.transform.position;
-        newPos.z = 0;
-        testObject.transform.position = newPos;
         return true;
     }
     /// <summary>
@@ -79,7 +72,7 @@ public class MapManager : MonoBehaviour
     public GameObject PlaceBuildingToGrid(BaseBuildingsClass activeBuildingCom, bool doChecking = false)
     {
         Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftGridPosition();
-        Vector2Int buildingSize = activeBuildingCom.GetBuildingSize();
+        Vector2Int buildingSize = activeBuildingCom.GetBuildingSizeOnMap();
         //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
         // Can we place it there?
         if(doChecking)
@@ -87,6 +80,7 @@ public class MapManager : MonoBehaviour
                 return null;
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
+        activeBuildingCom.BuildingPlaced();
 
         return activeBuildingCom.gameObject;
     }
@@ -98,9 +92,10 @@ public class MapManager : MonoBehaviour
     public GameObject RemoveBuildingFromGrid(BaseBuildingsClass activeBuildingCom)
     {
         Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftGridPosition();
-        Vector2Int buildingSize = activeBuildingCom.GetBuildingSize();
+        Vector2Int buildingSize = activeBuildingCom.GetBuildingSizeOnMap();
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, false);
+        activeBuildingCom.BuildingRemoved();
 
         return activeBuildingCom.gameObject;
     }
@@ -115,7 +110,7 @@ public class MapManager : MonoBehaviour
     /// <returns>True if can place Building</returns>
     public bool CanPlaceBuilding(BaseBuildingsClass activeBuildingCom)
     {
-        return CanPlaceBuilding(activeBuildingCom.GetBottomLeftGridPosition(), activeBuildingCom.GetBuildingSize());
+        return CanPlaceBuilding(activeBuildingCom.GetBottomLeftGridPosition(), activeBuildingCom.GetBuildingSizeOnMap());
     }
     public bool CanPlaceBuilding(Vector3 buildingBottomLeftWorldPos, Vector2Int buildingSize)
     {

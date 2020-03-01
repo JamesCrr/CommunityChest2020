@@ -8,7 +8,9 @@ public class BuildingData : ScriptableObject
     string m_BuildingName = "Unnamed_Building";
     [SerializeField] string m_BuildingDescription;
     [SerializeField]
-    Vector2Int m_BuildingSize = Vector2Int.zero;
+    Vector2Int m_BuildingSpriteSize = Vector2Int.zero;
+    [SerializeField]
+    Vector2Int m_BuildingSizeOnMap = Vector2Int.zero;
     [SerializeField]
     Sprite m_BuildingSprite = null;
     [SerializeField]
@@ -41,37 +43,48 @@ public class BuildingData : ScriptableObject
         m_BottomLeftCorner_OffsetPosition = Vector2.zero;
 
         // Calculate the Offset Positions for Collision
-        Vector2Int halfBuildingSize = m_BuildingSize / 2;
+        Vector2Int halfBuildingSize = m_BuildingSpriteSize / 2;
         // Find Bottom left Corner
         m_BottomLeftCorner_OffsetPosition.x = -halfBuildingSize.x;
         m_BottomLeftCorner_OffsetPosition.y = -halfBuildingSize.y;
 
         // is building Width Even sized
-        if (m_BuildingSize.x % 2 == 0)
+        if (m_BuildingSpriteSize.x % 2 == 0)
         {
             m_SpriteGO_OffsetPosition.x = 0.5f;
             m_BottomLeftCorner_OffsetPosition.x += 1.0f;
         }
         // is building Height Even sized
-        if (m_BuildingSize.y % 2 == 0)
+        if (m_BuildingSpriteSize.y % 2 == 0)
         {
             m_SpriteGO_OffsetPosition.y = 0.5f;
             m_BottomLeftCorner_OffsetPosition.y += 1.0f;
         }
+        // Valid Size on Map?
+        if (m_BuildingSizeOnMap.x < 0)
+            m_BuildingSizeOnMap.x = 0;
+        if (m_BuildingSizeOnMap.y < 0)
+            m_BuildingSizeOnMap.y = 0;
+        if (m_BuildingSizeOnMap == Vector2Int.zero)
+            m_BuildingSizeOnMap = m_BuildingSpriteSize;
 
         //for resources
         m_ResourceUIOffset = new Vector2(0.0f, halfBuildingSize.y);
     }
 
+    #region Building Getters
     public string GetBuildingName() { return m_BuildingName; }
     public string GetBuildingDescription() { return m_BuildingDescription; }
     public BuildingDataBase.BUILDINGS GetBuildingID() { return m_BuildingID; }
     public Sprite GetBuildingSprite() { return m_BuildingSprite; }
-    public Vector2Int GetBuildingSize() { return m_BuildingSize; }
+    public Vector2Int GetBuildingSpriteSize() { return m_BuildingSpriteSize; }
+    public Vector2Int GetBuildingSizeOnMap() { return m_BuildingSizeOnMap; }
     public Vector2 GetSpriteGO_PositionOffset() { return m_SpriteGO_OffsetPosition; }
     public Vector2 GetBottomLeftCorner_PositionOffset() { return m_BottomLeftCorner_OffsetPosition; }
     public GameObject GetOwnCustomBuildingObject() { return m_CustomBuildingObject; }
+    #endregion
 
+    #region Resource Getters
     public float GetResourceTime
     {
         get { return m_GenerateResourceTime; }
@@ -101,6 +114,6 @@ public class BuildingData : ScriptableObject
     {
         return m_UIObject;
     }
-   
+    #endregion
 
 }

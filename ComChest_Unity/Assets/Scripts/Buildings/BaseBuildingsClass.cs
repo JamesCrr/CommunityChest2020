@@ -28,12 +28,12 @@ public class BaseBuildingsClass : MonoBehaviour
     {
         // Other Data
         m_BuildingID = buildingData.GetBuildingID();
-        m_BuildingSize = buildingData.GetBuildingSize();
+        m_BuildingSize = buildingData.GetBuildingSizeOnMap();
         // Sprite
         m_BuildingSpriteRenderer.gameObject.transform.localPosition = buildingData.GetSpriteGO_PositionOffset();
         m_BuildingSpriteRenderer.sprite = buildingData.GetBuildingSprite();
         // Collider
-        m_Collider.size = buildingData.GetBuildingSize();
+        m_Collider.size = buildingData.GetBuildingSpriteSize();
         m_BottomLeftCornerOffset = buildingData.GetBottomLeftCorner_PositionOffset();
     }
 
@@ -42,7 +42,7 @@ public class BaseBuildingsClass : MonoBehaviour
     public void SetSpriteObjectLayer(int newLayer) { m_BuildingSpriteRenderer.gameObject.layer = newLayer; }
     public void SetSpriteObjectColor(Color newColor) { m_BuildingSpriteRenderer.color = newColor; }
     // Building Details
-    public Vector2Int GetBuildingSize() { return m_BuildingSize; }
+    public Vector2Int GetBuildingSizeOnMap() { return m_BuildingSize; }
     public BuildingDataBase.BUILDINGS GetBuildingID() { return m_BuildingID; }
     public Vector2 GetBottomLeftGridPosition() { return (Vector2)transform.position + m_BottomLeftCornerOffset; }
 

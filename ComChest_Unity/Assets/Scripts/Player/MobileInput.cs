@@ -49,7 +49,7 @@ public class MobileInput : MonoBehaviour
         m_listOfActiveTouches.Add(newTouch4);
     }
 
-/*#if UNITY_ANDROID || UNITY_IOS*/    // playing on Phones
+#if UNITY_ANDROID || UNITY_IOS    // playing on Phones
     private void Update()
     { 
         // Any touches on the screen
@@ -140,7 +140,7 @@ public class MobileInput : MonoBehaviour
         }
 
     }
-//#endif
+#endif
 
     GameObject CheckTouchingUI(MobileTouch newTouch)
     {
@@ -167,7 +167,7 @@ public class MobileInput : MonoBehaviour
         // return result
         return newTouch.currentSelectedGO;
     }
-    public GameObject CheckTouchingGO(MobileTouch newTouch, int layerMaskID = 0)
+    GameObject CheckTouchingGO(MobileTouch newTouch, int layerMaskID = 0)
     {
         // Reset selected GO
         newTouch.currentSelectedGO = null;
@@ -177,37 +177,8 @@ public class MobileInput : MonoBehaviour
         if (hit.collider != null)
         {
             newTouch.currentSelectedGO = hit.transform.gameObject;
-            Debug.Log(newTouch.currentSelectedGO.name);
+            Debug.Log("Raycast2D hit: " + newTouch.currentSelectedGO.name);
         }
-
-        //RaycastHit hit;
-        //Ray ray = Camera.main.ScreenPointToRay(newTouch.lastTouchedPos);
-        //if (Physics2D.Raycast(ray, out hit, 200.0f, 1 << layerMaskID))
-        //{
-           
-        //}
-        return newTouch.currentSelectedGO;
-    }
-    public GameObject CheckTouchingGO(int layerMaskID = 0)
-    {
-        MobileTouch newTouch = m_listOfActiveTouches[Input.touches[0].fingerId];
-        // Reset selected GO
-        newTouch.currentSelectedGO = null;
-
-        // If it hits something...
-        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(newTouch.lastTouchedPos), Vector2.zero, 20.0f, 1 << layerMaskID);
-        if (hit.collider != null)
-        {
-            newTouch.currentSelectedGO = hit.transform.gameObject;
-            Debug.Log(newTouch.currentSelectedGO.name);
-        }
-
-        //RaycastHit hit;
-        //Ray ray = Camera.main.ScreenPointToRay(newTouch.lastTouchedPos);
-        //if (Physics2D.Raycast(ray, out hit, 200.0f, 1 << layerMaskID))
-        //{
-
-        //}
         return newTouch.currentSelectedGO;
     }
     MobileTouch GetDeactivatedMobileTouch()
@@ -274,6 +245,16 @@ public class MobileInput : MonoBehaviour
         if (CheckTouchingGO(m_listOfActiveTouches[fingerID], layerMaskID) == objToTouch)
             return true;
         return false;
+    }
+    /// <summary>
+    /// Returns the GameObject the finger is touching, if any
+    /// </summary>
+    /// <param name="fingerID"></param>
+    /// <param name="layerMaskID"></param>
+    /// <returns></returns>
+    public GameObject IsFingerTouching_GO(int fingerID = 0, int layerMaskID = 0)
+    {
+        return CheckTouchingGO(m_listOfActiveTouches[fingerID], layerMaskID);
     }
 
     /// <summary>
