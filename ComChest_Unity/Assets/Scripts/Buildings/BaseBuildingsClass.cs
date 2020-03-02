@@ -17,7 +17,7 @@ public class BaseBuildingsClass : MonoBehaviour
     Color m_DebugColor = Color.blue;
     [Header("From Scriptable Object")]
     [SerializeField]
-    BuildingDataBase.BUILDINGS m_BuildingID = BuildingDataBase.BUILDINGS.B_TOTAL;
+    BuildingDataBase.BUILDINGS m_BuildingType = BuildingDataBase.BUILDINGS.B_TOTAL;
     [SerializeField]
     Vector2Int m_BuildingSize = Vector2Int.zero;
     Vector2 m_BottomLeftCornerOffset = Vector2.zero;
@@ -27,7 +27,7 @@ public class BaseBuildingsClass : MonoBehaviour
     public virtual void SetNewBuildingType(BuildingData buildingData)
     {
         // Other Data
-        m_BuildingID = buildingData.GetBuildingID();
+        m_BuildingType = buildingData.GetBuildingType();
         m_BuildingSize = buildingData.GetBuildingSizeOnMap();
         // Sprite
         m_BuildingSpriteRenderer.gameObject.transform.localPosition = buildingData.GetSpriteGO_PositionOffset();
@@ -43,7 +43,7 @@ public class BaseBuildingsClass : MonoBehaviour
     public void SetSpriteObjectColor(Color newColor) { m_BuildingSpriteRenderer.color = newColor; }
     // Building Details
     public Vector2Int GetBuildingSizeOnMap() { return m_BuildingSize; }
-    public BuildingDataBase.BUILDINGS GetBuildingID() { return m_BuildingID; }
+    public BuildingDataBase.BUILDINGS GetBuildingType() { return m_BuildingType; }
     public Vector2 GetBottomLeftGridPosition() { return (Vector2)transform.position + m_BottomLeftCornerOffset; }
 
     // Called when you place a building down and remove the building

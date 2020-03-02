@@ -8,9 +8,12 @@ public class MapManager : MonoBehaviour
     [SerializeField]        // Where the Tilemaps will be rendered
     Grid m_GridGO = null;
     BaseMapClass m_currentMap;
-    List<bool> m_GridTakenArray;
-
-    public delegate void MapGeneratedAction();      // Map Generated Action
+    // To store which tiles on map are taken by building
+    List<bool> m_GridTakenArray;        
+    // To store the buildings on the map
+    Dictionary<Vector2Int, BaseBuildingsClass> m_DictOfBuildingsOnMap = new Dictionary<Vector2Int,BaseBuildingsClass>();
+    // Map Generated Action
+    public delegate void MapGeneratedAction();      
     public static event MapGeneratedAction OnMapGenerated;
 
     static MapManager m_Instance = null;
@@ -66,8 +69,8 @@ public class MapManager : MonoBehaviour
     /// Tries to place a Building into the Grid from it's world Position.
     /// Returns null if Unable to, returns the newly created GO otherwise
     /// </summary>
-    /// <param name="buildingType">What kind of Building to place</param>
-    /// <param name="buildingWorldPos">Where should you place it in the world</param>
+    /// <param name="activeBuildingCom">The Building GO to place</param>
+    /// <param name="doChecking">Are any of the spots taken by another building already?</param>
     /// <returns></returns>
     public GameObject PlaceBuildingToGrid(BaseBuildingsClass activeBuildingCom, bool doChecking = false)
     {
@@ -80,6 +83,7 @@ public class MapManager : MonoBehaviour
                 return null;
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
+        AddBuildingIntoTrackingDictionary(activeBuildingCom);
         activeBuildingCom.BuildingPlaced();
 
         return activeBuildingCom.gameObject;
@@ -93,8 +97,9 @@ public class MapManager : MonoBehaviour
     {
         Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftGridPosition();
         Vector2Int buildingSize = activeBuildingCom.GetBuildingSizeOnMap();
-        // Set all the grids taken by new building to true
+        // Set all the grids taken by building to false, since no longer there
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, false);
+        RemoveBuildingFromTrackingDictionary(activeBuildingCom);
         activeBuildingCom.BuildingRemoved();
 
         return activeBuildingCom.gameObject;
@@ -167,6 +172,28 @@ public class MapManager : MonoBehaviour
             testGridPos = buildingGridPos;
         }
     }
+    /// <summary>
+    /// Adds a building into the tracking Dictionary
+    /// </summary>
+    /// <param name="activeBuildingCom"></param>
+    void AddBuildingIntoTrackingDictionary(BaseBuildingsClass activeBuildingCom)
+    {
+        Vector2Int key = (Vector2Int)m_GridGO.WorldToCell(activeBuildingCom.GetBottomLeftGridPosition());
+        if(m_DictOfBuildingsOnMap.ContainsKey(key))
+        {
+            Debug.LogError("Duplicate Key in MapManager Building Storage!!");
+            return;
+        }
+        m_DictOfBuildingsOnMap[key] = activeBuildingCom;
+    }
+    void RemoveBuildingFromTrackingDictionary(BaseBuildingsClass activeBuildingCom)
+    {
+        Vector2Int key = (Vector2Int)m_GridGO.WorldToCell(activeBuildingCom.GetBottomLeftGridPosition());
+        if (!m_DictOfBuildingsOnMap.ContainsKey(key))
+            return;
+        m_DictOfBuildingsOnMap.Remove(key);
+    }
+
 
     int Convert2DToIntIndex(Vector2Int v2Index) 
     {
@@ -183,7 +210,33 @@ public class MapManager : MonoBehaviour
     }
     #endregion
 
+    #region Load From File
+    public void SaveFileWasLoaded(Save_BuildingsOnMap saveFileData)
+    {
+        BaseBuildingsClass savedBuilding = null;
+        Vector3 savedPosition = Vector3.zero;
+        for(int i = 0; i < saveFileData.buildingType.Length; ++i)
+        {
+            savedPosition.x = saveFileData.worldPosX[i];
+            savedPosition.y = saveFileData.worldPosY[i];
+            savedBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), savedPosition, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+            savedBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData((BuildingDataBase.BUILDINGS)saveFileData.buildingType[i]));
+            PlaceBuildingToGrid(savedBuilding);
+        }
+    }
+    #endregion
+
     #region Getters
     public Grid GetGrid() { return m_GridGO; }
+    public List<BaseBuildingsClass> GetBuildingsOnMap()
+    {
+        List<BaseBuildingsClass> listOfBuildings = new List<BaseBuildingsClass>();
+        foreach (KeyValuePair<Vector2Int, BaseBuildingsClass> entry in m_DictOfBuildingsOnMap)
+        {
+            listOfBuildings.Add(entry.Value);
+        }
+        return listOfBuildings;
+    }
     #endregion
+
 }

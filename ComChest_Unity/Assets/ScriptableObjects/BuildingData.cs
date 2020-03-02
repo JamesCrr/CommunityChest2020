@@ -14,7 +14,7 @@ public class BuildingData : ScriptableObject
     [SerializeField]
     Sprite m_BuildingSprite = null;
     [SerializeField]
-    BuildingDataBase.BUILDINGS m_BuildingID = BuildingDataBase.BUILDINGS.B_TOTAL;
+    BuildingDataBase.BUILDINGS m_BuildingType = BuildingDataBase.BUILDINGS.B_TOTAL;
     [SerializeField]
     GameObject m_CustomBuildingObject = null;
     [Header("Collision")]
@@ -75,7 +75,7 @@ public class BuildingData : ScriptableObject
     #region Building Getters
     public string GetBuildingName() { return m_BuildingName; }
     public string GetBuildingDescription() { return m_BuildingDescription; }
-    public BuildingDataBase.BUILDINGS GetBuildingID() { return m_BuildingID; }
+    public BuildingDataBase.BUILDINGS GetBuildingType() { return m_BuildingType; }
     public Sprite GetBuildingSprite() { return m_BuildingSprite; }
     public Vector2Int GetBuildingSpriteSize() { return m_BuildingSpriteSize; }
     public Vector2Int GetBuildingSizeOnMap() { return m_BuildingSizeOnMap; }

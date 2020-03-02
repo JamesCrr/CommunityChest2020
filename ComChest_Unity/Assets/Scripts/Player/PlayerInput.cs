@@ -11,8 +11,6 @@ public class PlayerInput : MonoBehaviour
     Vector3 m_TargetCameraPosition;
     // Placment
     [Header("Placement of Buildings")]
-    [SerializeField]
-    GameObject m_baseBuildingGO = null;
     BaseBuildingsClass m_PlacingBuilding = null;
     Vector2 m_BuildingPlacementOffset = Vector2.zero;
     BuildingDataBase.BUILDINGS buildingSelectID = BuildingDataBase.BUILDINGS.B_POND;
@@ -24,7 +22,7 @@ public class PlayerInput : MonoBehaviour
 
     void Start()
     {
-        m_PlacingBuilding = Instantiate(m_baseBuildingGO, Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+        m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
         m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
         TogglePlacmentBrush(false);
 
@@ -56,6 +54,11 @@ public class PlayerInput : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Q))
             TogglePlacmentBrush(!m_BrushActive, BuildingDataBase.BUILDINGS.B_POND);
+
+        //if (Input.GetKeyUp(KeyCode.Z))
+        //    SaveSystem.SaveBuildingsOnMap(MapManager.GetInstance().GetBuildingsOnMap());
+        //else if (Input.GetKeyUp(KeyCode.X))
+        //    SaveSystem.LoadSavedBuildingsToMap();
 
         //Grid gridLayout = MapManager.GetInstance().GetGrid();
         //Vector3Int gridPos = gridLayout.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
@@ -105,8 +108,8 @@ public class PlayerInput : MonoBehaviour
             m_PlacingBuilding.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(buildingSelectID).GetBuildingName();
 
             // Success in placing building, create new building for next placment
-            BuildingDataBase.BUILDINGS oldID = m_PlacingBuilding.GetBuildingID();
-            m_PlacingBuilding = Instantiate(m_baseBuildingGO, Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+            BuildingDataBase.BUILDINGS oldID = m_PlacingBuilding.GetBuildingType();
+            m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
             m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(oldID));
             m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
         }

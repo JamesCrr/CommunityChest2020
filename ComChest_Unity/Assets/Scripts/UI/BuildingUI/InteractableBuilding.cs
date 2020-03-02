@@ -13,7 +13,7 @@ public class InteractableBuilding : InteractableObjBase
     {
         if(m_buildClass)
         {
-            buildingData = BuildingDataBase.GetInstance().GetBuildingData(m_buildClass.GetBuildingID());
+            buildingData = BuildingDataBase.GetInstance().GetBuildingData(m_buildClass.GetBuildingType());
         }
     }
 

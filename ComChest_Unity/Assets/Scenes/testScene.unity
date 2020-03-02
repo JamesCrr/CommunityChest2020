@@ -644,8 +644,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MinZoomOut: 3
   m_MaxZoomOut: 6
-  m_baseBuildingGO: {fileID: 5262389215657745914, guid: a0a79597acd784b479b7c7b6d7f41499,
-    type: 3}
 --- !u!4 &378641286
 Transform:
   m_ObjectHideFlags: 0
@@ -2645,12 +2643,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecc3f0cffc239414eb20ac7ca4a2a843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listOfBuildingSO:
-  - {fileID: 11400000, guid: b279fff1f43753e4592ecb24dcccebd0, type: 2}
+  m_BaseBuildingGO: {fileID: 5262389215657745914, guid: a0a79597acd784b479b7c7b6d7f41499,
+    type: 3}
+  m_ListOfBuildingSO:
+  - {fileID: 11400000, guid: 6f78ca6834e371e4a80391fc5ff75780, type: 2}
   - {fileID: 11400000, guid: 72bc919e25fc72d4792147d15e67202b, type: 2}
   - {fileID: 11400000, guid: 3b72c063c5e288a4183dea8f1aa4a8ec, type: 2}
-  - {fileID: 11400000, guid: 6f78ca6834e371e4a80391fc5ff75780, type: 2}
   - {fileID: 11400000, guid: 53aac3e2290315041a9d898f4f8ca122, type: 2}
+  - {fileID: 11400000, guid: b279fff1f43753e4592ecb24dcccebd0, type: 2}
+  - {fileID: 11400000, guid: b16084ffa4792a549b1c36f7f733f366, type: 2}
 --- !u!114 &1715679362 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1227979311907532155, guid: 3123c89d7405cdb47bb3d135258209f3,
