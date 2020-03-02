@@ -17,7 +17,7 @@ MonoBehaviour:
   m_BuildingSpriteSize: {x: 3, y: 3}
   m_BuildingSizeOnMap: {x: 3, y: 3}
   m_BuildingSprite: {fileID: 21300000, guid: d9532d640ad06e44bbeba332a389b345, type: 3}
-  m_BuildingID: 1
+  m_BuildingType: 1
   m_CustomBuildingObject: {fileID: 0}
   m_HasUI: 0
   m_UIObject: {fileID: 0}
