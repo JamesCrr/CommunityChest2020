@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Building")]]
+[CreateAssetMenu(menuName = "Building")]
 public class MuseumData : ScriptableObject
 {
     [Header("UI Building Data")]

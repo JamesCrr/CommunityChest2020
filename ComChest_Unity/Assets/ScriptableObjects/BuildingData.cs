@@ -6,7 +6,6 @@ public class BuildingData : ScriptableObject
     [Header("Building Data")]
     [SerializeField]
     string m_BuildingName = "Unnamed_Building";
-    [SerializeField] string m_BuildingDescription;
     [SerializeField]
     Vector2Int m_BuildingSpriteSize = Vector2Int.zero;
     [SerializeField]
@@ -22,6 +21,8 @@ public class BuildingData : ScriptableObject
     Vector2 m_BottomLeftCorner_OffsetPosition = Vector2.zero;
 
     [Header("UI Shiz")]
+    [SerializeField] 
+    string m_BuildingDescription;
     [SerializeField]
     bool m_HasUI = false;
     [SerializeField]
