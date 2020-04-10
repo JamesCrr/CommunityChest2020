@@ -71,6 +71,19 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 53aac3e2290315041a9d898f4f8ca122, type: 2}
   - {fileID: 11400000, guid: b279fff1f43753e4592ecb24dcccebd0, type: 2}
   - {fileID: 11400000, guid: b16084ffa4792a549b1c36f7f733f366, type: 2}
+  - {fileID: 11400000, guid: 420676219430f08449e33f72718a9c70, type: 2}
+  m_RoadSpriteInfo:
+  - m_RoadType: 0
+    m_RoadSprite: {fileID: 7882084548424057576, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 1
+    m_RoadSprite: {fileID: -1673113019724502095, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 2
+    m_RoadSprite: {fileID: -4952411892609157923, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 3
+    m_RoadSprite: {fileID: 0}
 --- !u!114 &3648735085387793284
 MonoBehaviour:
   m_ObjectHideFlags: 0

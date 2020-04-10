@@ -11,6 +11,7 @@ public class BuildingDataBase : MonoBehaviour
         B_DECO,
         B_LAVA,
         B_SHOP,
+        B_ROAD,
 
         B_TOTAL
     }
@@ -21,14 +22,26 @@ public class BuildingDataBase : MonoBehaviour
         R_MONEY
     }
 
+    [System.Serializable]
+    public struct RoadTypeInfo
+    {
+        public RoadTypeList m_RoadType;
+        public Sprite m_RoadSprite;
+    }
+
     [Header("Placement of Buildings")]
     [SerializeField]
-    GameObject m_BaseBuildingGO = null;
+    GameObject m_BaseBuildingGO = null; //the building prefab template
     [Header("All Avaliable Buildings")]
     [SerializeField]        // Temporary storage of Buildings (ONLY In the Editor)
     List<BuildingData> m_ListOfBuildingSO = new List<BuildingData>();
     // To Store all possible Buildings when running
     Dictionary<BUILDINGS, BuildingData> m_DictOfBuildingSO = new Dictionary<BUILDINGS, BuildingData>();
+
+    [Header("All Avaliable Road Sprites")]
+    [SerializeField]
+    List<RoadTypeInfo> m_RoadSpriteInfo = new List<RoadTypeInfo>();
+    Dictionary<RoadTypeList, Sprite> m_DictRoadTypeSprites = new Dictionary<RoadTypeList, Sprite>();
 
     static BuildingDataBase m_Instance = null;
     public static BuildingDataBase GetInstance() { return m_Instance; }
@@ -73,6 +86,11 @@ public class BuildingDataBase : MonoBehaviour
         // If no duplicates or missing buildings, convert to Dictionary
         foreach (BuildingData baseBuilding in m_ListOfBuildingSO)
             m_DictOfBuildingSO[baseBuilding.GetBuildingType()] = baseBuilding;
+
+        //store the road types in a dictionary
+        foreach (RoadTypeInfo roadInfo in m_RoadSpriteInfo)
+            m_DictRoadTypeSprites.Add(roadInfo.m_RoadType, roadInfo.m_RoadSprite);
+
         m_ListOfBuildingSO.Clear();
     }
 
@@ -81,6 +99,16 @@ public class BuildingDataBase : MonoBehaviour
 
     public BuildingData GetBuildingData(BUILDINGS buildingType) { return m_DictOfBuildingSO[buildingType]; }
     public GameObject GetBaseBuildingGO() { return m_BaseBuildingGO; }
+
+    public Sprite GetRoadSprite(RoadTypeList roadType)
+    {
+        if (m_DictRoadTypeSprites.ContainsKey(roadType))
+        {
+            return m_DictRoadTypeSprites[roadType];
+        }
+
+        return null;
+    }
 }
 
 
