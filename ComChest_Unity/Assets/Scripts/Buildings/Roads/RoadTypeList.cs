@@ -1,0 +1,14 @@
+﻿//r- right
+//L-LEFT
+//D-DOWN
+//U-UP
+
+public enum RoadTypeList
+{
+    NO_CONNECTION,
+    R_ONLY_CONNECTION,
+    L_ONLY_CONNECTION,
+    U_ONLY_CONNECTION,
+    D_ONLY_CONNECTION,
+    RLUP_ONLY_CONNECTION,
+}
