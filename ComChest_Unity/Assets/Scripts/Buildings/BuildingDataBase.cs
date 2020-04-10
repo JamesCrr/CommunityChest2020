@@ -10,7 +10,6 @@ public class BuildingDataBase : MonoBehaviour
         B_GRASSHOLE,
         B_DECO,
         B_LAVA,
-        B_HOUSE,
         B_SHOP,
 
         B_TOTAL
@@ -51,15 +50,27 @@ public class BuildingDataBase : MonoBehaviour
             foreach (BuildingData baseBuilding in m_ListOfBuildingSO)
             {
                 if (baseBuilding.GetBuildingType() == (BUILDINGS)i)
+                {
                     counter++;
+                }
             }
-            if (counter > 1)
+
+            // Check for missing Buildings or duplicated buildingIDs
+            if (counter != 1)
             {
-                Debug.LogError("Duplicate Enum ID in BUILDING Database!!");
+                // 2 ScriptableObjects share the same BuildingID
+                if (counter > 1)
+                    Debug.LogError("Duplicate Enum ID in BUILDING Database!! \nDuplicated ID is: " + (BUILDINGS)i);
+                // Missing Building ScriptableObject
+                else if (counter == 0)
+                    Debug.LogError("Missing Building ScriptableObject in BUILDING Database!! \nMissing ID is: " + (BUILDINGS)i);
+
+                Debug.LogError("DataBase is NOT GENERATED. \nCHECK your BuildingDataBase Again!");
+                Debug.LogError("FIX THIS NOW!");
                 return;
-            }
+            } 
         }
-        // If no duplicates, convert to Dictionary
+        // If no duplicates or missing buildings, convert to Dictionary
         foreach (BuildingData baseBuilding in m_ListOfBuildingSO)
             m_DictOfBuildingSO[baseBuilding.GetBuildingType()] = baseBuilding;
         m_ListOfBuildingSO.Clear();
