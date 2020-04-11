@@ -262,8 +262,7 @@ public class RoadManager
 
         //check diagonal
         Vector2Int diagonalOffset = Vector2Int.zero;
-        if (ThreeRoadsDiagonal(key, ref currentRoadType, ref diagonalOffset))
-            CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
+        ThreeRoadsDiagonal(key, ref currentRoadType, loop);
 
         //change the current one
         SetRoadSprite(key, currentRoadType);
@@ -274,77 +273,117 @@ public class RoadManager
         }
     }
 
-    public bool ThreeRoadsDiagonal(Vector2Int key, ref RoadTypeList currentRoadType, ref Vector2Int diagonalOffset)
+    public bool ThreeRoadsDiagonal(Vector2Int key, ref RoadTypeList currentRoadType, int loop)
     {
+        Vector2Int diagonalOffset = Vector2Int.zero;
+
+
         //check possible combination of diagonals and see if theres any roads there
         switch (currentRoadType)
         {
             case RoadTypeList.U_D_L_ONLY_CONNECTION:
             {
+                bool bottomLeft, topLeft;
+                bottomLeft = topLeft = false;
+
                 diagonalOffset = new Vector2Int(-1, -1); //check bottom left first
                 if (CheckMapAvailability(diagonalOffset + key))
                 {
                     currentRoadType = RoadTypeList.U_D_L_DIA_BL_ONLY_CONNECTION;
-                    return true;
+                    bottomLeft = true;
+                    CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
+
                 }
 
                 diagonalOffset = new Vector2Int(-1, 1); //check top left
                 if (CheckMapAvailability(diagonalOffset + key))
                 {
                     currentRoadType = RoadTypeList.U_D_L_DIA_TL_ONLY_CONNECTION;
-                    return true;
+                    topLeft = true;
+                    CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
+
                 }
+
+                if (topLeft && bottomLeft) //if diagonally both sides have
+                   currentRoadType = RoadTypeList.U_D_L_DIA_BL_TL_ONLY_CONNECTION;
             }
             break;
             case RoadTypeList.U_D_R_ONLY_CONNECTION:
             {
+                bool bottomRight, topRight;
+                bottomRight = topRight = false;
+
                 diagonalOffset = new Vector2Int(1, -1); //check bottom right first
                 if (CheckMapAvailability(diagonalOffset + key))
                 {
                     currentRoadType = RoadTypeList.U_D_R_DIA_BR_ONLY_CONNECTION;
-                    return true;
+                    bottomRight = true;
+                    CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
+
                 }
 
                 diagonalOffset = new Vector2Int(1, 1); //check top right
                 if (CheckMapAvailability(diagonalOffset + key))
                 {
                     currentRoadType = RoadTypeList.U_D_R_DIA_TR_ONLY_CONNECTION;
-                    return true;
+                    topRight = true;
+                    CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
                 }
+
+                if (topRight && bottomRight) //if diagonally both sides have
+                   currentRoadType = RoadTypeList.U_D_R_DIA_BR_TR_ONLY_CONNECTION;
             }
             break;
             case RoadTypeList.U_R_L_ONLY_CONNECTION:
             {
+                bool topLeft, topRight;
+                topLeft = topRight = false;
+
                 diagonalOffset = new Vector2Int(1, 1); //check top right first
                 if (CheckMapAvailability(diagonalOffset + key))
                 {
                     currentRoadType = RoadTypeList.U_R_L_DIA_TR_ONLY_CONNECTION;
-                    return true;
+                    topRight = true;
+                    CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
                 }
 
                 diagonalOffset = new Vector2Int(-1, 1); //check top left
                 if (CheckMapAvailability(diagonalOffset + key))
                 {
                     currentRoadType = RoadTypeList.U_R_L_DIA_TL_ONLY_CONNECTION;
-                    return true;
+                    topLeft = true;
+                    CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
                 }
+
+                if (topRight && topLeft) //if diagonally both sides have
+                    currentRoadType = RoadTypeList.U_R_L_DIA_TR_TL_ONLY_CONNECTION;
             }
             break;
             case RoadTypeList.D_R_L_ONLY_CONNECTION:
             {
+                bool bottomLeft, bottomRight;
+                bottomLeft = bottomRight = false;
+
                 diagonalOffset = new Vector2Int(1, -1); //check bottom right first
                 if (CheckMapAvailability(diagonalOffset + key))
                 {
                     currentRoadType = RoadTypeList.D_R_L_DIA_BR_ONLY_CONNECTION;
-                    return true;
+                    bottomRight = true;
+
+                    CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1); //change the corners accordingly
                 }
 
                 diagonalOffset = new Vector2Int(-1, -1); //check bottom left
                 if (CheckMapAvailability(diagonalOffset + key))
                 {
                     currentRoadType = RoadTypeList.D_R_L_DIA_BL_ONLY_CONNECTION;
-                    return true;
+                    bottomLeft = true;
+
+                    CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
                 }
+
+                if (bottomLeft && bottomRight) //if diagonally both sides have
+                    currentRoadType = RoadTypeList.D_R_L_DIA_BR_BL_ONLY_CONNECTION;
             }
             break;
         }

@@ -154,6 +154,18 @@ MonoBehaviour:
   - m_RoadType: 26
     m_RoadSprite: {fileID: -6904589303029389476, guid: 793c6b70b89963a4b946d62eff7ea838,
       type: 3}
+  - m_RoadType: 27
+    m_RoadSprite: {fileID: 2503616085237147480, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 28
+    m_RoadSprite: {fileID: 8080685100164925232, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 29
+    m_RoadSprite: {fileID: 506399441110862613, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 30
+    m_RoadSprite: {fileID: -1839991569613333704, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
 --- !u!114 &3648735085387793284
 MonoBehaviour:
   m_ObjectHideFlags: 0

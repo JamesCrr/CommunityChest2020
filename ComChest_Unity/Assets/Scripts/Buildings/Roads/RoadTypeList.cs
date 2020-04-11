@@ -46,7 +46,12 @@ public enum RoadTypeList
     D_R_L_DIA_BR_ONLY_CONNECTION,
     D_R_L_DIA_BL_ONLY_CONNECTION,
 
-    //check both also
+    //check both diagonal sides
+    U_D_L_DIA_BL_TL_ONLY_CONNECTION,
+    U_D_R_DIA_BR_TR_ONLY_CONNECTION,
+    U_R_L_DIA_TR_TL_ONLY_CONNECTION,
+    D_R_L_DIA_BR_BL_ONLY_CONNECTION,
+
 
     //goes to 4 different direction
 
