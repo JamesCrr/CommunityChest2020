@@ -3,6 +3,8 @@
 //D-DOWN
 //U-UP
 //DIA - diagonal
+//B - BOTTOM
+//T - TOP
 
 public enum RoadTypeList
 {
@@ -34,7 +36,17 @@ public enum RoadTypeList
     U_R_L_ONLY_CONNECTION,
     D_R_L_ONLY_CONNECTION,
 
+    //3 directions, plus diagonal
+    U_D_L_DIA_BL_ONLY_CONNECTION,
+    U_D_L_DIA_TL_ONLY_CONNECTION,
+    U_D_R_DIA_BR_ONLY_CONNECTION, //DIAGONAL PIECE AT BOTTOM RIGHT
+    U_D_R_DIA_TR_ONLY_CONNECTION,
+    U_R_L_DIA_TR_ONLY_CONNECTION,
+    U_R_L_DIA_TL_ONLY_CONNECTION,
+    D_R_L_DIA_BR_ONLY_CONNECTION,
+    D_R_L_DIA_BL_ONLY_CONNECTION,
 
+    //check both also
 
     //goes to 4 different direction
 

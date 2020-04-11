@@ -203,7 +203,7 @@ public class RoadManager
             offsets[1] = LEFT_VECTOR;
         }
 
-        //inverse and check if theres anything diagonal of the road
+        //check if theres anything diagonal of the road
         offsets[2] = offsets[0] + offsets[1];
         if (CheckMapAvailability(key + offsets[2]) && offsets[2] != Vector2Int.zero)
         {
@@ -257,9 +257,13 @@ public class RoadManager
             offsets[0] = DOWN_VECTOR;
             offsets[1] = RIGHT_VECTOR;
             offsets[2] = LEFT_VECTOR;
-
             currentRoadType = RoadTypeList.D_R_L_ONLY_CONNECTION;
         }
+
+        //check diagonal
+        Vector2Int diagonalOffset = Vector2Int.zero;
+        if (ThreeRoadsDiagonal(key, ref currentRoadType, ref diagonalOffset))
+            CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
 
         //change the current one
         SetRoadSprite(key, currentRoadType);
@@ -268,6 +272,84 @@ public class RoadManager
         {
             CheckAndChangeRoadDirection(new Vector2Int(key.x + offset.x, key.y + offset.y), loop + 1);
         }
+    }
+
+    public bool ThreeRoadsDiagonal(Vector2Int key, ref RoadTypeList currentRoadType, ref Vector2Int diagonalOffset)
+    {
+        //check possible combination of diagonals and see if theres any roads there
+        switch (currentRoadType)
+        {
+            case RoadTypeList.U_D_L_ONLY_CONNECTION:
+            {
+                diagonalOffset = new Vector2Int(-1, -1); //check bottom left first
+                if (CheckMapAvailability(diagonalOffset + key))
+                {
+                    currentRoadType = RoadTypeList.U_D_L_DIA_BL_ONLY_CONNECTION;
+                    return true;
+                }
+
+                diagonalOffset = new Vector2Int(-1, 1); //check top left
+                if (CheckMapAvailability(diagonalOffset + key))
+                {
+                    currentRoadType = RoadTypeList.U_D_L_DIA_TL_ONLY_CONNECTION;
+                    return true;
+                }
+            }
+            break;
+            case RoadTypeList.U_D_R_ONLY_CONNECTION:
+            {
+                diagonalOffset = new Vector2Int(1, -1); //check bottom right first
+                if (CheckMapAvailability(diagonalOffset + key))
+                {
+                    currentRoadType = RoadTypeList.U_D_R_DIA_BR_ONLY_CONNECTION;
+                    return true;
+                }
+
+                diagonalOffset = new Vector2Int(1, 1); //check top right
+                if (CheckMapAvailability(diagonalOffset + key))
+                {
+                    currentRoadType = RoadTypeList.U_D_R_DIA_TR_ONLY_CONNECTION;
+                    return true;
+                }
+            }
+            break;
+            case RoadTypeList.U_R_L_ONLY_CONNECTION:
+            {
+                diagonalOffset = new Vector2Int(1, 1); //check top right first
+                if (CheckMapAvailability(diagonalOffset + key))
+                {
+                    currentRoadType = RoadTypeList.U_R_L_DIA_TR_ONLY_CONNECTION;
+                    return true;
+                }
+
+                diagonalOffset = new Vector2Int(-1, 1); //check top left
+                if (CheckMapAvailability(diagonalOffset + key))
+                {
+                    currentRoadType = RoadTypeList.U_R_L_DIA_TL_ONLY_CONNECTION;
+                    return true;
+                }
+            }
+            break;
+            case RoadTypeList.D_R_L_ONLY_CONNECTION:
+            {
+                diagonalOffset = new Vector2Int(1, -1); //check bottom right first
+                if (CheckMapAvailability(diagonalOffset + key))
+                {
+                    currentRoadType = RoadTypeList.D_R_L_DIA_BR_ONLY_CONNECTION;
+                    return true;
+                }
+
+                diagonalOffset = new Vector2Int(-1, -1); //check bottom left
+                if (CheckMapAvailability(diagonalOffset + key))
+                {
+                    currentRoadType = RoadTypeList.D_R_L_DIA_BL_ONLY_CONNECTION;
+                    return true;
+                }
+            }
+            break;
+        }
+
+        return false;
     }
 
     public void SetRoadSprite(Vector2Int key, RoadTypeList type)

@@ -130,6 +130,30 @@ MonoBehaviour:
   - m_RoadType: 18
     m_RoadSprite: {fileID: -6894790358917656738, guid: 793c6b70b89963a4b946d62eff7ea838,
       type: 3}
+  - m_RoadType: 19
+    m_RoadSprite: {fileID: -7497471352550807468, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 20
+    m_RoadSprite: {fileID: 1610438912664610065, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 21
+    m_RoadSprite: {fileID: 1678454160915363153, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 22
+    m_RoadSprite: {fileID: 325968671556517762, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 23
+    m_RoadSprite: {fileID: 5277737986070600457, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 24
+    m_RoadSprite: {fileID: 7719718094498009632, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 25
+    m_RoadSprite: {fileID: -6741412481709457591, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 26
+    m_RoadSprite: {fileID: -6904589303029389476, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
 --- !u!114 &3648735085387793284
 MonoBehaviour:
   m_ObjectHideFlags: 0
