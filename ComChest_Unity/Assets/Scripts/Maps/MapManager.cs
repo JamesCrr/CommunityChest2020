@@ -192,8 +192,7 @@ public class MapManager : MonoBehaviour
         if (activeBuildingCom.GetBuildingType() == BuildingDataBase.BUILDINGS.B_ROAD)
         {
             int arrayIndex = Convert2DToIntIndex(key);
-            m_RoadManager.PlaceRoads(arrayIndex, ref activeBuildingCom);
-
+            m_RoadManager.PlaceRoads(key, arrayIndex, ref activeBuildingCom);
         }
         else
         {
