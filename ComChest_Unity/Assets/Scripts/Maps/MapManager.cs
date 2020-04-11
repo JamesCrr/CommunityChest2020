@@ -16,6 +16,8 @@ public class MapManager : MonoBehaviour
     public delegate void MapGeneratedAction();      
     public static event MapGeneratedAction OnMapGenerated;
 
+    RoadManager m_RoadManager = new RoadManager();
+
     static MapManager m_Instance = null;
     public static MapManager GetInstance() { return m_Instance; }
     private void Awake()
@@ -83,7 +85,8 @@ public class MapManager : MonoBehaviour
                 return null;
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
-        AddBuildingIntoTrackingDictionary(activeBuildingCom);
+
+        AddBuildingIntoTrackingDictionary(activeBuildingCom); //roads and buildings store accordingly
         activeBuildingCom.BuildingPlaced();
 
         return activeBuildingCom.gameObject;
@@ -135,7 +138,7 @@ public class MapManager : MonoBehaviour
                     return false;
                 // Check if spot is already taken
                 arrayIndex = Convert2DToIntIndex(testGridPos);
-                if (m_GridTakenArray[arrayIndex])
+                if (m_GridTakenArray[arrayIndex] || m_RoadManager.CheckMapAvailability(arrayIndex))
                 {
                     //Debug.Log("SPOT TAKEN");
                     return false;
@@ -184,7 +187,18 @@ public class MapManager : MonoBehaviour
             Debug.LogError("Duplicate Key in MapManager Building Storage!!");
             return;
         }
-        m_DictOfBuildingsOnMap[key] = activeBuildingCom;
+
+        //check if its roads or not, store accordingly
+        if (activeBuildingCom.GetBuildingType() == BuildingDataBase.BUILDINGS.B_ROAD)
+        {
+            int arrayIndex = Convert2DToIntIndex(key);
+            m_RoadManager.PlaceRoads(arrayIndex, ref activeBuildingCom);
+
+        }
+        else
+        {
+            m_DictOfBuildingsOnMap[key] = activeBuildingCom;
+        }
     }
     void RemoveBuildingFromTrackingDictionary(BaseBuildingsClass activeBuildingCom)
     {

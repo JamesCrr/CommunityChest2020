@@ -74,16 +74,23 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 420676219430f08449e33f72718a9c70, type: 2}
   m_RoadSpriteInfo:
   - m_RoadType: 0
-    m_RoadSprite: {fileID: 7882084548424057576, guid: 793c6b70b89963a4b946d62eff7ea838,
+    m_RoadSprite: {fileID: -5289148843455750591, guid: 793c6b70b89963a4b946d62eff7ea838,
       type: 3}
   - m_RoadType: 1
-    m_RoadSprite: {fileID: -1673113019724502095, guid: 793c6b70b89963a4b946d62eff7ea838,
+    m_RoadSprite: {fileID: 7091976381937828221, guid: 793c6b70b89963a4b946d62eff7ea838,
       type: 3}
   - m_RoadType: 2
-    m_RoadSprite: {fileID: -4952411892609157923, guid: 793c6b70b89963a4b946d62eff7ea838,
+    m_RoadSprite: {fileID: 2592168193217277025, guid: 793c6b70b89963a4b946d62eff7ea838,
       type: 3}
   - m_RoadType: 3
-    m_RoadSprite: {fileID: 0}
+    m_RoadSprite: {fileID: -5308214993090501409, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 4
+    m_RoadSprite: {fileID: 7224345659411163795, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 5
+    m_RoadSprite: {fileID: -1673113019724502095, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
 --- !u!114 &3648735085387793284
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -6,21 +6,21 @@ public class BaseBuildingsClass : MonoBehaviour
 {
     [Header("Building GO")]
     [SerializeField]
-    SpriteRenderer m_BuildingSpriteRenderer = null;
+    protected SpriteRenderer m_BuildingSpriteRenderer = null;
     [SerializeField]
-    BoxCollider2D m_Collider = null;
-    bool m_BuildingPlaced = false;
+    protected BoxCollider2D m_Collider = null;
+    protected bool m_BuildingPlaced = false;
     [Header("Debug")]
     [SerializeField]
-    bool m_DrawDebug = false;
+    protected bool m_DrawDebug = false;
     [SerializeField]
-    Color m_DebugColor = Color.blue;
+    protected Color m_DebugColor = Color.blue;
     [Header("From Scriptable Object")]
     [SerializeField]
-    BuildingDataBase.BUILDINGS m_BuildingType = BuildingDataBase.BUILDINGS.B_TOTAL;
+    protected BuildingDataBase.BUILDINGS m_BuildingType = BuildingDataBase.BUILDINGS.B_TOTAL;
     [SerializeField]
-    Vector2Int m_BuildingSize = Vector2Int.zero;
-    Vector2 m_BottomLeftCornerOffset = Vector2.zero;
+    protected Vector2Int m_BuildingSize = Vector2Int.zero;
+    protected Vector2 m_BottomLeftCornerOffset = Vector2.zero;
     //[Header("For UI")]
 
 
@@ -39,6 +39,8 @@ public class BaseBuildingsClass : MonoBehaviour
 
     // Sprite Renderer
     public GameObject GetSpriteGO() { return m_BuildingSpriteRenderer.gameObject; }
+    public SpriteRenderer GetSpriteRenderer() { return m_BuildingSpriteRenderer; }
+    public void SetSprite(Sprite sprite) { m_BuildingSpriteRenderer.sprite = sprite; }
     public void SetSpriteObjectLayer(int newLayer) { m_BuildingSpriteRenderer.gameObject.layer = newLayer; }
     public void SetSpriteObjectColor(Color newColor) { m_BuildingSpriteRenderer.color = newColor; }
     // Building Details
