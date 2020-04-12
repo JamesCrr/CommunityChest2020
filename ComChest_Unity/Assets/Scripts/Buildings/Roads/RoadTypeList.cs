@@ -52,9 +52,29 @@ public enum RoadTypeList
     U_R_L_DIA_TR_TL_ONLY_CONNECTION,
     D_R_L_DIA_BR_BL_ONLY_CONNECTION,
 
-
     //goes to 4 different direction
+    NO_DIA_CONNECTION,
+    ALL_DIA_CONNECTION,
 
+    //4 different direction, 1 diagonal around
+    DIA_TR_ONLY_CONNECTION,
+    DIA_TL_ONLY_CONNECTION,
+    DIA_BR_ONLY_CONNECTION,
+    DIA_BL_ONLY_CONNECTION,
+
+    //4 different direction, 2 diagonals around
+    DIA_TL_TR_ONLY_CONNECTION,
+    DIA_TL_BL_ONLY_CONNECTION,
+    DIA_TL_BR_ONLY_CONNECTION,
+    DIA_TR_BL_ONLY_CONNECTION,
+    DIA_TR_BR_ONLY_CONNECTION,
+    DIA_BL_BR_ONLY_CONNECTION,
+
+    //4 different directions, 3 diagonals around
+    DIA_TL_TR_BL_ONLY_CONNECTION,
+    DIA_TL_TR_BR_ONLY_CONNECTION,
+    DIA_TL_BL_BR_ONLY_CONNECTION,
+    DIA_TR_BL_BR_ONLY_CONNECTION,
 
     RLUP_ONLY_CONNECTION,
 }

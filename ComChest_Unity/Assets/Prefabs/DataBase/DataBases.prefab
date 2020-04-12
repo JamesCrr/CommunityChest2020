@@ -166,6 +166,54 @@ MonoBehaviour:
   - m_RoadType: 30
     m_RoadSprite: {fileID: -1839991569613333704, guid: 793c6b70b89963a4b946d62eff7ea838,
       type: 3}
+  - m_RoadType: 31
+    m_RoadSprite: {fileID: -1673113019724502095, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 32
+    m_RoadSprite: {fileID: -4664054292420946157, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 33
+    m_RoadSprite: {fileID: -6131170351977602719, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 34
+    m_RoadSprite: {fileID: -1673113019724502095, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 35
+    m_RoadSprite: {fileID: 5385772474438794322, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 36
+    m_RoadSprite: {fileID: -4018482381127397273, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 37
+    m_RoadSprite: {fileID: 4697330478187859683, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 38
+    m_RoadSprite: {fileID: -577613543605782704, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 39
+    m_RoadSprite: {fileID: -4018482381127397273, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 40
+    m_RoadSprite: {fileID: -4018482381127397273, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 41
+    m_RoadSprite: {fileID: -5376091741914167984, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 42
+    m_RoadSprite: {fileID: 3250369449086383156, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 43
+    m_RoadSprite: {fileID: 231202145150673737, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 44
+    m_RoadSprite: {fileID: 6742615878200275462, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 45
+    m_RoadSprite: {fileID: -524006050083905511, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
+  - m_RoadType: 46
+    m_RoadSprite: {fileID: -6511577315528718982, guid: 793c6b70b89963a4b946d62eff7ea838,
+      type: 3}
 --- !u!114 &3648735085387793284
 MonoBehaviour:
   m_ObjectHideFlags: 0

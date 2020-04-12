@@ -13,6 +13,15 @@ public class RoadManager
         TOTAL_DIRECTIONS
     }
 
+    enum DiagonalDirection
+    {
+        TOP_RIGHT,
+        TOP_LEFT,
+        BOTTOM_RIGHT,
+        BOTTOM_LEFT,
+        TOTAL_DIA_DIRECTIONS
+    }
+
 
     Dictionary<int, RoadTypeList> m_RoadMap = new Dictionary<int, RoadTypeList>();
     Dictionary<Vector2Int, BaseBuildingsClass> m_RoadSpriteRendererMap = new Dictionary<Vector2Int, BaseBuildingsClass>();
@@ -22,7 +31,6 @@ public class RoadManager
     Vector2Int DOWN_VECTOR = new Vector2Int(0, -1);
     Vector2Int RIGHT_VECTOR = new Vector2Int(1, 0);
     Vector2Int LEFT_VECTOR = new Vector2Int(-1, 0);
-
 
 
     public bool CheckMapAvailability(int mapIndex) //check if space is taken by the road
@@ -100,9 +108,9 @@ public class RoadManager
             case 3:
                 ThreeRoadsAround(key, directionChecks, loop);
                 Debug.Log("Three ROAD ARD");
-
                 break;
             case 4:
+                FourRoadsAround(key, loop);
                 break;
         }
     }
@@ -273,10 +281,9 @@ public class RoadManager
         }
     }
 
-    public bool ThreeRoadsDiagonal(Vector2Int key, ref RoadTypeList currentRoadType, int loop)
+    public void ThreeRoadsDiagonal(Vector2Int key, ref RoadTypeList currentRoadType, int loop)
     {
         Vector2Int diagonalOffset = Vector2Int.zero;
-
 
         //check possible combination of diagonals and see if theres any roads there
         switch (currentRoadType)
@@ -292,7 +299,6 @@ public class RoadManager
                     currentRoadType = RoadTypeList.U_D_L_DIA_BL_ONLY_CONNECTION;
                     bottomLeft = true;
                     CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
-
                 }
 
                 diagonalOffset = new Vector2Int(-1, 1); //check top left
@@ -301,7 +307,6 @@ public class RoadManager
                     currentRoadType = RoadTypeList.U_D_L_DIA_TL_ONLY_CONNECTION;
                     topLeft = true;
                     CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
-
                 }
 
                 if (topLeft && bottomLeft) //if diagonally both sides have
@@ -319,7 +324,6 @@ public class RoadManager
                     currentRoadType = RoadTypeList.U_D_R_DIA_BR_ONLY_CONNECTION;
                     bottomRight = true;
                     CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
-
                 }
 
                 diagonalOffset = new Vector2Int(1, 1); //check top right
@@ -369,7 +373,6 @@ public class RoadManager
                 {
                     currentRoadType = RoadTypeList.D_R_L_DIA_BR_ONLY_CONNECTION;
                     bottomRight = true;
-
                     CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1); //change the corners accordingly
                 }
 
@@ -378,7 +381,6 @@ public class RoadManager
                 {
                     currentRoadType = RoadTypeList.D_R_L_DIA_BL_ONLY_CONNECTION;
                     bottomLeft = true;
-
                     CheckAndChangeRoadDirection(key + diagonalOffset, loop + 1);
                 }
 
@@ -387,9 +389,132 @@ public class RoadManager
             }
             break;
         }
-
-        return false;
     }
+
+    public void FourRoadsAround(Vector2Int key, int loop)
+    {
+        //check diagonal sides
+        bool[] diagonalDirectionChecks = new bool[(int)DiagonalDirection.TOTAL_DIA_DIRECTIONS];
+        for (int i = 0; i < (int)Direction.TOTAL_DIRECTIONS; ++i)
+        {
+            diagonalDirectionChecks[i] = false;
+        }
+
+        if (CheckMapAvailability(new Vector2Int(key.x + 1, key.y + 1))) //check top right
+            diagonalDirectionChecks[(int)DiagonalDirection.TOP_RIGHT] = true;
+        if (CheckMapAvailability(new Vector2Int(key.x - 1, key.y + 1))) //check top left
+            diagonalDirectionChecks[(int)DiagonalDirection.TOP_LEFT] = true;
+        if (CheckMapAvailability(new Vector2Int(key.x + 1, key.y - 1))) //check bottom right
+            diagonalDirectionChecks[(int)DiagonalDirection.BOTTOM_RIGHT] = true;
+        if (CheckMapAvailability(new Vector2Int(key.x - 1, key.y - 1))) //check bottom left
+            diagonalDirectionChecks[(int)DiagonalDirection.BOTTOM_LEFT] = true;
+
+        int diagonalRoadCounter = 0;
+        foreach (bool diagonalCheck in diagonalDirectionChecks)
+        {
+            if (diagonalCheck)
+                ++diagonalRoadCounter;
+        }
+
+        //change the sprite accordingly to the number of diagonal roads around it
+        switch (diagonalRoadCounter)
+        {
+            case 0:
+                ZeroDiagonalAround(key);
+                break;
+            case 1:
+                ZeroDiagonalAround(key);
+                break;
+            case 2:
+                TwoDiagonalAround(key, diagonalDirectionChecks);
+                break;
+            case 3:
+                ThreeDiagonalAround(key, diagonalDirectionChecks);
+                break;
+            case 4:
+                FourDiagonalAround(key);
+                break;
+        }
+
+        //check the top, bottom, left and right roads
+        CheckAndChangeRoadDirection(key + UP_VECTOR, loop + 1);
+        CheckAndChangeRoadDirection(key + DOWN_VECTOR, loop + 1);
+        CheckAndChangeRoadDirection(key + RIGHT_VECTOR, loop + 1);
+        CheckAndChangeRoadDirection(key + LEFT_VECTOR, loop + 1);
+    }
+
+    #region FourRoadDiagonal
+    public void ZeroDiagonalAround(Vector2Int key)
+    {
+        SetRoadSprite(key, RoadTypeList.NO_DIA_CONNECTION);
+    }
+
+    public void TwoDiagonalAround(Vector2Int key, bool[] diaDirectionCheck)
+    {
+        RoadTypeList currentRoadType = RoadTypeList.ALL_DIA_CONNECTION;
+
+        if (diaDirectionCheck[(int)DiagonalDirection.TOP_LEFT])
+        {
+            if (diaDirectionCheck[(int)DiagonalDirection.TOP_RIGHT]) //top left and top right
+            {
+                currentRoadType = RoadTypeList.DIA_TL_TR_ONLY_CONNECTION;
+            }
+            else if (diaDirectionCheck[(int)DiagonalDirection.BOTTOM_LEFT]) //top left and bottom left
+            {
+                currentRoadType = RoadTypeList.DIA_TL_BL_ONLY_CONNECTION;
+            }
+            else //assume its top left and bottom right
+            {
+                currentRoadType = RoadTypeList.DIA_TL_BR_ONLY_CONNECTION;
+            }
+        }
+        else if (diaDirectionCheck[(int)DiagonalDirection.TOP_RIGHT]) 
+        {
+            if (diaDirectionCheck[(int)DiagonalDirection.BOTTOM_LEFT]) //top right and bottom left
+                currentRoadType = RoadTypeList.DIA_TR_BL_ONLY_CONNECTION;
+            else //assume its top right and bottom right
+                currentRoadType = RoadTypeList.DIA_TR_BR_ONLY_CONNECTION;
+        }
+        else //assume its bottom left and bottom right
+        {
+            currentRoadType = RoadTypeList.DIA_BL_BR_ONLY_CONNECTION;
+        }
+
+        SetRoadSprite(key, currentRoadType);
+    }
+
+    public void ThreeDiagonalAround(Vector2Int key, bool[] diaDirectionCheck)
+    {
+        RoadTypeList currentRoadType = RoadTypeList.ALL_DIA_CONNECTION;
+
+        if (diaDirectionCheck[(int)DiagonalDirection.TOP_LEFT])
+        {
+            if (diaDirectionCheck[(int)DiagonalDirection.TOP_RIGHT])
+            {
+                if (diaDirectionCheck[(int)DiagonalDirection.BOTTOM_RIGHT])
+                    currentRoadType = RoadTypeList.DIA_TL_TR_BR_ONLY_CONNECTION;
+                else //assume its bottom left
+                    currentRoadType = RoadTypeList.DIA_TL_TR_BL_ONLY_CONNECTION;
+            }
+            else //assume diagonally on top left, bottom left, bottom right theres roads
+            {
+                currentRoadType = RoadTypeList.DIA_TL_BL_BR_ONLY_CONNECTION;
+            }
+        }
+        else //assume its top right, bottom left, bottom right
+        {
+            currentRoadType = RoadTypeList.DIA_TR_BL_BR_ONLY_CONNECTION;
+        }
+
+        SetRoadSprite(key, currentRoadType);
+    }
+
+    public void FourDiagonalAround(Vector2Int key)
+    {
+        SetRoadSprite(key, RoadTypeList.ALL_DIA_CONNECTION);
+    }
+
+    #endregion
 
     public void SetRoadSprite(Vector2Int key, RoadTypeList type)
     {
