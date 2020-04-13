@@ -10,7 +10,7 @@ public class MapManager : MonoBehaviour
     BaseMapClass m_currentMap;
     // To store which tiles on map are taken by building
     List<bool> m_GridTakenArray;        
-    // To store the buildings on the map
+    // To store the buildings currently on the map
     Dictionary<Vector2Int, BaseBuildingsClass> m_DictOfBuildingsOnMap = new Dictionary<Vector2Int,BaseBuildingsClass>();
     // Map Generated Action
     public delegate void MapGeneratedAction();      
@@ -199,6 +199,10 @@ public class MapManager : MonoBehaviour
             m_DictOfBuildingsOnMap[key] = activeBuildingCom;
         }
     }
+    /// <summary>
+    /// Removes a building from the tracking Dictionary
+    /// </summary>
+    /// <param name="activeBuildingCom"></param>
     void RemoveBuildingFromTrackingDictionary(BaseBuildingsClass activeBuildingCom)
     {
         Vector2Int key = (Vector2Int)m_GridGO.WorldToCell(activeBuildingCom.GetBottomLeftGridPosition());

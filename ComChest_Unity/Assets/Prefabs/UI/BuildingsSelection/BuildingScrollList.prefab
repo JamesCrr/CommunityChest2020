@@ -1013,8 +1013,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildingScribe: {fileID: 0}
   buildingDatas: []
-  builderElementPrefab: {fileID: 4169103533769355528, guid: f6831591b58754a41862b7828815075d,
-    type: 3}
+  builderElementPrefab: {fileID: 0}
 --- !u!1 &6066948731822380122
 GameObject:
   m_ObjectHideFlags: 0
@@ -1132,7 +1131,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6066948732006350990}
   m_HandleRect: {fileID: 6066948732006350991}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1721,7 +1720,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 629731508690436972}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2306581558729474629}
+        m_MethodName: BuildButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8003281707993233706
 GameObject:
   m_ObjectHideFlags: 0
@@ -1777,7 +1787,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildingName: {fileID: 8483399689568681190}
   buildingCost: {fileID: 8611713064499885671}
-  buildingDescriptionText: {fileID: 3233493940057965498}
+  buildingDescription: {fileID: 0}
   buildingThumbnail: {fileID: 265441119729600}
 --- !u!1 &9140416632044835405
 GameObject:

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class MobileInput : MonoBehaviour
 {
@@ -13,30 +13,25 @@ public class MobileInput : MonoBehaviour
     // UI Graphics Raycasting
     GraphicRaycaster m_Raycaster = null;
     PointerEventData m_PointerEventData = null;
-    [SerializeField]
     EventSystem m_EventSystem = null;
 
     // Lists of Touches that are currently active
     List<MobileTouch> m_listOfActiveTouches = new List<MobileTouch>();
 
     [Header("Mobile UI Parent")]
-    [SerializeField]
     GameObject m_mobileUIParent = null;
 
     public static MobileInput GetInstance() { return m_Instance; }
     private void Awake()
     {
-        m_mobileUIParent.SetActive(false);
-
         if (m_Instance != null)       // Make this a public Instance
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
             return;
         }
         m_Instance = this;
-        DontDestroyOnLoad(this.gameObject);
-
-        m_Raycaster = m_mobileUIParent.GetComponent<GraphicRaycaster>();
+        DontDestroyOnLoad(gameObject);
+        SceneManager.activeSceneChanged += ActiveSceneChanged;
 
         // Create new MobileTouch and add into list
         MobileTouch newTouch = new MobileTouch();
@@ -48,6 +43,14 @@ public class MobileInput : MonoBehaviour
         m_listOfActiveTouches.Add(newTouch3);
         m_listOfActiveTouches.Add(newTouch4);
     }
+    void ActiveSceneChanged(Scene current, Scene next)
+    {
+        // Get Ref to this Scene's Canvas and Event System
+        m_EventSystem = (EventSystem)FindObjectOfType(typeof(EventSystem));
+        m_mobileUIParent = ((GraphicRaycaster)FindObjectOfType(typeof(GraphicRaycaster))).gameObject;
+        m_Raycaster = m_mobileUIParent.GetComponent<GraphicRaycaster>();
+    }
+
 
 #if UNITY_ANDROID || UNITY_IOS    // playing on Phones
     private void Update()

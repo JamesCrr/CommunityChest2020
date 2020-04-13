@@ -14,6 +14,7 @@ public class BuilderMenu : MonoBehaviour
     [SerializeField] GameObject builderElementPrefab;
     GameObject contentGameObject;
     Button currBuilding = null;
+    BuildingDataBase.BUILDINGS currBuildingID;
     private void Awake()
     {
         if (instance != null)
@@ -31,12 +32,14 @@ public class BuilderMenu : MonoBehaviour
         }
     }
 
-    public void BuildingElementClicked(Button _button)
+    public void BuildingElementClicked(Button _button, BuildingData buildingData)
     {
         if (currBuilding != null)
             currBuilding.interactable = true;
         currBuilding = _button;
         currBuilding.interactable = false;
+
+        currBuildingID = buildingData.GetBuildingType();
     }
 
     public void ResetButtons()
@@ -44,5 +47,11 @@ public class BuilderMenu : MonoBehaviour
         if (currBuilding != null)
             currBuilding.interactable = true;
         currBuilding = null;
+    }
+
+    public void BuildButtonClicked()
+    {
+        IngameUIManager.instance.CloseBuildMenuPressed();
+        InGame_PlayerInput.GetInstance().TogglePlacmentBrush(true, currBuildingID);
     }
 }

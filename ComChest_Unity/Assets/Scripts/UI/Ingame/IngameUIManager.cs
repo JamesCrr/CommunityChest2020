@@ -5,10 +5,18 @@ using UnityEngine.UI;
 using TMPro;
 public class IngameUIManager : MonoBehaviour
 {
+    public static IngameUIManager instance = null;
+
     #region IngameButtons
     [SerializeField] Button buildMenuButton;
     #endregion
     [SerializeField] GameObject buildMenu;
+    private void Awake()
+    {
+        if (instance != null)
+            Debug.LogWarning("More than 1 IngameUIManager instance exists!");
+        instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {

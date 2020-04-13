@@ -23,6 +23,6 @@ public class BuilderMenuElement : MonoBehaviour
     public void OnClick()
     {
         BuilderMenu.instance.buildingScribe.DescribeBuilding(m_buildingData);
-        BuilderMenu.instance.BuildingElementClicked(GetComponent<Button>());
+        BuilderMenu.instance.BuildingElementClicked(GetComponent<Button>(), m_buildingData);
     }
 }

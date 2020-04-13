@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class PlayerInput : MonoBehaviour
+public class InGame_PlayerInput : MonoBehaviour
 {
     // Camera
     [Header("Camera Related")]
@@ -9,22 +10,40 @@ public class PlayerInput : MonoBehaviour
     [SerializeField]
     float m_MaxZoomOut = 6;
     Vector3 m_TargetCameraPosition;
-    // Placment
+    // Placment Buildings
     [Header("Placement of Buildings")]
     BaseBuildingsClass m_PlacingBuilding = null;
     Vector2 m_BuildingPlacementOffset = Vector2.zero;
-    BuildingDataBase.BUILDINGS buildingSelectID = BuildingDataBase.BUILDINGS.B_POND;
-    bool m_BrushActive = true;
+    BuildingDataBase.BUILDINGS m_BuildingSelectID = BuildingDataBase.BUILDINGS.B_POND;
+    bool m_PlacmentBrushActive = true;
+    bool m_RemovalBrushActive = false;
+    // Removal Buildings
+    [Header("Removal of Buildings")]
+    List<BaseBuildingsClass> m_ListOfBuildingsToRemove = null;
     // Miscs
     bool m_MovingPlacementBuilding = false;     // Are we currently moving the Placement Building or the Camera?
     bool m_MovingSomething = false;         // Have we started moving?
 
-
+    // Instance
+    static InGame_PlayerInput m_Instance = null;
+    public static InGame_PlayerInput GetInstance() { return m_Instance; }
+    private void Awake()
+    {
+        if (m_Instance != null)       // Make this a Singleton Instance
+        {
+            Destroy(gameObject);
+            return;
+        }
+        m_Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
     void Start()
     {
         m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
         m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
+        m_ListOfBuildingsToRemove = new List<BaseBuildingsClass>();
         TogglePlacmentBrush(false);
+        ToggleRemovalBrush(false);
 
         // Subscribe to Map Generated Event
         MapManager.OnMapGenerated += MapWasGenerated;
@@ -36,24 +55,52 @@ public class PlayerInput : MonoBehaviour
         Camera.main.transform.position = Vector3.Slerp(Camera.main.transform.position, m_TargetCameraPosition, Time.deltaTime * 20.0f);
         SetPlacementBuildingToGridPosition();   // Move Building with Camera
 
-        //Detect Fingers, for mobile input
+        // Detect Fingers, for mobile input
         DetectFingerInput();
 
+#if UNITY_EDITOR || UNITY_STANDALONE
         DEBUG_MoveCameraInput();
 
-        // Is Brush Active?
-        if (m_BrushActive)
+        if (Input.GetKeyUp(KeyCode.Q))
+            TogglePlacmentBrush(!m_PlacmentBrushActive, BuildingDataBase.BUILDINGS.B_POND);
+        else if (Input.GetKeyUp(KeyCode.W))
+            ToggleRemovalBrush(!m_RemovalBrushActive);
+
+
+        // Is Placement Brush Active?
+        if (m_PlacmentBrushActive)
         {
             RenderPlacementBuilding();
 
-            PlaceBuildings();
+            if (Input.GetKeyUp(KeyCode.Space))
+                PlaceBuildings();
 
             if (Input.GetKeyUp(KeyCode.R))
                 IncrementPlacingBuilding();
         }
+        // Is Removal Brush Active?
+        if (m_RemovalBrushActive)
+        {
+            if (Input.GetMouseButtonUp(0))
+            {
+                RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 20.0f, 1 << 0);
+                if (hit.collider == null)
+                    return;
+                // Debug.Log("Raycast2D hit: " + hit.transform.gameObject.name);
 
-        if (Input.GetKeyUp(KeyCode.Q))
-            TogglePlacmentBrush(!m_BrushActive, BuildingDataBase.BUILDINGS.B_POND);
+                hit.transform.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                m_ListOfBuildingsToRemove.Add(hit.transform.parent.gameObject.GetComponent<BaseBuildingsClass>());
+            }
+            else if (Input.GetKeyUp(KeyCode.E))
+            {
+                for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
+                {
+                    MapManager.GetInstance().RemoveBuildingFromGrid(m_ListOfBuildingsToRemove[i]);
+                    Destroy(m_ListOfBuildingsToRemove[i].transform.gameObject);
+                }
+                m_ListOfBuildingsToRemove.Clear();
+            }
+        }
 
         //if (Input.GetKeyUp(KeyCode.Z))
         //    SaveSystem.SaveBuildingsOnMap(MapManager.GetInstance().GetBuildingsOnMap());
@@ -63,17 +110,21 @@ public class PlayerInput : MonoBehaviour
         //Grid gridLayout = MapManager.GetInstance().GetGrid();
         //Vector3Int gridPos = gridLayout.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         //Debug.Log("MOUSE ON: " + gridPos);
+#endif
+
+
     }
 
     #region Building Placement
-    void TogglePlacmentBrush(bool newValue, BuildingDataBase.BUILDINGS selectedBuildingID = BuildingDataBase.BUILDINGS.B_POND)
+    public void TogglePlacmentBrush(bool newValue, BuildingDataBase.BUILDINGS selectedBuildingID = BuildingDataBase.BUILDINGS.B_POND)
     {
-        m_BrushActive = newValue;
-        buildingSelectID = selectedBuildingID;
-        if (m_BrushActive)
+        m_PlacmentBrushActive = newValue;
+        m_BuildingSelectID = selectedBuildingID;
+        if (m_PlacmentBrushActive)
         {
+            ToggleRemovalBrush(false);
             m_PlacingBuilding.gameObject.SetActive(true);
-            m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(buildingSelectID));
+            m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID));
         }
         else
         {
@@ -82,37 +133,35 @@ public class PlayerInput : MonoBehaviour
     }
     void PlaceBuildings()
     {
-        if (Input.GetKeyUp(KeyCode.Space))
+        Grid gridLayout = MapManager.GetInstance().GetGrid();
+        Vector3 worldPos = Camera.main.transform.position;//Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        worldPos.z = 0.0f;
+        Vector3Int gridPos = gridLayout.WorldToCell(worldPos);
+
+        // Can place there?
+        if (!MapManager.GetInstance().CanPlaceBuilding(m_PlacingBuilding))
+            return;
+        // Check if we need to create a Custom Building GO
+        if (BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID).GetOwnCustomBuildingObject())
         {
-            Grid gridLayout = MapManager.GetInstance().GetGrid();
-            Vector3 worldPos = Camera.main.transform.position;//Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            worldPos.z = 0.0f;
-            Vector3Int gridPos = gridLayout.WorldToCell(worldPos);
-
-            // Can place there?
-            if (!MapManager.GetInstance().CanPlaceBuilding(m_PlacingBuilding))
-                return;
-            // Check if we need to create a Custom Building GO
-            if (BuildingDataBase.GetInstance().GetBuildingData(buildingSelectID).GetOwnCustomBuildingObject())
-            {
-                Destroy(m_PlacingBuilding.gameObject);
-                GameObject customBuilding = BuildingDataBase.GetInstance().GetBuildingData(buildingSelectID).GetOwnCustomBuildingObject();
-                m_PlacingBuilding = Instantiate(customBuilding, m_PlacingBuilding.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
-                m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(buildingSelectID));
-            }
-
-            // Place the Building
-            MapManager.GetInstance().PlaceBuildingToGrid(m_PlacingBuilding);
-            // Change Sprite Layer back to default
-            m_PlacingBuilding.SetSpriteObjectLayer(0);
-            m_PlacingBuilding.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(buildingSelectID).GetBuildingName();
-
-            // Success in placing building, create new building for next placment
-            BuildingDataBase.BUILDINGS oldID = m_PlacingBuilding.GetBuildingType();
-            m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
-            m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(oldID));
-            m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
+            Destroy(m_PlacingBuilding.gameObject);
+            GameObject customBuilding = BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID).GetOwnCustomBuildingObject();
+            m_PlacingBuilding = Instantiate(customBuilding, m_PlacingBuilding.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+            m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID));
         }
+
+        // Place the Building
+        MapManager.GetInstance().PlaceBuildingToGrid(m_PlacingBuilding);
+        // Change Sprite Layer back to default
+        m_PlacingBuilding.SetSpriteObjectLayer(0);
+        m_PlacingBuilding.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID).GetBuildingName();
+
+        // Success in placing building, create new building for next placment
+        BuildingDataBase.BUILDINGS oldID = m_PlacingBuilding.GetBuildingType();
+        m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+        m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(oldID));
+        m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
+
     }
     void SetPlacementBuildingToGridPosition()
     {
@@ -133,11 +182,28 @@ public class PlayerInput : MonoBehaviour
     }
     void IncrementPlacingBuilding()
     {
-        buildingSelectID += 1;
-        if (buildingSelectID >= BuildingDataBase.BUILDINGS.B_TOTAL)
-            buildingSelectID = BuildingDataBase.BUILDINGS.B_POND;
+        m_BuildingSelectID += 1;
+        if (m_BuildingSelectID >= BuildingDataBase.BUILDINGS.B_TOTAL)
+            m_BuildingSelectID = BuildingDataBase.BUILDINGS.B_POND;
 
-        m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(buildingSelectID));
+        m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID));
+    }
+    #endregion
+
+    #region Building Removal
+    public void ToggleRemovalBrush(bool newValue)
+    {
+        if(newValue)
+            TogglePlacmentBrush(false);
+        else
+        {
+            for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
+            {
+                m_ListOfBuildingsToRemove[i].transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+        }
+        m_ListOfBuildingsToRemove.Clear();
+        m_RemovalBrushActive = newValue;
     }
     #endregion
 
