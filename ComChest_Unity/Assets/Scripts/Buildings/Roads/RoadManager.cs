@@ -22,9 +22,10 @@ public class RoadManager
         TOTAL_DIA_DIRECTIONS
     }
 
-
     Dictionary<int, RoadTypeList> m_RoadMap = new Dictionary<int, RoadTypeList>();
     Dictionary<Vector2Int, BaseBuildingsClass> m_RoadSpriteRendererMap = new Dictionary<Vector2Int, BaseBuildingsClass>();
+
+    Vector2Int m_MapSize = Vector2Int.zero;
 
     const int MAX_CHECKS = 2;
     Vector2Int UP_VECTOR = new Vector2Int(0, 1);
@@ -37,6 +38,18 @@ public class RoadManager
     Vector2Int BOTTOM_RIGHT_VECTOR = new Vector2Int(1, -1);
     Vector2Int BOTTOM_LEFT_VECTOR = new Vector2Int(-1, -1);
 
+    public void Init(Vector2Int mapSize)
+    {
+        m_MapSize = mapSize;
+    }
+
+    int Convert2DToIntIndex(Vector2Int v2Index)
+    {
+        if (v2Index.x < 0 || v2Index.y < 0)
+            return -1;
+        return (v2Index.y * m_MapSize.x) + v2Index.x;
+    }
+
     public bool CheckMapAvailability(int mapIndex) //check if space is taken by the road
     {
         return m_RoadMap.ContainsKey(mapIndex);
@@ -47,15 +60,16 @@ public class RoadManager
         return m_RoadSpriteRendererMap.ContainsKey(key);
     }
 
-    public void PlaceRoads(Vector2Int key, int indexConverted, ref BaseBuildingsClass roadInfo)
+    public void PlaceRoads(Vector2Int key, ref BaseBuildingsClass roadInfo)
     {
+        //add them in uey
         m_RoadSpriteRendererMap.Add(key, roadInfo);
+
+        int indexConverted = Convert2DToIntIndex(key);
+        m_RoadMap.Add(indexConverted, RoadTypeList.NO_CONNECTION);
 
         //change sprites accordingly, do check
         CheckAndChangeRoadDirection(key);
-
-        //TODO, STORE THE NEW DIRECTIONS ACCORDINGLY
-        m_RoadMap.Add(indexConverted, RoadTypeList.NO_CONNECTION); 
     }
 
     public void CheckAndChangeRoadDirection(Vector2Int key, int loop = 0)
@@ -597,7 +611,10 @@ public class RoadManager
         BaseBuildingsClass road = m_RoadSpriteRendererMap[key];
         road.SetSprite(BuildingDataBase.GetInstance().GetRoadSprite(type));
 
-        //TODO, STORE IN DICT THE ROAD TYPE HERE
+        //change and store the road type
+        int indexConverted = Convert2DToIntIndex(key);
+        if (m_RoadMap.ContainsKey(indexConverted))
+            m_RoadMap[indexConverted] = type;
     }
 
     public void RemoveRoads(Vector2Int key)
@@ -607,10 +624,51 @@ public class RoadManager
 
         m_RoadSpriteRendererMap.Remove(key);
 
+        //remove the type of road from the list
+        int indexConverted = Convert2DToIntIndex(key);
+        if (m_RoadMap.ContainsKey(indexConverted))
+            m_RoadMap.Remove(indexConverted);
+
         //check if theres any road around it and update them accordingly
         CheckAndChangeRoadDirection(key + UP_VECTOR);
         CheckAndChangeRoadDirection(key + DOWN_VECTOR);
         CheckAndChangeRoadDirection(key + RIGHT_VECTOR);
         CheckAndChangeRoadDirection(key + LEFT_VECTOR);
+    }
+
+    public Save_RoadsOnMap[] GetSavedRoads()
+    {
+        Save_RoadsOnMap[] saveRoadsData = new Save_RoadsOnMap[m_RoadSpriteRendererMap.Count];
+
+        int index = 0;
+        foreach (KeyValuePair<Vector2Int, BaseBuildingsClass> road in m_RoadSpriteRendererMap)
+        {
+            BaseBuildingsClass baseRoad = road.Value;
+            if (baseRoad == null)
+                continue;
+
+            saveRoadsData[index] = new Save_RoadsOnMap();
+            saveRoadsData[index].worldPosX = baseRoad.transform.position.x;
+            saveRoadsData[index].worldPosY = baseRoad.transform.position.y;
+
+            //get and store the type
+            int indexConverted = Convert2DToIntIndex(road.Key);
+            if (m_RoadMap.ContainsKey(indexConverted))
+            {
+                saveRoadsData[index].roadType = (int)m_RoadMap[indexConverted];
+            }
+
+            ++index;
+        }
+
+        return saveRoadsData;
+    }
+
+    public void StoreLoadedInRoads(Vector2Int key, BaseBuildingsClass roadInfo, RoadTypeList roadType)
+    {
+        m_RoadSpriteRendererMap.Add(key, roadInfo);
+
+        int indexConverted = Convert2DToIntIndex(key);
+        m_RoadMap.Add(indexConverted, roadType);
     }
 }

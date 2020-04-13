@@ -37,6 +37,8 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         CreateNewMap(MapDataBase.MAPS.M_GRASS);
+
+        m_RoadManager.Init(m_currentMap.GetMapSize());
     }
 
     /// <summary>
@@ -138,7 +140,7 @@ public class MapManager : MonoBehaviour
                     return false;
                 // Check if spot is already taken
                 arrayIndex = Convert2DToIntIndex(testGridPos);
-                if (m_GridTakenArray[arrayIndex] || m_RoadManager.CheckMapAvailability(arrayIndex))
+                if (m_GridTakenArray[arrayIndex])
                 {
                     //Debug.Log("SPOT TAKEN");
                     return false;
@@ -191,8 +193,7 @@ public class MapManager : MonoBehaviour
         //check if its roads or not, store accordingly
         if (activeBuildingCom.GetBuildingType() == BuildingDataBase.BUILDINGS.B_ROAD)
         {
-            int arrayIndex = Convert2DToIntIndex(key);
-            m_RoadManager.PlaceRoads(key, arrayIndex, ref activeBuildingCom);
+            m_RoadManager.PlaceRoads(key, ref activeBuildingCom);
         }
         else
         {
@@ -233,18 +234,50 @@ public class MapManager : MonoBehaviour
     #endregion
 
     #region Load From File
-    public void SaveFileWasLoaded(Save_BuildingsOnMap saveFileData)
+    public void SaveFileWasLoaded(Save_BuildingsOnMap[] saveFileBuildingsData, Save_RoadsOnMap[] saveFileRoadsData)
     {
         BaseBuildingsClass savedBuilding = null;
         Vector3 savedPosition = Vector3.zero;
-        for(int i = 0; i < saveFileData.buildingType.Length; ++i)
+        for(int i = 0; i < saveFileBuildingsData.Length; ++i)
         {
-            savedPosition.x = saveFileData.worldPosX[i];
-            savedPosition.y = saveFileData.worldPosY[i];
+            savedPosition.x = saveFileBuildingsData[i].worldPosX;
+            savedPosition.y = saveFileBuildingsData[i].worldPosY;
             savedBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), savedPosition, Quaternion.identity).GetComponent<BaseBuildingsClass>();
-            savedBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData((BuildingDataBase.BUILDINGS)saveFileData.buildingType[i]));
+            savedBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData((BuildingDataBase.BUILDINGS)saveFileBuildingsData[i].buildingType));
             PlaceBuildingToGrid(savedBuilding);
         }
+
+        //do the same for the roads
+        for (int i = 0; i < saveFileRoadsData.Length; ++i)
+        {
+            savedPosition.x = saveFileRoadsData[i].worldPosX;
+            savedPosition.y = saveFileRoadsData[i].worldPosY;
+            savedBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), savedPosition, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+            savedBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(BuildingDataBase.BUILDINGS.B_ROAD));
+
+            //set to the correct road direction sprite
+            RoadTypeList roadType = (RoadTypeList)saveFileRoadsData[i].roadType;
+            savedBuilding.SetSprite(BuildingDataBase.GetInstance().GetRoadSprite(roadType));
+            StoreLoadedRoads(savedBuilding, roadType); 
+        }
+    }
+
+    //to store the loaded roads from the save file into the roadManager
+    public void StoreLoadedRoads(BaseBuildingsClass roadBuilding, RoadTypeList roadType) 
+    {
+        if (m_RoadManager == null)
+            return;
+
+        Vector3 buildingBottomLeftWorldPos = roadBuilding.GetBottomLeftGridPosition();
+        Vector2Int buildingSize = roadBuilding.GetBuildingSizeOnMap();
+
+        // Set all the grids taken by new building to true
+        SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
+
+        Vector2Int key = (Vector2Int)m_GridGO.WorldToCell(roadBuilding.GetBottomLeftGridPosition());
+        roadBuilding.BuildingPlaced();
+
+        m_RoadManager.StoreLoadedInRoads(key, roadBuilding, roadType);
     }
     #endregion
 
@@ -259,6 +292,12 @@ public class MapManager : MonoBehaviour
         }
         return listOfBuildings;
     }
-    #endregion
+    public Save_RoadsOnMap[] GetSavedRoads()
+    { 
+        if (m_RoadManager != null)
+            return m_RoadManager.GetSavedRoads();
 
+        return null;
+    }
+    #endregion
 }
