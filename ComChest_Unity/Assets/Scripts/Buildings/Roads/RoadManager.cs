@@ -37,7 +37,6 @@ public class RoadManager
     Vector2Int BOTTOM_RIGHT_VECTOR = new Vector2Int(1, -1);
     Vector2Int BOTTOM_LEFT_VECTOR = new Vector2Int(-1, -1);
 
-
     public bool CheckMapAvailability(int mapIndex) //check if space is taken by the road
     {
         return m_RoadMap.ContainsKey(mapIndex);
@@ -55,7 +54,6 @@ public class RoadManager
         //change sprites accordingly, do check
         CheckAndChangeRoadDirection(key);
 
-
         //TODO, STORE THE NEW DIRECTIONS ACCORDINGLY
         m_RoadMap.Add(indexConverted, RoadTypeList.NO_CONNECTION); 
     }
@@ -66,7 +64,7 @@ public class RoadManager
             return;
 
         if (!m_RoadSpriteRendererMap.ContainsKey(key))
-            Debug.LogError("ROAD KEY DOESNT EXIST, WAS NOT STORED PROPERLY !");
+            return;
 
         //check right left up down first
         bool[] directionChecks = new bool[(int)Direction.TOTAL_DIRECTIONS];
@@ -598,5 +596,21 @@ public class RoadManager
     {
         BaseBuildingsClass road = m_RoadSpriteRendererMap[key];
         road.SetSprite(BuildingDataBase.GetInstance().GetRoadSprite(type));
+
+        //TODO, STORE IN DICT THE ROAD TYPE HERE
+    }
+
+    public void RemoveRoads(Vector2Int key)
+    {
+        if (!CheckMapAvailability(key)) //if key doesnt exist
+            return;
+
+        m_RoadSpriteRendererMap.Remove(key);
+
+        //check if theres any road around it and update them accordingly
+        CheckAndChangeRoadDirection(key + UP_VECTOR);
+        CheckAndChangeRoadDirection(key + DOWN_VECTOR);
+        CheckAndChangeRoadDirection(key + RIGHT_VECTOR);
+        CheckAndChangeRoadDirection(key + LEFT_VECTOR);
     }
 }

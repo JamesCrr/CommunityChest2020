@@ -206,9 +206,14 @@ public class MapManager : MonoBehaviour
     void RemoveBuildingFromTrackingDictionary(BaseBuildingsClass activeBuildingCom)
     {
         Vector2Int key = (Vector2Int)m_GridGO.WorldToCell(activeBuildingCom.GetBottomLeftGridPosition());
-        if (!m_DictOfBuildingsOnMap.ContainsKey(key))
+        if (m_DictOfBuildingsOnMap.ContainsKey(key)) //if have remove
+        {
+            m_DictOfBuildingsOnMap.Remove(key);
             return;
-        m_DictOfBuildingsOnMap.Remove(key);
+        }
+
+        //check roads instead if its not in building map
+        m_RoadManager.RemoveRoads(key);
     }
 
 
