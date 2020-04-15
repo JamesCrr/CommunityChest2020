@@ -70,7 +70,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3b72c063c5e288a4183dea8f1aa4a8ec, type: 2}
   - {fileID: 11400000, guid: 53aac3e2290315041a9d898f4f8ca122, type: 2}
   - {fileID: 11400000, guid: b279fff1f43753e4592ecb24dcccebd0, type: 2}
-  - {fileID: 11400000, guid: b16084ffa4792a549b1c36f7f733f366, type: 2}
+  - {fileID: 11400000, guid: dc7a56a495968714e9d3ff23536dfc23, type: 2}
   - {fileID: 11400000, guid: 420676219430f08449e33f72718a9c70, type: 2}
   m_RoadSpriteInfo:
   - m_RoadType: 0

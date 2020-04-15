@@ -38,7 +38,7 @@ public class MapManager : MonoBehaviour
     {
         CreateNewMap(MapDataBase.MAPS.M_GRASS);
 
-        m_RoadManager.Init(m_currentMap.GetMapSize());
+        m_RoadManager.Init(m_currentMap.GetTileMapSize());
     }
 
     /// <summary>
@@ -53,13 +53,13 @@ public class MapManager : MonoBehaviour
         mapObject = Instantiate(mapObject, m_GridGO.transform.position, Quaternion.identity, m_GridGO.transform);
         m_currentMap = mapObject.GetComponent<BaseMapClass>();
         // Resize the layout Array
-        int totalSize = m_currentMap.GetMapSize().x * m_currentMap.GetMapSize().y;
+        int totalSize = m_currentMap.GetTileMapSize().x * m_currentMap.GetTileMapSize().y;
         m_GridTakenArray.Clear();
         m_GridTakenArray.Capacity = totalSize;     // Set the capactiy to prevent calling Array.Resize() multiple times
         for (int i = 0; i < totalSize; ++i)
             m_GridTakenArray.Add(false);
         // Center the Camera to the map
-        Vector3 centerMapWorldPos = m_GridGO.CellToWorld((Vector3Int)m_currentMap.GetMapSize() / 2);
+        Vector3 centerMapWorldPos = m_GridGO.CellToWorld((Vector3Int)m_currentMap.GetTileMapSize() / 2);
         centerMapWorldPos += m_GridGO.cellSize * 0.5f;
         centerMapWorldPos.z = -10.0f;
         Camera.main.transform.position = centerMapWorldPos;
@@ -110,6 +110,12 @@ public class MapManager : MonoBehaviour
         return activeBuildingCom.gameObject;
     }
 
+    private void Update()
+    {
+        Vector3Int gridPos = m_currentMap.GetTileMapCom().WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        Debug.Log("GridPOs: " + gridPos + "\n" + m_currentMap.GetTileMapCom().HasTile(gridPos));
+        //Debug.Log("Tile at : " + gridPos + "\n" + m_currentMap.GetTileMapCom().GetTile(gridPos));
+    }
 
     #region Misc
     /// <summary>
@@ -135,9 +141,13 @@ public class MapManager : MonoBehaviour
             {
                 testGridPos.x = buildingGridPos.x + xAxis;
                 // Out of Scope?
-                if (testGridPos.x < 0 || testGridPos.x >= m_currentMap.GetMapSize().x ||
-                    testGridPos.y < 0 || testGridPos.y >= m_currentMap.GetMapSize().y)
+                if (testGridPos.x < 0 || testGridPos.x >= m_currentMap.GetTileMapSize().x ||
+                    testGridPos.y < 0 || testGridPos.y >= m_currentMap.GetTileMapSize().y)
                     return false;
+                // Out of Map?
+                if (!m_currentMap.GetTileMapCom().HasTile((Vector3Int)testGridPos))
+                    return false;
+                //    return false;
                 // Check if spot is already taken
                 arrayIndex = Convert2DToIntIndex(testGridPos);
                 if (m_GridTakenArray[arrayIndex])
@@ -222,13 +232,13 @@ public class MapManager : MonoBehaviour
     {
         if (v2Index.x < 0 || v2Index.y < 0)
             return -1;
-        return (v2Index.y * m_currentMap.GetMapSize().x) + v2Index.x;
+        return (v2Index.y * m_currentMap.GetTileMapSize().x) + v2Index.x;
     }
     Vector2Int ConvertIntIndexTo2D(int arrayIndex)
     {
         Vector2Int result = new Vector2Int();
-        result.y = arrayIndex / m_currentMap.GetMapSize().x;
-        result.x = arrayIndex - (result.y * m_currentMap.GetMapSize().x);
+        result.y = arrayIndex / m_currentMap.GetTileMapSize().x;
+        result.x = arrayIndex - (result.y * m_currentMap.GetTileMapSize().x);
         return result;
     }
     #endregion
@@ -282,7 +292,8 @@ public class MapManager : MonoBehaviour
     #endregion
 
     #region Getters
-    public Grid GetGrid() { return m_GridGO; }
+    //public Grid GetGrid() { return m_GridGO; }
+    public BaseMapClass GetCurrentMap() { return m_currentMap;  }
     public List<BaseBuildingsClass> GetBuildingsOnMap()
     {
         List<BaseBuildingsClass> listOfBuildings = new List<BaseBuildingsClass>();

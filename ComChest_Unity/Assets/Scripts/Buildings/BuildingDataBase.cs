@@ -9,8 +9,9 @@ public class BuildingDataBase : MonoBehaviour
         B_DIRT,
         B_GRASSHOLE,
         B_DECO,
-        B_LAVA,
-        B_SHOP,
+        B_LAVA,     // Testing Buildings
+
+        B_CC,
         B_ROAD,
 
         B_TOTAL

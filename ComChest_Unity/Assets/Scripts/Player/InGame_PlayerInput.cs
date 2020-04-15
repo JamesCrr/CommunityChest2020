@@ -133,11 +133,6 @@ public class InGame_PlayerInput : MonoBehaviour
     }
     void PlaceBuildings()
     {
-        Grid gridLayout = MapManager.GetInstance().GetGrid();
-        Vector3 worldPos = Camera.main.transform.position;//Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        worldPos.z = 0.0f;
-        Vector3Int gridPos = gridLayout.WorldToCell(worldPos);
-
         // Can place there?
         if (!MapManager.GetInstance().CanPlaceBuilding(m_PlacingBuilding))
             return;
@@ -166,10 +161,10 @@ public class InGame_PlayerInput : MonoBehaviour
     void SetPlacementBuildingToGridPosition()
     {
         // Calculate actual Position on Grid
-        Grid gridLayout = MapManager.GetInstance().GetGrid();
-        Vector3Int gridPos = gridLayout.WorldToCell(Camera.main.transform.position + (Vector3)m_BuildingPlacementOffset);
-        Vector3 newPos = gridLayout.CellToWorld(gridPos);
-        newPos += gridLayout.cellSize * 0.5f;
+        BaseMapClass gridLayout = MapManager.GetInstance().GetCurrentMap();
+        Vector3Int gridPos = gridLayout.GetTileMapCom().WorldToCell(Camera.main.transform.position + (Vector3)m_BuildingPlacementOffset);
+        Vector3 newPos = gridLayout.GetTileMapCom().CellToWorld(gridPos);
+        newPos += gridLayout.GetTileMapCom().cellSize * 0.5f;
         m_PlacingBuilding.transform.position = newPos;
     }
     void RenderPlacementBuilding()
