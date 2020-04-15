@@ -16,6 +16,9 @@ public class MapManager : MonoBehaviour
     public delegate void MapGeneratedAction();      
     public static event MapGeneratedAction OnMapGenerated;
 
+    [Header("Roads")]
+    [SerializeField]
+    BaseBuildingsClass m_MainRoad; //the main road, not deleatable
     RoadManager m_RoadManager = new RoadManager();
 
     static MapManager m_Instance = null;
@@ -38,7 +41,15 @@ public class MapManager : MonoBehaviour
     {
         CreateNewMap(MapDataBase.MAPS.M_GRASS);
 
-        m_RoadManager.Init(m_currentMap.GetTileMapSize());
+        //init road stuff
+        Vector2Int mainRoadPos = Vector2Int.zero;
+        if (m_MainRoad != null)
+            mainRoadPos = (Vector2Int)m_GridGO.WorldToCell(m_MainRoad.GetBottomLeftGridPosition());
+
+        m_RoadManager.Init(m_currentMap.GetTileMapSize(), mainRoadPos);
+
+        if (m_MainRoad != null)
+            PlaceBuildingToGrid(m_MainRoad);
     }
 
     /// <summary>
@@ -243,6 +254,37 @@ public class MapManager : MonoBehaviour
     }
     #endregion
 
+    #region For players placement and removal of building mode
+    //when player is out of adding buildings editor mode
+    public void PlayerCloseAddEditorMode()
+    {
+        //roadmanager checks if anything is added during the editor session
+        if (m_RoadManager != null)
+            m_RoadManager.CheckAndInvokeAddingOfRoadsCallback();
+    }
+
+    //when player is out of removing editor mode
+    public void PlayerCloseRemovalEditorModeStop() 
+    {
+        //roadmanager checks if anything is removed during the editor session
+        if (m_RoadManager != null)
+            m_RoadManager.CheckAndInvokeRemovalOfRoadsCallback();
+    }
+
+    #endregion
+
+    #region CheckingRoadConnections
+    public bool CheckRoadConnection(Vector2Int startPt, Vector2Int endPt)
+    {
+        return m_RoadManager.CheckRoadConnection(startPt, endPt);
+    }
+
+    public bool CheckRoadConnectionToMainRoad(Vector2Int startPt)
+    {
+        return m_RoadManager.CheckRoadConnectionToMainRoad(startPt);
+    }
+    #endregion
+
     #region Load From File
     public void SaveFileWasLoaded(Save_BuildingsOnMap[] saveFileBuildingsData, Save_RoadsOnMap[] saveFileRoadsData)
     {
@@ -293,6 +335,7 @@ public class MapManager : MonoBehaviour
 
     #region Getters
     //public Grid GetGrid() { return m_GridGO; }
+    public Vector2Int GetWorldPosToCellPos(Vector2 pos) { return (Vector2Int)m_GridGO.WorldToCell(pos); }
     public BaseMapClass GetCurrentMap() { return m_currentMap;  }
     public List<BaseBuildingsClass> GetBuildingsOnMap()
     {
@@ -309,6 +352,10 @@ public class MapManager : MonoBehaviour
             return m_RoadManager.GetSavedRoads();
 
         return null;
+    }
+    public RoadManager GetRoadManager()
+    {
+        return m_RoadManager;
     }
     #endregion
 }

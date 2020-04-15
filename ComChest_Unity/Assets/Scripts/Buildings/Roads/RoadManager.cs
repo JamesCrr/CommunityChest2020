@@ -26,6 +26,7 @@ public class RoadManager
     Dictionary<Vector2Int, BaseBuildingsClass> m_RoadSpriteRendererMap = new Dictionary<Vector2Int, BaseBuildingsClass>();
 
     Vector2Int m_MapSize = Vector2Int.zero;
+    Vector2Int m_MainRoadGridPos = Vector2Int.zero;
 
     const int MAX_CHECKS = 2;
     Vector2Int UP_VECTOR = new Vector2Int(0, 1);
@@ -38,9 +39,22 @@ public class RoadManager
     Vector2Int BOTTOM_RIGHT_VECTOR = new Vector2Int(1, -1);
     Vector2Int BOTTOM_LEFT_VECTOR = new Vector2Int(-1, -1);
 
-    public void Init(Vector2Int mapSize)
+    Queue<Vector2Int> m_BFSQueue = new Queue<Vector2Int>();
+
+    //delegate functions for when player is in editing mode
+    public delegate void OnRoadModifiedAndAdded(); //if players edited the road by adding to it
+    public OnRoadModifiedAndAdded OnRoadModifiedAndAddedCallback;
+
+    public delegate void OnRoadModifiedAndDeleated(); //if players edited the road by deleating some
+    public OnRoadModifiedAndDeleated OnRoadModifiedAndDeleatedCallback;
+
+    bool m_RoadAddedInSession = false;
+    bool m_RoadRemovedInSession = false;
+
+    public void Init(Vector2Int mapSize, Vector2Int mainRoadGridPos)
     {
         m_MapSize = mapSize;
+        m_MainRoadGridPos = mainRoadGridPos;
     }
 
     int Convert2DToIntIndex(Vector2Int v2Index)
@@ -70,8 +84,12 @@ public class RoadManager
 
         //change sprites accordingly, do check
         CheckAndChangeRoadDirection(key);
+
+        //road was added during session
+        m_RoadAddedInSession = true;
     }
 
+#region CheckAndChangeRoadDirection
     public void CheckAndChangeRoadDirection(Vector2Int key, int loop = 0)
     {
         if (loop >= MAX_CHECKS)
@@ -606,6 +624,8 @@ public class RoadManager
     }
     #endregion
 
+#endregion
+
     public void SetRoadSprite(Vector2Int key, RoadTypeList type)
     {
         BaseBuildingsClass road = m_RoadSpriteRendererMap[key];
@@ -634,8 +654,38 @@ public class RoadManager
         CheckAndChangeRoadDirection(key + DOWN_VECTOR);
         CheckAndChangeRoadDirection(key + RIGHT_VECTOR);
         CheckAndChangeRoadDirection(key + LEFT_VECTOR);
+
+        //road was removed during session
+        m_RoadRemovedInSession = true;
     }
 
+#region ForEditingMode
+    public void CheckAndInvokeAddingOfRoadsCallback()
+    {
+        //check if roads were added during the adding edit session
+        if (m_RoadAddedInSession)
+        {
+            if (OnRoadModifiedAndAddedCallback != null)
+                OnRoadModifiedAndAddedCallback.Invoke();
+        }
+
+        m_RoadAddedInSession = false;
+    }
+
+    public void CheckAndInvokeRemovalOfRoadsCallback()
+    {
+        //check if roads are removed during the removal Edit ssession
+        if (m_RoadRemovedInSession)
+        {
+            if (OnRoadModifiedAndDeleatedCallback != null)
+                OnRoadModifiedAndDeleatedCallback.Invoke();
+        }
+
+        m_RoadRemovedInSession = false;
+    }
+#endregion
+
+    #region SavingAndLoading
     public Save_RoadsOnMap[] GetSavedRoads()
     {
         Save_RoadsOnMap[] saveRoadsData = new Save_RoadsOnMap[m_RoadSpriteRendererMap.Count];
@@ -671,4 +721,78 @@ public class RoadManager
         int indexConverted = Convert2DToIntIndex(key);
         m_RoadMap.Add(indexConverted, roadType);
     }
+    #endregion
+
+#region pathFinding
+    public bool CheckRoadConnection(Vector2Int startPt, Vector2Int endPt)
+    {
+        //check if end and start point exists first
+        if (!CheckMapAvailability(startPt) || !CheckMapAvailability(endPt))
+            return false;
+
+        m_BFSQueue.Enqueue(startPt);
+        Dictionary<Vector2Int, bool> visitedNodes = new Dictionary<Vector2Int, bool>();
+
+        //BFS to check
+        while (m_BFSQueue.Count != 0) //while queue is not empty
+        {
+            Vector2Int currNode = m_BFSQueue.Peek();
+            m_BFSQueue.Dequeue(); //pop out the current vector
+
+            //'explore' the current node
+            if (currNode == endPt)
+            {
+                return true; //reached the destination we want, stop as path exists
+            }
+
+            //check the other nodes
+            Vector2Int nextNode = currNode + UP_VECTOR;
+            if (nextNode.y < m_MapSize.y) //within map size
+            {
+                if (CheckMapAvailability(nextNode) && !visitedNodes.ContainsKey(nextNode)) //if road exists and not visited yet
+                {
+                    m_BFSQueue.Enqueue(nextNode);
+                    visitedNodes.Add(nextNode, true);
+                }
+            }
+
+            nextNode = currNode + DOWN_VECTOR;
+            if (nextNode.y > 0)
+            {
+                if (CheckMapAvailability(nextNode) && !visitedNodes.ContainsKey(nextNode))
+                {
+                    m_BFSQueue.Enqueue(nextNode);
+                    visitedNodes.Add(nextNode, true);
+                }
+            }
+
+            nextNode = currNode + RIGHT_VECTOR;
+            if (nextNode.x < m_MapSize.x)
+            {
+                if (CheckMapAvailability(nextNode) && !visitedNodes.ContainsKey(nextNode))
+                {
+                    m_BFSQueue.Enqueue(nextNode);
+                    visitedNodes.Add(nextNode, true);
+                }
+            }
+
+            nextNode = currNode + LEFT_VECTOR;
+            if (nextNode.x > 0)
+            {
+                if (CheckMapAvailability(nextNode) && !visitedNodes.ContainsKey(nextNode))
+                {
+                    m_BFSQueue.Enqueue(nextNode);
+                    visitedNodes.Add(nextNode, true);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public bool CheckRoadConnectionToMainRoad(Vector2Int startPt)
+    {
+        return CheckRoadConnection(startPt, m_MainRoadGridPos);
+    }
+#endregion
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ResourceBuildings : BaseBuildingsClass
+public class ResourceBuildings : RoadBuildings
 {
     [Header("Resource Info")]
     float m_GenerateResourceTime = 0.0f;

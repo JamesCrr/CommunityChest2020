@@ -126,6 +126,8 @@ public class InGame_PlayerInput : MonoBehaviour
         else
         {
             m_PlacingBuilding.gameObject.SetActive(false);
+
+            MapManager.GetInstance().PlayerCloseAddEditorMode();
         }
     }
     void PlaceBuildings()
@@ -193,6 +195,8 @@ public class InGame_PlayerInput : MonoBehaviour
             {
                 m_ListOfBuildingsToRemove[i].transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = Color.white;
             }
+
+            MapManager.GetInstance().PlayerCloseRemovalEditorModeStop();
         }
         m_ListOfBuildingsToRemove.Clear();
         m_RemovalBrushActive = newValue;

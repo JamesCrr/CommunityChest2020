@@ -38,6 +38,11 @@ public class BuildingData : ScriptableObject
     int m_AmtResourceGiven = 0;
     Vector2 m_ResourceUIOffset;
 
+    [Header("Road Info")]
+    [Tooltip("For buildings that need a road in front of it, the road offset starting from the building bottom left grid")]
+    [SerializeField]
+    Vector2Int m_RoadOffset = Vector2Int.zero;
+
     private void OnEnable()
     {
         m_SpriteGO_OffsetPosition = Vector2.zero;
@@ -114,6 +119,13 @@ public class BuildingData : ScriptableObject
     public GameObject GetUIObject()
     {
         return m_UIObject;
+    }
+    #endregion
+
+    #region roadGetters
+    public Vector2Int GetRoadOffset
+    {
+        get { return m_RoadOffset; }
     }
     #endregion
 
