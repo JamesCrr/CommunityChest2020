@@ -107,9 +107,6 @@ public class InGame_PlayerInput : MonoBehaviour
         //else if (Input.GetKeyUp(KeyCode.X))
         //    SaveSystem.LoadSavedBuildingsToMap();
 
-        //Grid gridLayout = MapManager.GetInstance().GetGrid();
-        //Vector3Int gridPos = gridLayout.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        //Debug.Log("MOUSE ON: " + gridPos);
 #endif
 
 

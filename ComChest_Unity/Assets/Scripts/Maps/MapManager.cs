@@ -110,12 +110,12 @@ public class MapManager : MonoBehaviour
         return activeBuildingCom.gameObject;
     }
 
-    private void Update()
-    {
-        Vector3Int gridPos = m_currentMap.GetTileMapCom().WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        Debug.Log("GridPOs: " + gridPos + "\n" + m_currentMap.GetTileMapCom().HasTile(gridPos));
-        //Debug.Log("Tile at : " + gridPos + "\n" + m_currentMap.GetTileMapCom().GetTile(gridPos));
-    }
+    //private void Update()
+    //{
+    //    Vector3Int gridPos = m_currentMap.GetTileMapCom().WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+    //    Debug.Log("GridPOs: " + gridPos + "\n" + m_currentMap.GetTileMapCom().HasTile(gridPos));
+    //    Debug.Log("Tile at : " + gridPos + "\n" + m_currentMap.GetTileMapCom().GetTile(gridPos));
+    //}
 
     #region Misc
     /// <summary>
