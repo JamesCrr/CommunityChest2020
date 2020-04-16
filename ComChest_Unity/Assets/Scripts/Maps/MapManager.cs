@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour
 {
-    [Header("Grid and Placements")]
+    [Header("Grid and TileMap")]
     [SerializeField]        // Where the Tilemaps will be rendered
     Grid m_GridGO = null;
     BaseMapClass m_currentMap;
@@ -12,6 +12,14 @@ public class MapManager : MonoBehaviour
     List<bool> m_GridTakenArray;        
     // To store the buildings currently on the map
     Dictionary<Vector2Int, BaseBuildingsClass> m_DictOfBuildingsOnMap = new Dictionary<Vector2Int,BaseBuildingsClass>();
+    [Header("Placement of Buildings")]      // Handle placement of Buildings into Map
+    [SerializeField]
+    BaseBuildingsClass m_PlacingBuilding = null;
+    BuildingDataBase.BUILDINGS m_PlacingBuildingID = BuildingDataBase.BUILDINGS.B_POND;
+    bool m_PlacmentBrushActive = false;
+    [Header("Removal of Buildings")]        // Handle removal of Buildings from Map
+    List<BaseBuildingsClass> m_ListOfBuildingsToRemove = null;
+    bool m_RemovalBrushActive = false;
     // Map Generated Action
     public delegate void MapGeneratedAction();      
     public static event MapGeneratedAction OnMapGenerated;
@@ -34,11 +42,19 @@ public class MapManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         m_GridTakenArray = new List<bool>();
 
+        // Placement and Removal
+        m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+        m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
+        m_ListOfBuildingsToRemove = new List<BaseBuildingsClass>();
+
         // Parent the m_GridGO
         m_GridGO.transform.parent = transform;
     }
     private void Start()
     {
+        SetPlacementBrush(false);
+        SetRemovalBrush(false);
+
         CreateNewMap(MapDataBase.MAPS.M_GRASS);
 
         //init road stuff
@@ -49,9 +65,10 @@ public class MapManager : MonoBehaviour
         m_RoadManager.Init(m_currentMap.GetTileMapSize(), mainRoadPos);
 
         if (m_MainRoad != null)
-            PlaceBuildingToGrid(m_MainRoad);
+            PlaceBuildingToGrid(ref m_MainRoad);
     }
 
+    #region Map Related
     /// <summary>
     /// Creates a new TileMap 
     /// </summary>
@@ -80,6 +97,19 @@ public class MapManager : MonoBehaviour
 
         return true;
     }
+    #endregion
+
+    #region Placement and Removal of Buildings into/from Map
+    public void PlaceTemplateBuilding()
+    {
+        PlaceBuildingToGrid(ref m_PlacingBuilding);
+
+        // Success in placing building, create new building for next placment
+        BuildingDataBase.BUILDINGS oldID = m_PlacingBuilding.GetBuildingType();
+        m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+        m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(oldID));
+        m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
+    }
     /// <summary>
     /// Tries to place a Building into the Grid from it's world Position.
     /// Returns null if Unable to, returns the newly created GO otherwise
@@ -87,8 +117,19 @@ public class MapManager : MonoBehaviour
     /// <param name="activeBuildingCom">The Building GO to place</param>
     /// <param name="doChecking">Are any of the spots taken by another building already?</param>
     /// <returns></returns>
-    public GameObject PlaceBuildingToGrid(BaseBuildingsClass activeBuildingCom, bool doChecking = false)
+    GameObject PlaceBuildingToGrid(ref BaseBuildingsClass activeBuildingCom, bool doChecking = false)
     {
+        // Check if we need to create a Custom Building GO
+        if (BuildingDataBase.GetInstance().GetBuildingData(activeBuildingCom.GetBuildingType()).GetOwnCustomBuildingObject())
+        {
+            Vector3 buildingPos = activeBuildingCom.transform.position;
+            BuildingDataBase.BUILDINGS buildingID = activeBuildingCom.GetBuildingType();
+            Destroy(activeBuildingCom.gameObject);
+            GameObject customBuilding = BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetOwnCustomBuildingObject();
+            activeBuildingCom = Instantiate(customBuilding, buildingPos, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+            activeBuildingCom.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(buildingID));
+        }
+
         Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftGridPosition();
         Vector2Int buildingSize = activeBuildingCom.GetBuildingSizeOnMap();
         //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
@@ -102,6 +143,10 @@ public class MapManager : MonoBehaviour
         AddBuildingIntoTrackingDictionary(activeBuildingCom); //roads and buildings store accordingly
         activeBuildingCom.BuildingPlaced();
 
+        // Change Sprite Layer back to default
+        activeBuildingCom.SetSpriteObjectLayer(0);
+        activeBuildingCom.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(activeBuildingCom.GetBuildingType()).GetBuildingName();
+
         return activeBuildingCom.gameObject;
     }
     /// <summary>
@@ -109,7 +154,7 @@ public class MapManager : MonoBehaviour
     /// </summary>
     /// <param name="activeBuildingCom"></param>
     /// <returns></returns>
-    public GameObject RemoveBuildingFromGrid(BaseBuildingsClass activeBuildingCom)
+    GameObject RemoveBuildingFromGrid(BaseBuildingsClass activeBuildingCom)
     {
         Vector3 buildingBottomLeftWorldPos = activeBuildingCom.GetBottomLeftGridPosition();
         Vector2Int buildingSize = activeBuildingCom.GetBuildingSizeOnMap();
@@ -120,6 +165,80 @@ public class MapManager : MonoBehaviour
 
         return activeBuildingCom.gameObject;
     }
+
+
+    public void AddBuildingToBeRemoved(BaseBuildingsClass buildingToRemove)
+    {
+        m_ListOfBuildingsToRemove.Add(buildingToRemove);
+    }
+    public void RemoveBuildingsFromMapUnderList()
+    {
+        for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
+        {
+            RemoveBuildingFromGrid(m_ListOfBuildingsToRemove[i]);
+            Destroy(m_ListOfBuildingsToRemove[i].transform.gameObject);
+        }
+        m_ListOfBuildingsToRemove.Clear();
+    }
+    #endregion
+
+    #region Toggle Placement and Removal of Buildings MODE
+    public void SetPlacementBrush(bool newValue, BuildingDataBase.BUILDINGS selectedBuildingID = BuildingDataBase.BUILDINGS.B_POND)
+    {
+        m_PlacmentBrushActive = newValue;
+        m_PlacingBuildingID = selectedBuildingID;
+        if (m_PlacmentBrushActive)
+        {
+            SetRemovalBrush(false);
+            m_PlacingBuilding.gameObject.SetActive(true);
+            m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_PlacingBuildingID));
+        }
+        else
+        {
+            m_PlacingBuilding.gameObject.SetActive(false);
+            PlayerCloseAddEditorMode();
+        }
+    }
+    public void IncrementPlacingBuildingID()
+    {
+        m_PlacingBuildingID += 1;
+        if (m_PlacingBuildingID >= BuildingDataBase.BUILDINGS.B_TOTAL)
+            m_PlacingBuildingID = BuildingDataBase.BUILDINGS.B_POND;
+        m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_PlacingBuildingID));
+    }
+    public void SetRemovalBrush(bool newValue)
+    {
+        if (newValue)
+            SetPlacementBrush(false);
+        else
+        {
+            for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
+            {
+                m_ListOfBuildingsToRemove[i].transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+            PlayerCloseRemovalEditorModeStop();
+        }
+        m_ListOfBuildingsToRemove.Clear();
+        m_RemovalBrushActive = newValue;
+    }
+
+    //when player is out of adding buildings editor mode
+    public void PlayerCloseAddEditorMode()
+    {
+        //roadmanager checks if anything is added during the editor session
+        if (m_RoadManager != null)
+            m_RoadManager.CheckAndInvokeAddingOfRoadsCallback();
+    }
+
+    //when player is out of removing editor mode
+    public void PlayerCloseRemovalEditorModeStop()
+    {
+        //roadmanager checks if anything is removed during the editor session
+        if (m_RoadManager != null)
+            m_RoadManager.CheckAndInvokeRemovalOfRoadsCallback();
+    }
+
+    #endregion
 
     //private void Update()
     //{
@@ -135,6 +254,10 @@ public class MapManager : MonoBehaviour
     /// <param name="buildingBottomLeftWorldPos">Bottom Left Corner of the Building</param>
     /// <param name="buildingSize">How many grids does this building take</param>
     /// <returns>True if can place Building</returns>
+    public bool CanPlaceTemplateBuilding()
+    {
+        return CanPlaceBuilding(m_PlacingBuilding.GetBottomLeftGridPosition(), m_PlacingBuilding.GetBuildingSizeOnMap());
+    }
     public bool CanPlaceBuilding(BaseBuildingsClass activeBuildingCom)
     {
         return CanPlaceBuilding(activeBuildingCom.GetBottomLeftGridPosition(), activeBuildingCom.GetBuildingSizeOnMap());
@@ -254,25 +377,6 @@ public class MapManager : MonoBehaviour
     }
     #endregion
 
-    #region For players placement and removal of building mode
-    //when player is out of adding buildings editor mode
-    public void PlayerCloseAddEditorMode()
-    {
-        //roadmanager checks if anything is added during the editor session
-        if (m_RoadManager != null)
-            m_RoadManager.CheckAndInvokeAddingOfRoadsCallback();
-    }
-
-    //when player is out of removing editor mode
-    public void PlayerCloseRemovalEditorModeStop() 
-    {
-        //roadmanager checks if anything is removed during the editor session
-        if (m_RoadManager != null)
-            m_RoadManager.CheckAndInvokeRemovalOfRoadsCallback();
-    }
-
-    #endregion
-
     #region CheckingRoadConnections
     public bool CheckRoadConnection(Vector2Int startPt, Vector2Int endPt)
     {
@@ -296,7 +400,7 @@ public class MapManager : MonoBehaviour
             savedPosition.y = saveFileBuildingsData[i].worldPosY;
             savedBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), savedPosition, Quaternion.identity).GetComponent<BaseBuildingsClass>();
             savedBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData((BuildingDataBase.BUILDINGS)saveFileBuildingsData[i].buildingType));
-            PlaceBuildingToGrid(savedBuilding);
+            PlaceBuildingToGrid(ref savedBuilding);
         }
 
         //do the same for the roads
@@ -337,6 +441,9 @@ public class MapManager : MonoBehaviour
     //public Grid GetGrid() { return m_GridGO; }
     public Vector2Int GetWorldPosToCellPos(Vector2 pos) { return (Vector2Int)m_GridGO.WorldToCell(pos); }
     public BaseMapClass GetCurrentMap() { return m_currentMap;  }
+    public BaseBuildingsClass GetTemplateBuilding() { return m_PlacingBuilding; }
+    public bool GetPlacementBrushActive() { return m_PlacmentBrushActive; }
+    public bool GetRemovalBrushActive() { return m_RemovalBrushActive; }
     public List<BaseBuildingsClass> GetBuildingsOnMap()
     {
         List<BaseBuildingsClass> listOfBuildings = new List<BaseBuildingsClass>();

@@ -11,15 +11,9 @@ public class InGame_PlayerInput : MonoBehaviour
     float m_MaxZoomOut = 6;
     Vector3 m_TargetCameraPosition;
     // Placment Buildings
-    [Header("Placement of Buildings")]
-    BaseBuildingsClass m_PlacingBuilding = null;
+    [Header("Placement of Buildings")]    
     Vector2 m_BuildingPlacementOffset = Vector2.zero;
-    BuildingDataBase.BUILDINGS m_BuildingSelectID = BuildingDataBase.BUILDINGS.B_POND;
-    bool m_PlacmentBrushActive = true;
-    bool m_RemovalBrushActive = false;
-    // Removal Buildings
-    [Header("Removal of Buildings")]
-    List<BaseBuildingsClass> m_ListOfBuildingsToRemove = null;
+
     // Miscs
     bool m_MovingPlacementBuilding = false;     // Are we currently moving the Placement Building or the Camera?
     bool m_MovingSomething = false;         // Have we started moving?
@@ -39,12 +33,6 @@ public class InGame_PlayerInput : MonoBehaviour
     }
     void Start()
     {
-        m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
-        m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
-        m_ListOfBuildingsToRemove = new List<BaseBuildingsClass>();
-        TogglePlacmentBrush(false);
-        ToggleRemovalBrush(false);
-
         // Subscribe to Map Generated Event
         MapManager.OnMapGenerated += MapWasGenerated;
     }
@@ -62,13 +50,13 @@ public class InGame_PlayerInput : MonoBehaviour
         DEBUG_MoveCameraInput();
 
         if (Input.GetKeyUp(KeyCode.Q))
-            TogglePlacmentBrush(!m_PlacmentBrushActive, BuildingDataBase.BUILDINGS.B_POND);
+            MapManager.GetInstance().SetPlacementBrush(!MapManager.GetInstance().GetPlacementBrushActive(), BuildingDataBase.BUILDINGS.B_POND);
         else if (Input.GetKeyUp(KeyCode.W))
-            ToggleRemovalBrush(!m_RemovalBrushActive);
+            MapManager.GetInstance().SetRemovalBrush(!MapManager.GetInstance().GetRemovalBrushActive());
 
 
         // Is Placement Brush Active?
-        if (m_PlacmentBrushActive)
+        if (MapManager.GetInstance().GetPlacementBrushActive())
         {
             RenderPlacementBuilding();
 
@@ -76,10 +64,10 @@ public class InGame_PlayerInput : MonoBehaviour
                 PlaceBuildings();
 
             if (Input.GetKeyUp(KeyCode.R))
-                IncrementPlacingBuilding();
+                MapManager.GetInstance().IncrementPlacingBuildingID();
         }
         // Is Removal Brush Active?
-        if (m_RemovalBrushActive)
+        if (MapManager.GetInstance().GetRemovalBrushActive())
         {
             if (Input.GetMouseButtonUp(0))
             {
@@ -89,23 +77,24 @@ public class InGame_PlayerInput : MonoBehaviour
                 // Debug.Log("Raycast2D hit: " + hit.transform.gameObject.name);
 
                 hit.transform.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
-                m_ListOfBuildingsToRemove.Add(hit.transform.parent.gameObject.GetComponent<BaseBuildingsClass>());
+                MapManager.GetInstance().AddBuildingToBeRemoved(hit.transform.parent.gameObject.GetComponent<BaseBuildingsClass>());
             }
             else if (Input.GetKeyUp(KeyCode.E))
             {
-                for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
-                {
-                    MapManager.GetInstance().RemoveBuildingFromGrid(m_ListOfBuildingsToRemove[i]);
-                    Destroy(m_ListOfBuildingsToRemove[i].transform.gameObject);
-                }
-                m_ListOfBuildingsToRemove.Clear();
+                //for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
+                //{
+                //    MapManager.GetInstance().RemoveBuildingFromGrid(m_ListOfBuildingsToRemove[i]);
+                //    Destroy(m_ListOfBuildingsToRemove[i].transform.gameObject);
+                //}
+                //m_ListOfBuildingsToRemove.Clear();
+                MapManager.GetInstance().RemoveBuildingsFromMapUnderList();
             }
         }
 
-        //if (Input.GetKeyUp(KeyCode.Z))
-        //    SaveSystem.SaveBuildingsOnMap(MapManager.GetInstance().GetBuildingsOnMap());
-        //else if (Input.GetKeyUp(KeyCode.X))
-        //    SaveSystem.LoadSavedBuildingsToMap();
+        if (Input.GetKeyUp(KeyCode.Z))
+            SaveSystem.SaveMap(MapManager.GetInstance().GetBuildingsOnMap(), MapManager.GetInstance().GetRoadManager().GetSavedRoads());
+        else if (Input.GetKeyUp(KeyCode.X))
+            SaveSystem.LoadSavedBuildingsToMap();
 
 #endif
 
@@ -113,48 +102,15 @@ public class InGame_PlayerInput : MonoBehaviour
     }
 
     #region Building Placement
-    public void TogglePlacmentBrush(bool newValue, BuildingDataBase.BUILDINGS selectedBuildingID = BuildingDataBase.BUILDINGS.B_POND)
-    {
-        m_PlacmentBrushActive = newValue;
-        m_BuildingSelectID = selectedBuildingID;
-        if (m_PlacmentBrushActive)
-        {
-            ToggleRemovalBrush(false);
-            m_PlacingBuilding.gameObject.SetActive(true);
-            m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID));
-        }
-        else
-        {
-            m_PlacingBuilding.gameObject.SetActive(false);
-
-            MapManager.GetInstance().PlayerCloseAddEditorMode();
-        }
-    }
     void PlaceBuildings()
     {
         // Can place there?
-        if (!MapManager.GetInstance().CanPlaceBuilding(m_PlacingBuilding))
+        if (!MapManager.GetInstance().CanPlaceTemplateBuilding())
             return;
-        // Check if we need to create a Custom Building GO
-        if (BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID).GetOwnCustomBuildingObject())
-        {
-            Destroy(m_PlacingBuilding.gameObject);
-            GameObject customBuilding = BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID).GetOwnCustomBuildingObject();
-            m_PlacingBuilding = Instantiate(customBuilding, m_PlacingBuilding.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
-            m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID));
-        }
-
-        // Place the Building
-        MapManager.GetInstance().PlaceBuildingToGrid(m_PlacingBuilding);
-        // Change Sprite Layer back to default
-        m_PlacingBuilding.SetSpriteObjectLayer(0);
-        m_PlacingBuilding.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID).GetBuildingName();
-
-        // Success in placing building, create new building for next placment
-        BuildingDataBase.BUILDINGS oldID = m_PlacingBuilding.GetBuildingType();
-        m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
-        m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(oldID));
-        m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
+       
+        // Place the Template Building
+        MapManager.GetInstance().PlaceTemplateBuilding();
+    
 
     }
     void SetPlacementBuildingToGridPosition()
@@ -164,44 +120,19 @@ public class InGame_PlayerInput : MonoBehaviour
         Vector3Int gridPos = gridLayout.GetTileMapCom().WorldToCell(Camera.main.transform.position + (Vector3)m_BuildingPlacementOffset);
         Vector3 newPos = gridLayout.GetTileMapCom().CellToWorld(gridPos);
         newPos += gridLayout.GetTileMapCom().cellSize * 0.5f;
-        m_PlacingBuilding.transform.position = newPos;
+        MapManager.GetInstance().GetTemplateBuilding().transform.position = newPos;
     }
     void RenderPlacementBuilding()
     {
         // Darken if not able to place
-        if(MapManager.GetInstance().CanPlaceBuilding(m_PlacingBuilding.GetBottomLeftGridPosition(), m_PlacingBuilding.GetBuildingSizeOnMap()))
-            m_PlacingBuilding.SetSpriteObjectColor(Color.white);
+        if (MapManager.GetInstance().CanPlaceTemplateBuilding())
+            MapManager.GetInstance().GetTemplateBuilding().SetSpriteObjectColor(Color.white);
         else
-            m_PlacingBuilding.SetSpriteObjectColor(Color.gray);
-    }
-    void IncrementPlacingBuilding()
-    {
-        m_BuildingSelectID += 1;
-        if (m_BuildingSelectID >= BuildingDataBase.BUILDINGS.B_TOTAL)
-            m_BuildingSelectID = BuildingDataBase.BUILDINGS.B_POND;
-
-        m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_BuildingSelectID));
+            MapManager.GetInstance().GetTemplateBuilding().SetSpriteObjectColor(Color.gray);
     }
     #endregion
 
-    #region Building Removal
-    public void ToggleRemovalBrush(bool newValue)
-    {
-        if(newValue)
-            TogglePlacmentBrush(false);
-        else
-        {
-            for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
-            {
-                m_ListOfBuildingsToRemove[i].transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = Color.white;
-            }
 
-            MapManager.GetInstance().PlayerCloseRemovalEditorModeStop();
-        }
-        m_ListOfBuildingsToRemove.Clear();
-        m_RemovalBrushActive = newValue;
-    }
-    #endregion
 
     #region Movement
     void DetectFingerInput()
@@ -214,7 +145,7 @@ public class InGame_PlayerInput : MonoBehaviour
             if(!m_MovingSomething)
             {
                 // Move Camera or Building?
-                if (!MobileInput.GetInstance().IsFingerTouching_GO(m_PlacingBuilding.GetSpriteGO(), 0, LayerMask.NameToLayer("BuildingPlaceRef")))
+                if (!MobileInput.GetInstance().IsFingerTouching_GO(MapManager.GetInstance().GetTemplateBuilding().GetSpriteGO(), 0, LayerMask.NameToLayer("BuildingPlaceRef")))
                     m_MovingPlacementBuilding = false;
                 else
                     m_MovingPlacementBuilding = true;

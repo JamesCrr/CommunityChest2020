@@ -52,6 +52,6 @@ public class BuilderMenu : MonoBehaviour
     public void BuildButtonClicked()
     {
         IngameUIManager.instance.CloseBuildMenuPressed();
-        InGame_PlayerInput.GetInstance().TogglePlacmentBrush(true, currBuildingID);
+        MapManager.GetInstance().SetPlacementBrush(true, currBuildingID);
     }
 }
