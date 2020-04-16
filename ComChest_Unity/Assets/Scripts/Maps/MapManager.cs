@@ -8,14 +8,13 @@ public class MapManager : MonoBehaviour
     [SerializeField]        // Where the Tilemaps will be rendered
     Grid m_GridGO = null;
     BaseMapClass m_currentMap;
-    // To store which tiles on map are taken by building
-    List<bool> m_GridTakenArray;        
+    List<bool> m_GridTakenArray;    // To store which tiles on map are taken by building        
     // To store the buildings currently on the map
     Dictionary<Vector2Int, BaseBuildingsClass> m_DictOfBuildingsOnMap = new Dictionary<Vector2Int,BaseBuildingsClass>();
     [Header("Placement of Buildings")]      // Handle placement of Buildings into Map
     [SerializeField]
-    BaseBuildingsClass m_PlacingBuilding = null;
-    BuildingDataBase.BUILDINGS m_PlacingBuildingID = BuildingDataBase.BUILDINGS.B_POND;
+    BaseBuildingsClass m_TemplateBuilding = null;
+    BuildingDataBase.BUILDINGS m_TemplateBuildingID = BuildingDataBase.BUILDINGS.B_POND;
     bool m_PlacmentBrushActive = false;
     [Header("Removal of Buildings")]        // Handle removal of Buildings from Map
     List<BaseBuildingsClass> m_ListOfBuildingsToRemove = null;
@@ -43,8 +42,8 @@ public class MapManager : MonoBehaviour
         m_GridTakenArray = new List<bool>();
 
         // Placement and Removal
-        m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
-        m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
+        m_TemplateBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+        m_TemplateBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
         m_ListOfBuildingsToRemove = new List<BaseBuildingsClass>();
 
         // Parent the m_GridGO
@@ -100,15 +99,60 @@ public class MapManager : MonoBehaviour
     #endregion
 
     #region Placement and Removal of Buildings into/from Map
-    public void PlaceTemplateBuilding()
+    /// <summary>
+    /// Places the Template Building into the Map
+    /// </summary>
+    /// <param name="doChecking">Are any of the spots taken by another building already?</param>
+    /// <returns></returns>
+    public BaseBuildingsClass PlaceTemplateBuilding(bool doChecking = false)
     {
-        PlaceBuildingToGrid(ref m_PlacingBuilding);
+        BaseBuildingsClass PlacedBuilding = PlaceBuildingToGrid(ref m_TemplateBuilding, doChecking);
 
         // Success in placing building, create new building for next placment
-        BuildingDataBase.BUILDINGS oldID = m_PlacingBuilding.GetBuildingType();
-        m_PlacingBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
-        m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(oldID));
-        m_PlacingBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
+        BuildingDataBase.BUILDINGS oldID = m_TemplateBuilding.GetBuildingType();
+        m_TemplateBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+        m_TemplateBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(oldID));
+        m_TemplateBuilding.SetSpriteObjectLayer(LayerMask.NameToLayer("BuildingPlaceRef"));
+
+        return PlacedBuilding;
+    }
+    public BaseBuildingsClass PlaceNewBuildingIntoMap(Vector2 spawnWorldPosition, BuildingDataBase.BUILDINGS buildingID)
+    {
+        // Convert World to Grid Coordinates
+        BaseMapClass gridLayout = GetCurrentMap();
+        Vector3Int gridPos = gridLayout.GetTileMapCom().WorldToCell(spawnWorldPosition);
+        spawnWorldPosition = gridLayout.GetTileMapCom().CellToWorld(gridPos);
+        spawnWorldPosition += (Vector2)gridLayout.GetTileMapCom().cellSize * 0.5f;
+        // Check if we can place building Down
+        Vector3 buildingBottomLeft = spawnWorldPosition + BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetBottomLeftCorner_PositionOffset();
+        Vector2Int buildingSize = BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetBuildingSizeOnMap();
+        if (!CanPlaceBuilding(buildingBottomLeft, buildingSize))
+        {
+            Debug.LogError("Unable to Place Building, Canceling...");
+            return null;
+        }
+        // Create the Building
+        return PlaceBuildingToGrid(spawnWorldPosition, buildingID);
+    }
+    /// <summary>
+    /// Adds a Building to the List to be Removed from Map
+    /// </summary>
+    /// <param name="buildingToRemove"></param>
+    public void AddBuildingToBeRemoved(BaseBuildingsClass buildingToRemove)
+    {
+        m_ListOfBuildingsToRemove.Add(buildingToRemove);
+    }
+    /// <summary>
+    /// Removes all Buildings from Map in List
+    /// </summary>
+    public void RemoveBuildingsFromMapUnderList()
+    {
+        for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
+        {
+            RemoveBuildingFromGrid(m_ListOfBuildingsToRemove[i]);
+            Destroy(m_ListOfBuildingsToRemove[i].transform.gameObject);
+        }
+        m_ListOfBuildingsToRemove.Clear();
     }
     /// <summary>
     /// Tries to place a Building into the Grid from it's world Position.
@@ -117,7 +161,7 @@ public class MapManager : MonoBehaviour
     /// <param name="activeBuildingCom">The Building GO to place</param>
     /// <param name="doChecking">Are any of the spots taken by another building already?</param>
     /// <returns></returns>
-    GameObject PlaceBuildingToGrid(ref BaseBuildingsClass activeBuildingCom, bool doChecking = false)
+    BaseBuildingsClass PlaceBuildingToGrid(ref BaseBuildingsClass activeBuildingCom, bool doChecking = false)
     {
         // Check if we need to create a Custom Building GO
         if (BuildingDataBase.GetInstance().GetBuildingData(activeBuildingCom.GetBuildingType()).GetOwnCustomBuildingObject())
@@ -134,7 +178,7 @@ public class MapManager : MonoBehaviour
         Vector2Int buildingSize = activeBuildingCom.GetBuildingSizeOnMap();
         //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
         // Can we place it there?
-        if(doChecking)
+        if (doChecking)
             if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
                 return null;
         // Set all the grids taken by new building to true
@@ -147,7 +191,38 @@ public class MapManager : MonoBehaviour
         activeBuildingCom.SetSpriteObjectLayer(0);
         activeBuildingCom.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(activeBuildingCom.GetBuildingType()).GetBuildingName();
 
-        return activeBuildingCom.gameObject;
+        return activeBuildingCom;
+    }
+    BaseBuildingsClass PlaceBuildingToGrid(Vector2 spawnWorldPos, BuildingDataBase.BUILDINGS buildingID, bool doChecking = false)
+    {
+        // Check if we need to create a Custom Building GO
+        BaseBuildingsClass newBuilding = null;
+        if (BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetOwnCustomBuildingObject())
+        {
+            GameObject customBuilding = BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetOwnCustomBuildingObject();
+            newBuilding = Instantiate(customBuilding, spawnWorldPos, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+        }
+        else
+            newBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), spawnWorldPos, Quaternion.identity).GetComponent<BaseBuildingsClass>();
+        newBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(buildingID));
+
+        Vector3 buildingBottomLeftWorldPos = newBuilding.GetBottomLeftGridPosition();
+        Vector2Int buildingSize = newBuilding.GetBuildingSizeOnMap();
+        // Can we place it there?
+        if (doChecking)
+            if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
+                return null;
+        // Set all the grids taken by new building to true
+        SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
+
+        AddBuildingIntoTrackingDictionary(newBuilding); //roads and buildings store accordingly
+        newBuilding.BuildingPlaced();
+
+        // Change Sprite Layer back to default
+        newBuilding.SetSpriteObjectLayer(0);
+        newBuilding.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetBuildingName();
+
+        return newBuilding;
     }
     /// <summary>
     /// Removes the Building from Grid by setting it's array spots back to untaken, then returns it
@@ -165,47 +240,43 @@ public class MapManager : MonoBehaviour
 
         return activeBuildingCom.gameObject;
     }
-
-
-    public void AddBuildingToBeRemoved(BaseBuildingsClass buildingToRemove)
-    {
-        m_ListOfBuildingsToRemove.Add(buildingToRemove);
-    }
-    public void RemoveBuildingsFromMapUnderList()
-    {
-        for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
-        {
-            RemoveBuildingFromGrid(m_ListOfBuildingsToRemove[i]);
-            Destroy(m_ListOfBuildingsToRemove[i].transform.gameObject);
-        }
-        m_ListOfBuildingsToRemove.Clear();
-    }
     #endregion
 
     #region Toggle Placement and Removal of Buildings MODE
+    /// <summary>
+    /// Enables/Disables Placement Brush to be used for placing down New Buildings in Map.
+    /// Auto Disables Removal Brush when enabling
+    /// </summary>
+    /// <param name="newValue">True=Enable, False=Disable</param>
+    /// <param name="selectedBuildingID">What Building Type to Start with</param>
     public void SetPlacementBrush(bool newValue, BuildingDataBase.BUILDINGS selectedBuildingID = BuildingDataBase.BUILDINGS.B_POND)
     {
         m_PlacmentBrushActive = newValue;
-        m_PlacingBuildingID = selectedBuildingID;
+        m_TemplateBuildingID = selectedBuildingID;
         if (m_PlacmentBrushActive)
         {
             SetRemovalBrush(false);
-            m_PlacingBuilding.gameObject.SetActive(true);
-            m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_PlacingBuildingID));
+            m_TemplateBuilding.gameObject.SetActive(true);
+            m_TemplateBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_TemplateBuildingID));
         }
         else
         {
-            m_PlacingBuilding.gameObject.SetActive(false);
+            m_TemplateBuilding.gameObject.SetActive(false);
             PlayerCloseAddEditorMode();
         }
     }
     public void IncrementPlacingBuildingID()
     {
-        m_PlacingBuildingID += 1;
-        if (m_PlacingBuildingID >= BuildingDataBase.BUILDINGS.B_TOTAL)
-            m_PlacingBuildingID = BuildingDataBase.BUILDINGS.B_POND;
-        m_PlacingBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_PlacingBuildingID));
+        m_TemplateBuildingID += 1;
+        if (m_TemplateBuildingID >= BuildingDataBase.BUILDINGS.B_TOTAL)
+            m_TemplateBuildingID = BuildingDataBase.BUILDINGS.B_POND;
+        m_TemplateBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_TemplateBuildingID));
     }
+    /// <summary>
+    /// Enables/Disables Removal Brush to be used for Removing Buildings from Map.
+    /// Auto Disables Placement Brush when enabling
+    /// </summary>
+    /// <param name="newValue">True=Enable, False=Disable</param>
     public void SetRemovalBrush(bool newValue)
     {
         if (newValue)
@@ -222,15 +293,18 @@ public class MapManager : MonoBehaviour
         m_RemovalBrushActive = newValue;
     }
 
-    //when player is out of adding buildings editor mode
+    /// <summary>
+    /// When player is out of adding buildings editor mode
+    /// </summary>
     public void PlayerCloseAddEditorMode()
     {
         //roadmanager checks if anything is added during the editor session
         if (m_RoadManager != null)
             m_RoadManager.CheckAndInvokeAddingOfRoadsCallback();
     }
-
-    //when player is out of removing editor mode
+    /// <summary>
+    /// When player is out of removing editor mode
+    /// </summary>
     public void PlayerCloseRemovalEditorModeStop()
     {
         //roadmanager checks if anything is removed during the editor session
@@ -256,7 +330,7 @@ public class MapManager : MonoBehaviour
     /// <returns>True if can place Building</returns>
     public bool CanPlaceTemplateBuilding()
     {
-        return CanPlaceBuilding(m_PlacingBuilding.GetBottomLeftGridPosition(), m_PlacingBuilding.GetBuildingSizeOnMap());
+        return CanPlaceBuilding(m_TemplateBuilding.GetBottomLeftGridPosition(), m_TemplateBuilding.GetBuildingSizeOnMap());
     }
     public bool CanPlaceBuilding(BaseBuildingsClass activeBuildingCom)
     {
@@ -441,7 +515,7 @@ public class MapManager : MonoBehaviour
     //public Grid GetGrid() { return m_GridGO; }
     public Vector2Int GetWorldPosToCellPos(Vector2 pos) { return (Vector2Int)m_GridGO.WorldToCell(pos); }
     public BaseMapClass GetCurrentMap() { return m_currentMap;  }
-    public BaseBuildingsClass GetTemplateBuilding() { return m_PlacingBuilding; }
+    public BaseBuildingsClass GetTemplateBuilding() { return m_TemplateBuilding; }
     public bool GetPlacementBrushActive() { return m_PlacmentBrushActive; }
     public bool GetRemovalBrushActive() { return m_RemovalBrushActive; }
     public List<BaseBuildingsClass> GetBuildingsOnMap()

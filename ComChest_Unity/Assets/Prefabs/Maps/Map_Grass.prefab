@@ -44,6 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b654a521c7dd6a34e9bf1f92dc3b89ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ListOfBuildingsToBuildAtSpawn:
+  - buildingID: 5
+    spawnGridPosition: {x: 5, y: 4}
+    debugColor: {r: 1, g: 0, b: 0, a: 1}
   m_DrawDebug: 1
   m_DebugColor: {r: 0, g: 0, b: 1, a: 1}
 --- !u!1 &1255820143789706107

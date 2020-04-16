@@ -80,21 +80,13 @@ public class InGame_PlayerInput : MonoBehaviour
                 MapManager.GetInstance().AddBuildingToBeRemoved(hit.transform.parent.gameObject.GetComponent<BaseBuildingsClass>());
             }
             else if (Input.GetKeyUp(KeyCode.E))
-            {
-                //for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
-                //{
-                //    MapManager.GetInstance().RemoveBuildingFromGrid(m_ListOfBuildingsToRemove[i]);
-                //    Destroy(m_ListOfBuildingsToRemove[i].transform.gameObject);
-                //}
-                //m_ListOfBuildingsToRemove.Clear();
                 MapManager.GetInstance().RemoveBuildingsFromMapUnderList();
-            }
         }
 
-        if (Input.GetKeyUp(KeyCode.Z))
-            SaveSystem.SaveMap(MapManager.GetInstance().GetBuildingsOnMap(), MapManager.GetInstance().GetRoadManager().GetSavedRoads());
-        else if (Input.GetKeyUp(KeyCode.X))
-            SaveSystem.LoadSavedBuildingsToMap();
+        //if (Input.GetKeyUp(KeyCode.Z))
+        //    SaveSystem.SaveMap(MapManager.GetInstance().GetBuildingsOnMap(), MapManager.GetInstance().GetRoadManager().GetSavedRoads());
+        //else if (Input.GetKeyUp(KeyCode.X))
+        //    SaveSystem.LoadSavedBuildingsToMap();
 
 #endif
 
@@ -110,8 +102,6 @@ public class InGame_PlayerInput : MonoBehaviour
        
         // Place the Template Building
         MapManager.GetInstance().PlaceTemplateBuilding();
-    
-
     }
     void SetPlacementBuildingToGridPosition()
     {
