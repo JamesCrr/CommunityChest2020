@@ -514,6 +514,7 @@ public class MapManager : MonoBehaviour
     #region Getters
     //public Grid GetGrid() { return m_GridGO; }
     public Vector2Int GetWorldPosToCellPos(Vector2 pos) { return (Vector2Int)m_GridGO.WorldToCell(pos); }
+    public Vector2 GetCellCentrePosToWorld(Vector2Int pos) { return m_GridGO.GetCellCenterWorld((Vector3Int)pos);  }
     public BaseMapClass GetCurrentMap() { return m_currentMap;  }
     public BaseBuildingsClass GetTemplateBuilding() { return m_TemplateBuilding; }
     public bool GetPlacementBrushActive() { return m_PlacmentBrushActive; }
