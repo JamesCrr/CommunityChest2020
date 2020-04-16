@@ -719,6 +719,9 @@ public class RoadManager
 
     public void StoreLoadedInRoads(Vector2Int key, BaseBuildingsClass roadInfo, RoadTypeList roadType)
     {
+        if (CheckMapAvailability(key)) //if key exists, do early return
+            return;
+
         m_RoadSpriteRendererMap.Add(key, roadInfo);
 
         int indexConverted = Convert2DToIntIndex(key);
