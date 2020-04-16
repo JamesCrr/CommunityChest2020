@@ -76,6 +76,9 @@ public class RoadManager
 
     public void PlaceRoads(Vector2Int key, ref BaseBuildingsClass roadInfo)
     {
+        if (m_RoadSpriteRendererMap.ContainsKey(key))
+            return;
+
         //add them in uey
         m_RoadSpriteRendererMap.Add(key, roadInfo);
 
