@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class NPC : MonoBehaviour
@@ -6,13 +7,20 @@ public class NPC : MonoBehaviour
     [Header("Animation")]
     [SerializeField] Animator m_NPCAnimator;
     [SerializeField] Vector2 m_MinMaxAnimationSpeed = new Vector2(0.1f, 0.5f);
-    [SerializeField] Vector2 m_MinMaxSpeed = new Vector2(0.1f, 0.5f);
 
     [Header("NPC Data")]
-    [Tooltip("Chances of the NPCs entering a building")]
-    [SerializeField] int m_EnterBuildingPercentage = 100;
+    [Tooltip("Chances of the NPCs entering a building, its out of 100%")]
+    [Range(0, 100)] [SerializeField] int m_EnterBuildingChance = 100;
+    [SerializeField] Vector2 m_MinMaxSpeed = new Vector2(0.1f, 0.5f);
+
     float m_Speed = 1.0f;
     Vector2 m_Dir = Vector2Int.zero;
+    bool m_GoingIntoBuilding = false;
+
+    [Header("NPC Entering Building data")]
+    [SerializeField] SpriteRenderer m_SpriteRenderer;
+    [SerializeField] Vector2 m_SpriteFadeOutMinMaxSpeed = new Vector2(0.1f, 1.0f);
+    float m_FadeOutSpeed = 0.0f;
 
     //for finding the next route to go to
     Dictionary<Vector2Int, bool> m_VistedRoads = new Dictionary<Vector2Int, bool>();
@@ -23,19 +31,34 @@ public class NPC : MonoBehaviour
 
     public void OnEnable()
     {
-        Init(1.0f, new Vector2Int(9, 4));
+        Init(new Vector2Int(9, 4));
     }
 
-    public void Init(float speed, Vector2Int currentTilePos)
+    public void Init(Vector2Int currentTilePos)
     {
-        m_Speed = speed;
         m_CurrentTile = currentTilePos;
 
+        //get the speed and set the animation speed accordingly
+        m_Speed = Random.Range(m_MinMaxSpeed.x, m_MinMaxSpeed.y);
+        m_NPCAnimator.speed = (m_Speed / m_MinMaxSpeed.y) * (m_MinMaxAnimationSpeed.y - m_MinMaxAnimationSpeed.x) + m_MinMaxAnimationSpeed.x;
+
         //register the transform position based on current tile pos
-        transform.position = MapManager.GetInstance().GetCellCentrePosToWorld(currentTilePos);
+        if (MapManager.GetInstance() != null)
+        {
+            transform.position = MapManager.GetInstance().GetCellCentrePosToWorld(currentTilePos);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+            return;
+        }
 
         m_Dir = Vector2Int.zero;
         m_VistedRoads.Clear();
+        m_GoingIntoBuilding = false;
+
+        if (m_SpriteRenderer != null)
+            m_SpriteRenderer.color = Color.white;
 
         //check if theres anything around, if no road start despawning, this is to prevent infinite loop
         if (!CheckRoadsAroundExist(m_CurrentTile))
@@ -50,6 +73,9 @@ public class NPC : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (m_GoingIntoBuilding)
+            return;
+
         //reach the block then DFS next block
         if (m_NextTile == MapManager.GetInstance().GetWorldPosToCellPos(transform.position))
         {
@@ -58,10 +84,13 @@ public class NPC : MonoBehaviour
             Vector2 dirDiff = nextTileCentrePos - (Vector2)transform.position;
 
             //use dot product to see if NPC is 'over' its final destination
-            if (Vector2.Dot(dirDiff, m_Dir) < -Mathf.Epsilon) 
+            if (Vector2.Dot(dirDiff, m_Dir) <= 0.0f + Mathf.Epsilon) 
             {
                 m_CurrentTile = m_NextTile;
                 transform.position = MapManager.GetInstance().GetCellCentrePosToWorld(m_CurrentTile); //snap to grid
+
+                if (CheckAndEnterBuilding(m_CurrentTile)) //if NPC decide to enter building instead
+                    return;
 
                 DFSNextRoad(m_CurrentTile);
             }
@@ -159,6 +188,11 @@ public class NPC : MonoBehaviour
         m_Dir.Normalize();
 
         //update the animation of the NPC
+        UpdateMovementAnimation();
+    }
+
+    public void UpdateMovementAnimation()
+    {
         if (m_NPCAnimator != null)
         {
             m_NPCAnimator.SetFloat("HorizontalX", m_Dir.x);
@@ -179,5 +213,45 @@ public class NPC : MonoBehaviour
                 return;
             }
         }
+    }
+
+    bool CheckAndEnterBuilding(Vector2Int currTile)
+    {
+        //check if NPC is at the entrance of a building
+        if (NPCManager.Instance.CheckInFrontOfBuilding(currTile))
+        {
+            int chance = Random.Range(0,100);
+            if (chance <= m_EnterBuildingChance) //enter building
+            {
+                m_GoingIntoBuilding = true;
+                m_Speed = 0.0f;
+                m_Dir = new Vector2Int(0, 1); //entrance are above NPCs
+                UpdateMovementAnimation();
+
+                m_FadeOutSpeed = Random.Range(m_SpriteFadeOutMinMaxSpeed.x, m_SpriteFadeOutMinMaxSpeed.y);
+                StartCoroutine(EnterBuildingAnim()); //start fading out anim
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    IEnumerator EnterBuildingAnim()
+    {
+        //Color
+        if (m_SpriteRenderer != null)
+        {
+            Color spriteColor = m_SpriteRenderer.color;
+            while (spriteColor.a > 0)
+            {
+                spriteColor.a = Mathf.Lerp(spriteColor.a, 0.0f, Time.deltaTime * m_FadeOutSpeed);
+                m_SpriteRenderer.color = spriteColor;
+                yield return null;
+            }
+        }
+
+        gameObject.SetActive(false);
+        yield return null;
     }
 }

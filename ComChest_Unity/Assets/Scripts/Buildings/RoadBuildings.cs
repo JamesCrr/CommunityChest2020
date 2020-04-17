@@ -24,6 +24,9 @@ public class RoadBuildings : BaseBuildingsClass
         m_RoadGridPos = MapManager.GetInstance().GetWorldPosToCellPos(GetBottomLeftGridPosition()) + buildingData.GetRoadOffset;
 
         CheckRoadConnectionAfterRoadAdded(); //check if there are any roads connected already
+
+        if (NPCManager.Instance != null)
+            NPCManager.Instance.AddBuildingEntrance(m_RoadGridPos); //add the entrance to the road
     }
 
     public void CheckRoadConnectionAfterRoadAdded()
