@@ -38,7 +38,10 @@ public class BaseMapClass : MonoBehaviour
     {
         foreach (MapStartingBuildings building in m_ListOfBuildingsToBuildAtSpawn)
         {
-            MapManager.GetInstance().PlaceNewBuildingIntoMap(building.spawnGridPosition, building.buildingID);
+            foreach (Vector2Int pos in building.spawnGridPositions)
+            {
+                MapManager.GetInstance().PlaceNewBuildingIntoMap(pos, building.buildingID);
+            }
         }
     }
 
@@ -76,11 +79,14 @@ public class BaseMapClass : MonoBehaviour
         // Starting Building Positions
         foreach (MapStartingBuildings building in m_ListOfBuildingsToBuildAtSpawn)
         {
-            Vector2 half = building.spawnGridPosition;
-            half.x += 0.5f;
-            half.y += 0.5f;
             Gizmos.color = building.debugColor;
-            Gizmos.DrawWireSphere((Vector2)transform.position + half, 0.5f);
+            foreach (Vector2Int pos in building.spawnGridPositions)
+            {
+                Vector2 half = pos;
+                half.x += 0.5f;
+                half.y += 0.5f;
+                Gizmos.DrawWireSphere((Vector2)transform.position + half, 0.5f);
+            }
         }
 
     }
@@ -90,7 +96,9 @@ public class BaseMapClass : MonoBehaviour
 [System.Serializable]
 public class MapStartingBuildings
 {
+    public string name;
     public BuildingDataBase.BUILDINGS buildingID = BuildingDataBase.BUILDINGS.B_TOTAL;
-    public Vector2Int spawnGridPosition = Vector2Int.zero;
     public Color debugColor = Color.red;
+    public List<Vector2Int> spawnGridPositions = new List<Vector2Int>();
+    
 }

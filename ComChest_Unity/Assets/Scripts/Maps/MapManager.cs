@@ -12,7 +12,6 @@ public class MapManager : MonoBehaviour
     // To store the buildings currently on the map
     Dictionary<Vector2Int, BaseBuildingsClass> m_DictOfBuildingsOnMap = new Dictionary<Vector2Int,BaseBuildingsClass>();
     [Header("Placement of Buildings")]      // Handle placement of Buildings into Map
-    [SerializeField]
     BaseBuildingsClass m_TemplateBuilding = null;
     BuildingDataBase.BUILDINGS m_TemplateBuildingID = BuildingDataBase.BUILDINGS.B_POND;
     bool m_PlacmentBrushActive = false;
