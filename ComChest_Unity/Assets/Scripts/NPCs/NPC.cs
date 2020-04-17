@@ -1,19 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class NPC : MonoBehaviour
 {
-    [SerializeField]
-    [Tooltip("The max distance it needs to be from the grid tile center to be considered it reached that grid")]
-    float m_OffsetFromMiddle = 0.001f;
-
     [Header("Animation")]
-    [SerializeField]
-    Animator m_NPCAnimator;
-    [SerializeField]
-    Vector2 m_MinMaxAnimationSpeed = new Vector2(0.1f, 0.5f);
+    [SerializeField] Animator m_NPCAnimator;
+    [SerializeField] Vector2 m_MinMaxAnimationSpeed = new Vector2(0.1f, 0.5f);
+    [SerializeField] Vector2 m_MinMaxSpeed = new Vector2(0.1f, 0.5f);
 
+    [Header("NPC Data")]
+    [Tooltip("Chances of the NPCs entering a building")]
+    [SerializeField] int m_EnterBuildingPercentage = 100;
     float m_Speed = 1.0f;
     Vector2 m_Dir = Vector2Int.zero;
 
@@ -40,21 +37,28 @@ public class NPC : MonoBehaviour
         m_Dir = Vector2Int.zero;
         m_VistedRoads.Clear();
 
+        //check if theres anything around, if no road start despawning, this is to prevent infinite loop
+        if (!CheckRoadsAroundExist(m_CurrentTile))
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         DFSNextRoad(m_CurrentTile); //get the next tile to go to
     }
 
     // Update is called once per frame
     void Update()
     {
-        //TODO:: Make the check more reliable through the if else checking instead of distance
-
-
         //reach the block then DFS next block
         if (m_NextTile == MapManager.GetInstance().GetWorldPosToCellPos(transform.position))
         {
             //need to check if NPC at centre of tile, since worldpostocellpos checks bottom left of grid tile instead of centre
             Vector2 nextTileCentrePos = MapManager.GetInstance().GetCellCentrePosToWorld(m_NextTile);
-            if (Vector2.SqrMagnitude(nextTileCentrePos - (Vector2)transform.position) <= m_OffsetFromMiddle + Mathf.Epsilon)
+            Vector2 dirDiff = nextTileCentrePos - (Vector2)transform.position;
+
+            //use dot product to see if NPC is 'over' its final destination
+            if (Vector2.Dot(dirDiff, m_Dir) < -Mathf.Epsilon) 
             {
                 m_CurrentTile = m_NextTile;
                 transform.position = MapManager.GetInstance().GetCellCentrePosToWorld(m_CurrentTile); //snap to grid
@@ -66,7 +70,6 @@ public class NPC : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //update position
         transform.position = (Vector2)transform.position + m_Dir * m_Speed * Time.fixedDeltaTime;
     }
 
@@ -108,14 +111,6 @@ public class NPC : MonoBehaviour
 
         if (neighbourRoads.Count == 0) //if theres nothing
         {
-            //TODO
-            //check if theres anything around, if no start despawning
-            //if (m_VistedRoads.Count == 0) 
-            //{
-            //    m_Dir = Vector2Int.zero;
-            //    return;
-            //}
-
             //look into the queue to see if theres any other previous roads
             //if queue is empty, reset the position to NPC current tile and reset the visited list
             if (m_RoadsQueue.Count == 0)
@@ -141,6 +136,18 @@ public class NPC : MonoBehaviour
         }
     }
 
+    public bool CheckRoadsAroundExist(Vector2Int currTile)
+    {
+        RoadManager roadManager = MapManager.GetInstance().GetRoadManager();
+        if (roadManager == null)
+            return false;
+
+        return roadManager.CheckMapAvailability(currTile + new Vector2Int(0, 1)) ||
+            roadManager.CheckMapAvailability(currTile + new Vector2Int(0, -1)) ||
+            roadManager.CheckMapAvailability(currTile + new Vector2Int(1, 0)) ||
+            roadManager.CheckMapAvailability(currTile + new Vector2Int(-1, 0));
+    }
+
     public void InitNextTile(Vector2Int nextTile)
     {
         m_NextTile = nextTile;
@@ -156,6 +163,21 @@ public class NPC : MonoBehaviour
         {
             m_NPCAnimator.SetFloat("HorizontalX", m_Dir.x);
             m_NPCAnimator.SetFloat("VerticalY", m_Dir.y);
+        }
+    }
+
+    //when player remove roads in editor, NPC check if road still exist
+    public void PlayerRemoveRoads()
+    {
+        RoadManager roadManager = MapManager.GetInstance().GetRoadManager();
+        if (roadManager != null)
+        {
+            //check if curr or next road still exist, or if theres any roads around
+            if (!CheckRoadsAroundExist(m_CurrentTile) || !roadManager.CheckMapAvailability(m_CurrentTile) || !roadManager.CheckMapAvailability(m_NextTile))
+            {
+                gameObject.SetActive(false); //set inactive if doesnt exist
+                return;
+            }
         }
     }
 }
