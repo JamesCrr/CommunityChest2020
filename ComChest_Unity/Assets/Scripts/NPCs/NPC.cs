@@ -8,6 +8,12 @@ public class NPC : MonoBehaviour
     [Tooltip("The max distance it needs to be from the grid tile center to be considered it reached that grid")]
     float m_OffsetFromMiddle = 0.001f;
 
+    [Header("Animation")]
+    [SerializeField]
+    Animator m_NPCAnimator;
+    [SerializeField]
+    Vector2 m_MinMaxAnimationSpeed = new Vector2(0.1f, 0.5f);
+
     float m_Speed = 1.0f;
     Vector2 m_Dir = Vector2Int.zero;
 
@@ -40,6 +46,9 @@ public class NPC : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //TODO:: Make the check more reliable through the if else checking instead of distance
+
+
         //reach the block then DFS next block
         if (m_NextTile == MapManager.GetInstance().GetWorldPosToCellPos(transform.position))
         {
@@ -142,6 +151,11 @@ public class NPC : MonoBehaviour
         m_Dir = m_NextTile - m_CurrentTile;
         m_Dir.Normalize();
 
-        //TODO edit the animation here?
+        //update the animation of the NPC
+        if (m_NPCAnimator != null)
+        {
+            m_NPCAnimator.SetFloat("HorizontalX", m_Dir.x);
+            m_NPCAnimator.SetFloat("VerticalY", m_Dir.y);
+        }
     }
 }
