@@ -27,20 +27,17 @@ public class NPC : MonoBehaviour
     List<Vector2Int> m_RoadsQueue = new List<Vector2Int>();
     Vector2Int m_CurrentTile = Vector2Int.zero; //the current tile position theyre in
     Vector2Int m_NextTile = Vector2Int.zero; //the next tile position they need to go
-    
 
-    public void OnEnable()
-    {
-        Init(new Vector2Int(9, 4));
-    }
-
-    public void Init(Vector2Int currentTilePos)
+    public void Init(Vector2Int currentTilePos, AnimatorOverrideController animator = null)
     {
         m_CurrentTile = currentTilePos;
 
         //get the speed and set the animation speed accordingly
         m_Speed = Random.Range(m_MinMaxSpeed.x, m_MinMaxSpeed.y);
         m_NPCAnimator.speed = (m_Speed / m_MinMaxSpeed.y) * (m_MinMaxAnimationSpeed.y - m_MinMaxAnimationSpeed.x) + m_MinMaxAnimationSpeed.x;
+
+        //set the new animation type for the NPC
+        m_NPCAnimator.runtimeAnimatorController = animator;
 
         //register the transform position based on current tile pos
         if (MapManager.GetInstance() != null)
@@ -61,7 +58,8 @@ public class NPC : MonoBehaviour
             m_SpriteRenderer.color = Color.white;
 
         //check if theres anything around, if no road start despawning, this is to prevent infinite loop
-        if (!CheckRoadsAroundExist(m_CurrentTile))
+        RoadManager roadManager = MapManager.GetInstance().GetRoadManager();
+        if (!CheckRoadsAroundExist(m_CurrentTile) || !roadManager.CheckMapAvailability(m_CurrentTile))
         {
             gameObject.SetActive(false);
             return;
@@ -203,16 +201,23 @@ public class NPC : MonoBehaviour
     //when player remove roads in editor, NPC check if road still exist
     public void PlayerRemoveRoads()
     {
+        if (!CheckRoadPathExists())
+            gameObject.SetActive(false); //set inactive if doesnt exist
+    }
+
+    public bool CheckRoadPathExists()
+    {
         RoadManager roadManager = MapManager.GetInstance().GetRoadManager();
         if (roadManager != null)
         {
             //check if curr or next road still exist, or if theres any roads around
             if (!CheckRoadsAroundExist(m_CurrentTile) || !roadManager.CheckMapAvailability(m_CurrentTile) || !roadManager.CheckMapAvailability(m_NextTile))
             {
-                gameObject.SetActive(false); //set inactive if doesnt exist
-                return;
+                return false; //road doesnt exist
             }
         }
+
+        return true;
     }
 
     bool CheckAndEnterBuilding(Vector2Int currTile)
@@ -239,13 +244,13 @@ public class NPC : MonoBehaviour
 
     IEnumerator EnterBuildingAnim()
     {
-        //Color
+        //make it slowly fade away
         if (m_SpriteRenderer != null)
         {
             Color spriteColor = m_SpriteRenderer.color;
             while (spriteColor.a > 0)
             {
-                spriteColor.a = Mathf.Lerp(spriteColor.a, 0.0f, Time.deltaTime * m_FadeOutSpeed);
+                spriteColor.a -= Time.deltaTime * m_FadeOutSpeed;
                 m_SpriteRenderer.color = spriteColor;
                 yield return null;
             }
