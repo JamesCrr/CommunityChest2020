@@ -19,6 +19,12 @@ public class NPCManager : SingletonBase<NPCManager>
         m_NPCObjectPooler.Init();
         m_SpawnTimer = 0.0f;
         m_EditorModeActive = false;
+
+        RoadManager roadManager = MapManager.GetInstance().GetRoadManager();
+        if (roadManager != null)
+        {
+            roadManager.OnRoadModifiedAndDeleatedCallback += RoadsRemoved;
+        }
     }
 
     //TODO:: spawn timer is temp, create algorithm to change spawn rate depending on population and building number
@@ -82,7 +88,7 @@ public class NPCManager : SingletonBase<NPCManager>
             m_BuildingEntrances.Add(gridPos, true);
     }
 
-    //TODO:: IF BUILDING DELEATED MUST REMOVE THE ENTRANC
+    //IF BUILDING DELEATED MUST REMOVE THE ENTRANC
     public void RemoveBuildingEntrance(Vector2Int gridPos)
     {
         if (m_BuildingEntrances.ContainsKey(gridPos))
@@ -97,7 +103,7 @@ public class NPCManager : SingletonBase<NPCManager>
 
         Transform npcParent = m_NPCObjectPooler.GetNPCParent();
         if (npcParent != null)
-            npcParent.gameObject.SetActive(active);
+            npcParent.gameObject.SetActive(!active);
 
         m_EditorModeActive = active;
     }

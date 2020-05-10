@@ -257,6 +257,7 @@ public class MapManager : MonoBehaviour
             SetRemovalBrush(false);
             m_TemplateBuilding.gameObject.SetActive(true);
             m_TemplateBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_TemplateBuildingID));
+            PlayerOpenAddEditorMode();
         }
         else
         {
@@ -279,7 +280,10 @@ public class MapManager : MonoBehaviour
     public void SetRemovalBrush(bool newValue)
     {
         if (newValue)
+        {
             SetPlacementBrush(false);
+            PlayerOpenRemovalEditorModeStop();
+        }
         else
         {
             for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
@@ -300,7 +304,18 @@ public class MapManager : MonoBehaviour
         //roadmanager checks if anything is added during the editor session
         if (m_RoadManager != null)
             m_RoadManager.CheckAndInvokeAddingOfRoadsCallback();
+
+        if (NPCManager.Instance != null)
+            NPCManager.Instance.PlayerEditorModeActive(false);
     }
+
+    public void PlayerOpenAddEditorMode()
+    {
+        //open NPC player editor mode
+        if (NPCManager.Instance != null)
+            NPCManager.Instance.PlayerEditorModeActive(true);
+    }
+
     /// <summary>
     /// When player is out of removing editor mode
     /// </summary>
@@ -309,6 +324,17 @@ public class MapManager : MonoBehaviour
         //roadmanager checks if anything is removed during the editor session
         if (m_RoadManager != null)
             m_RoadManager.CheckAndInvokeRemovalOfRoadsCallback();
+
+        //close NPC player editor mode
+        if (NPCManager.Instance != null)
+            NPCManager.Instance.PlayerEditorModeActive(false);
+    }
+
+    public void PlayerOpenRemovalEditorModeStop()
+    {
+        //open NPC player editor mode
+        if (NPCManager.Instance != null)
+            NPCManager.Instance.PlayerEditorModeActive(true);
     }
 
     #endregion

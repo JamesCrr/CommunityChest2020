@@ -77,7 +77,8 @@ MonoBehaviour:
   bDontDestroyOnLoad: 0
   bUseRootTransform: 0
   m_NPCObjectPooler:
-    m_NPCPrefab: {fileID: 0}
+    m_NPCPrefab: {fileID: 639563636014184859, guid: ba1e16c6878a5f7449e7f2f0fa200697,
+      type: 3}
     m_NPCParent: {fileID: 5592154287231792162}
     m_PoolNumber: 5
     m_MaxNpcs: 15

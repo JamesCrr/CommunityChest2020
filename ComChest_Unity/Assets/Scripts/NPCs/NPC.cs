@@ -28,6 +28,11 @@ public class NPC : MonoBehaviour
     Vector2Int m_CurrentTile = Vector2Int.zero; //the current tile position theyre in
     Vector2Int m_NextTile = Vector2Int.zero; //the next tile position they need to go
 
+    public void OnEnable()
+    {
+        UpdateMovementAnimation();
+    }
+
     public void Init(Vector2Int currentTilePos, AnimatorOverrideController animator = null)
     {
         m_CurrentTile = currentTilePos;
@@ -60,6 +65,7 @@ public class NPC : MonoBehaviour
 
         m_Dir = Vector2Int.zero;
         m_VistedRoads.Clear();
+        m_RoadsQueue.Clear();
         m_GoingIntoBuilding = false;
 
         if (m_SpriteRenderer != null)
@@ -158,7 +164,7 @@ public class NPC : MonoBehaviour
         {
             m_RoadsQueue.Add(m_CurrentTile);
 
-            int randomNeighbourIndex = Random.Range(0, neighbourRoads.Count - 1);
+            int randomNeighbourIndex = Random.Range(0, neighbourRoads.Count);
             InitNextTile(neighbourRoads[randomNeighbourIndex]);
         }
     }
@@ -203,6 +209,10 @@ public class NPC : MonoBehaviour
     {
         if (!CheckRoadPathExists())
             gameObject.SetActive(false); //set inactive if doesnt exist
+
+        //clear roads visited
+        m_VistedRoads.Clear();
+        m_RoadsQueue.Clear();
     }
 
     public bool CheckRoadPathExists()
