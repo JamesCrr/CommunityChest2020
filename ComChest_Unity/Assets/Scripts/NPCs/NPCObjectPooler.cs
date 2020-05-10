@@ -5,6 +5,7 @@ using UnityEngine;
 public class NPCObjectPooler 
 {
     [SerializeField] GameObject m_NPCPrefab;
+    [SerializeField] Transform m_NPCParent;
     [SerializeField] int m_PoolNumber = 5;
     [SerializeField] int m_MaxNpcs = 10;
 
@@ -39,6 +40,8 @@ public class NPCObjectPooler
         for (int i = 0; i < number; ++i)
         {
             GameObject newNPC = GameObject.Instantiate(m_NPCPrefab);
+            if (m_NPCParent != null)
+                newNPC.transform.parent = m_NPCParent;
             newNPC.SetActive(false);
 
             NPC npc = newNPC.GetComponent<NPC>();
@@ -50,5 +53,10 @@ public class NPCObjectPooler
     public List<NPC> GetNPCList()
     {
         return m_NPCList;
+    }
+
+    public Transform GetNPCParent()
+    {
+        return m_NPCParent;
     }
 }

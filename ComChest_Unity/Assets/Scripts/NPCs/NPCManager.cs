@@ -11,12 +11,14 @@ public class NPCManager : SingletonBase<NPCManager>
 
     Dictionary<Vector2Int, bool> m_BuildingEntrances = new Dictionary<Vector2Int, bool>();
     float m_SpawnTimer = 0.0f;
+    bool m_EditorModeActive = false;
 
     // Start is called before the first frame update
     void Start()
     {
         m_NPCObjectPooler.Init();
         m_SpawnTimer = 0.0f;
+        m_EditorModeActive = false;
     }
 
     //TODO:: spawn timer is temp, create algorithm to change spawn rate depending on population and building number
@@ -25,6 +27,10 @@ public class NPCManager : SingletonBase<NPCManager>
     // Update is called once per frame
     void Update()
     {
+        //dont need spawn any NPC if player is in brush mode
+        if (m_EditorModeActive)
+            return;
+
         //when theres an entrance for them to spawn
         if (m_BuildingEntrances.Count == 0)
             return;
@@ -60,7 +66,14 @@ public class NPCManager : SingletonBase<NPCManager>
     //if yes, remove those NPCs, set them inactive
     public void RoadsRemoved()
     {
+        if (m_NPCObjectPooler == null)
+            return;
 
+        List<NPC> npcList = m_NPCObjectPooler.GetNPCList();
+        foreach (NPC npc in npcList)
+        {
+            npc.PlayerRemoveRoads();
+        }
     }
 
     public void AddBuildingEntrance(Vector2Int gridPos)
@@ -74,6 +87,19 @@ public class NPCManager : SingletonBase<NPCManager>
     {
         if (m_BuildingEntrances.ContainsKey(gridPos))
             m_BuildingEntrances.Remove(gridPos);
+    }
+
+    //when player is in brush mode and editing the map
+    public void PlayerEditorModeActive(bool active)
+    {
+        if (m_NPCObjectPooler == null)
+            return;
+
+        Transform npcParent = m_NPCObjectPooler.GetNPCParent();
+        if (npcParent != null)
+            npcParent.gameObject.SetActive(active);
+
+        m_EditorModeActive = active;
     }
 
     //checks whether its on the building's 'door'

@@ -32,6 +32,14 @@ public class NPC : MonoBehaviour
     {
         m_CurrentTile = currentTilePos;
 
+        //check if theres anything around, if no road start despawning, this is to prevent infinite loop
+        RoadManager roadManager = MapManager.GetInstance().GetRoadManager();
+        if (!CheckRoadsAroundExist(m_CurrentTile) || !roadManager.CheckMapAvailability(m_CurrentTile))
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         //get the speed and set the animation speed accordingly
         m_Speed = Random.Range(m_MinMaxSpeed.x, m_MinMaxSpeed.y);
         m_NPCAnimator.speed = (m_Speed / m_MinMaxSpeed.y) * (m_MinMaxAnimationSpeed.y - m_MinMaxAnimationSpeed.x) + m_MinMaxAnimationSpeed.x;
@@ -56,14 +64,6 @@ public class NPC : MonoBehaviour
 
         if (m_SpriteRenderer != null)
             m_SpriteRenderer.color = Color.white;
-
-        //check if theres anything around, if no road start despawning, this is to prevent infinite loop
-        RoadManager roadManager = MapManager.GetInstance().GetRoadManager();
-        if (!CheckRoadsAroundExist(m_CurrentTile) || !roadManager.CheckMapAvailability(m_CurrentTile))
-        {
-            gameObject.SetActive(false);
-            return;
-        }
 
         DFSNextRoad(m_CurrentTile); //get the next tile to go to
     }
