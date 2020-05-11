@@ -29,6 +29,14 @@ public class RoadBuildings : BaseBuildingsClass
             NPCManager.Instance.AddBuildingEntrance(m_RoadGridPos); //add the entrance to the road
     }
 
+    public override void BuildingRemoved()
+    {
+        base.BuildingRemoved();
+
+        if (NPCManager.Instance != null)
+            NPCManager.Instance.RemoveBuildingEntrance(m_RoadGridPos); //remove the entrance to the road
+    }
+
     public void CheckRoadConnectionAfterRoadAdded()
     {
         if (m_RoadConnected)
