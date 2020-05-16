@@ -20,13 +20,21 @@ public class BuildingData : ScriptableObject
     Vector2 m_SpriteGO_OffsetPosition = Vector2.zero;
     Vector2 m_BottomLeftCorner_OffsetPosition = Vector2.zero;
 
-    [Header("UI Shiz")]
-    [SerializeField] 
-    string m_BuildingDescription;
+    [Header("UI Info")]
     [SerializeField]
     bool m_HasUI = false;
     [SerializeField]
     GameObject m_UIObject = null;
+
+    [Header("Shop UI Info")]
+    [SerializeField]
+    string m_BuildingDescription;
+    [SerializeField]
+    int m_BuildingPrice = 100;
+    [SerializeField]
+    bool m_IsSoldInShop = true;
+    [SerializeField]
+    ShopItemType m_ShopItemType = ShopItemType.BUILDINGS;
 
     //for resources
     [Header("Resources Produced Data")]
@@ -105,7 +113,9 @@ public class BuildingData : ScriptableObject
     {
         get { return m_ResourceProduced; }
     }
+    #endregion
 
+    #region UI
     public Vector2 GetResourceUIOffset
     {
         get { return m_ResourceUIOffset; }
@@ -116,10 +126,10 @@ public class BuildingData : ScriptableObject
         return m_HasUI;
     }
 
-    public GameObject GetUIObject()
-    {
-        return m_UIObject;
-    }
+    public bool GetIsSoldInShop() { return m_IsSoldInShop; }
+    public ShopItemType GetShopItemType() { return m_ShopItemType; }
+    public int GetPrice() { return m_BuildingPrice; }
+    public GameObject GetUIObject() { return m_UIObject; }
     #endregion
 
     #region roadGetters
