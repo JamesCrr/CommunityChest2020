@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
 
 public class ShopItemCardUI : MonoBehaviour
 {
@@ -44,9 +41,18 @@ public class ShopItemCardUI : MonoBehaviour
         m_BuildingType = m_BuildingData.GetBuildingType();
     }
 
-    void OnBuy()
+    public void OnClicked()
     {
+        if (MapManager.GetInstance() == null)
+            return;
+
+        //close the shop menu UI
+        IngameUIManager.instance.SetShopMenuActive(false);
+
         //open the brush mode
-        //pass the building type
+        MapManager.GetInstance().SetPlacementBrush(true, m_BuildingType);
+        
+        //activate UI for placement
+
     }
 }

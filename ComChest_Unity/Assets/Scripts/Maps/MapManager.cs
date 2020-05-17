@@ -12,6 +12,7 @@ public class MapManager : MonoBehaviour
     // To store the buildings currently on the map
     Dictionary<Vector2Int, BaseBuildingsClass> m_DictOfBuildingsOnMap = new Dictionary<Vector2Int,BaseBuildingsClass>();
     [Header("Placement of Buildings")]      // Handle placement of Buildings into Map
+    [SerializeField] Transform m_BuildingParent;
     BaseBuildingsClass m_TemplateBuilding = null;
     BuildingDataBase.BUILDINGS m_TemplateBuildingID = BuildingDataBase.BUILDINGS.B_POND;
     bool m_PlacmentBrushActive = false;
@@ -25,6 +26,7 @@ public class MapManager : MonoBehaviour
     [Header("Roads")]
     [SerializeField]
     BaseBuildingsClass m_MainRoad; //the main road, not deleatable
+    [SerializeField] Transform m_RoadParent;
     RoadManager m_RoadManager = new RoadManager();
 
     static MapManager m_Instance = null;
@@ -213,6 +215,16 @@ public class MapManager : MonoBehaviour
                 return null;
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
+
+        //set the correct parent
+        if (newBuilding.GetBuildingType() == BuildingDataBase.BUILDINGS.B_ROAD)
+        {
+            newBuilding.gameObject.transform.SetParent(m_RoadParent);
+        }
+        else
+        {
+            newBuilding.gameObject.transform.SetParent(m_BuildingParent);
+        }
 
         AddBuildingIntoTrackingDictionary(newBuilding); //roads and buildings store accordingly
         newBuilding.BuildingPlaced();
