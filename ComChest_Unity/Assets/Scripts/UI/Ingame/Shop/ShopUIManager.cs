@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public enum ShopItemType
 {
     BUILDINGS,
-    //DECORATIONS,
+    DECORATIONS,
     TOTAL_TYPE,
 }
 
@@ -13,13 +12,14 @@ public class ShopUIManager : MonoBehaviour
 {
     [SerializeField] Transform[] m_ShopCategoriesParents; //get the parents of the different categories
     [SerializeField] GameObject m_ItemCardUIPrefab;
+    [Tooltip("The first shop page the player will always go to")]
+    [SerializeField] ShopItemType m_MainShopCategory = ShopItemType.BUILDINGS;
 
     // Start is called before the first frame update
     void Start()
     {
         //get from the building database the different buildings
-        //BuildingDataBase.GetInstance().get
-        //make an array of list
+        //make an array of list to store the different categories
         List<BuildingData>[] tempBuildingDataStorage = new List<BuildingData>[(int)ShopItemType.TOTAL_TYPE];
         for (int i =0; i < (int)ShopItemType.TOTAL_TYPE; ++i)
         {
@@ -47,13 +47,13 @@ public class ShopUIManager : MonoBehaviour
             SortBuildings sortBuildings = new SortBuildings();
             tempBuildingDataStorage[i].Sort(sortBuildings);
 
+            //make sure parent exist first
+            if (i >= m_ShopCategoriesParents.Length)
+                break;
+
             //spawn the prefabs and add to the correct parent
             foreach (BuildingData buildingData in tempBuildingDataStorage[i])
             {
-                //make sure parent exist first
-                if (i >= m_ShopCategoriesParents.Length)
-                    break;
-
                 GameObject itemCard = Instantiate(m_ItemCardUIPrefab, m_ShopCategoriesParents[i]);
 
                 //init the UI with the building info accordingly
@@ -64,11 +64,18 @@ public class ShopUIManager : MonoBehaviour
                 shopItemCardUI.Init(buildingData);
             }
 
-            //TODO:: clear the list
+            //clear the list
+            tempBuildingDataStorage[i].Clear();
         }
 
-        //TODO:: set the shop category inactive and active accordingly
+        //set the shop category inactive and active accordingly
+        for (int i = 0; i < m_ShopCategoriesParents.Length; ++i)
+        {
+            if (m_ShopCategoriesParents[i] == null)
+                continue;
 
+            m_ShopCategoriesParents[i].gameObject.SetActive(i == (int)m_MainShopCategory);
+        }
     }
 
     //class to help compare and sort the buildings in ascending order
