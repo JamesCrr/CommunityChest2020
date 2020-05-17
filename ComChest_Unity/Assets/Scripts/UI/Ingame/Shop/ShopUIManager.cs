@@ -15,6 +15,11 @@ public class ShopUIManager : MonoBehaviour
     [Tooltip("The first shop page the player will always go to")]
     [SerializeField] ShopItemType m_MainShopCategory = ShopItemType.BUILDINGS;
 
+    public void OnEnable()
+    {
+        InitCategoryShown();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -69,6 +74,12 @@ public class ShopUIManager : MonoBehaviour
         }
 
         //set the shop category inactive and active accordingly
+        InitCategoryShown();
+    }
+
+    //shows the default page 
+    public void InitCategoryShown()
+    {
         for (int i = 0; i < m_ShopCategoriesParents.Length; ++i)
         {
             if (m_ShopCategoriesParents[i] == null)

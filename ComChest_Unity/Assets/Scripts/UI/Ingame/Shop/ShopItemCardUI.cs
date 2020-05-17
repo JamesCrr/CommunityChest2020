@@ -43,16 +43,11 @@ public class ShopItemCardUI : MonoBehaviour
 
     public void OnClicked()
     {
-        if (MapManager.GetInstance() == null)
+        if (IngameUIManager.instance == null)
             return;
 
-        //close the shop menu UI
+        //close shop and activate UI for placement
         IngameUIManager.instance.SetShopMenuActive(false);
-
-        //open the brush mode
-        MapManager.GetInstance().SetPlacementBrush(true, m_BuildingType);
-        
-        //activate UI for placement
-
+        IngameUIManager.instance.PlayerInBuildModeUI(true, m_BuildingType);
     }
 }

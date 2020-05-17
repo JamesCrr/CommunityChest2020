@@ -13,8 +13,9 @@ public class IngameUIManager : MonoBehaviour
     #endregion
 
     [Header("UI Pages")]
-    [SerializeField] GameObject m_ShopMenu;
-    [SerializeField] GameObject m_InGameMenu;
+    [SerializeField] GameObject m_ShopMenu;//the shop menu
+    [SerializeField] GameObject m_InGameMenu; //things on the UI like build button etc.
+    [SerializeField] GameObject m_PlayerInBuildModeUI;
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class IngameUIManager : MonoBehaviour
     void Start()
     {
         m_ShopMenu.SetActive(false);
+        m_PlayerInBuildModeUI.SetActive(false);
     }
 
     #region MenuTogglers
@@ -36,13 +38,33 @@ public class IngameUIManager : MonoBehaviour
             m_ShopMenu.SetActive(active);
     }
 
+    public void SetInGameMenuActive(bool active)
+    {
+        if (m_InGameMenu != null)
+            m_InGameMenu.SetActive(active);
+    }
+
     public void OpenShopMenu(bool open)
     {
         SetShopMenuActive(open);
 
         //close some of the ingame menus
-        if (m_InGameMenu != null)
-            m_InGameMenu.SetActive(!open);
+        SetInGameMenuActive(!open);
+    }
+
+    //when player is placing down deco or buildings
+    public void PlayerInBuildModeUI(bool buildModeActive, BuildingDataBase.BUILDINGS buildingType = BuildingDataBase.BUILDINGS.B_LAVA)
+    {
+        //set up the build mode UI
+        if (m_PlayerInBuildModeUI != null)
+            m_PlayerInBuildModeUI.SetActive(buildModeActive);
+
+        //set up the original UI
+        SetInGameMenuActive(!buildModeActive);
+
+        //open the brush mode
+        if (MapManager.GetInstance() != null)
+            MapManager.GetInstance().SetPlacementBrush(buildModeActive, buildingType);
     }
     #endregion !MenuTogglers
 }
