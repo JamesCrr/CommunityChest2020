@@ -41,6 +41,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Buildings
+    uniqueID: 1459933869
+    locked: 0
+  - name: NPC
+    uniqueID: 3948539775
+    locked: 0
   - name: ResourceUI
     uniqueID: 1643951645
     locked: 0
