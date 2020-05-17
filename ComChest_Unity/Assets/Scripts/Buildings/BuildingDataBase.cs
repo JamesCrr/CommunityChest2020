@@ -13,6 +13,8 @@ public class BuildingDataBase : MonoBehaviour
 
         B_CC,
         B_ROAD,
+        B_FOODCOURT,
+        B_MUSEUM,
 
         B_TOTAL
     }

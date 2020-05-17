@@ -188,9 +188,19 @@ public class MapManager : MonoBehaviour
         AddBuildingIntoTrackingDictionary(activeBuildingCom); //roads and buildings store accordingly
         activeBuildingCom.BuildingPlaced();
 
-        // Change Sprite Layer back to default
-        activeBuildingCom.SetSpriteObjectLayer(0);
+        // Change Sprite Layer back to building layer
+        activeBuildingCom.SetSpriteObjectLayer(1);
         activeBuildingCom.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(activeBuildingCom.GetBuildingType()).GetBuildingName();
+
+        //set the correct parent
+        if (activeBuildingCom.GetBuildingType() == BuildingDataBase.BUILDINGS.B_ROAD)
+        {
+            activeBuildingCom.gameObject.transform.SetParent(m_RoadParent);
+        }
+        else
+        {
+            activeBuildingCom.gameObject.transform.SetParent(m_BuildingParent);
+        }
 
         return activeBuildingCom;
     }
@@ -216,6 +226,9 @@ public class MapManager : MonoBehaviour
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
 
+        AddBuildingIntoTrackingDictionary(newBuilding); //roads and buildings store accordingly
+        newBuilding.BuildingPlaced();
+
         //set the correct parent
         if (newBuilding.GetBuildingType() == BuildingDataBase.BUILDINGS.B_ROAD)
         {
@@ -225,9 +238,6 @@ public class MapManager : MonoBehaviour
         {
             newBuilding.gameObject.transform.SetParent(m_BuildingParent);
         }
-
-        AddBuildingIntoTrackingDictionary(newBuilding); //roads and buildings store accordingly
-        newBuilding.BuildingPlaced();
 
         // Change Sprite Layer back to default
         newBuilding.SetSpriteObjectLayer(0);

@@ -17,10 +17,15 @@ MonoBehaviour:
   m_BuildingSizeOnMap: {x: 6, y: 6}
   m_BuildingSprite: {fileID: 21300000, guid: c04c10a5c02ac494faa63eca66e540b2, type: 3}
   m_BuildingType: 5
-  m_CustomBuildingObject: {fileID: 0}
-  m_BuildingDescription: 
+  m_CustomBuildingObject: {fileID: 3134514589357339514, guid: 18cbfb22cf4a510408105b61e7375cbb,
+    type: 3}
   m_HasUI: 0
   m_UIObject: {fileID: 0}
+  m_BuildingDescription: 
+  m_BuildingPrice: 50
+  m_IsSoldInShop: 0
+  m_ShopItemType: 0
   m_GenerateResourceTime: 0
   m_ResourceProduced: 0
   m_AmtResourceGiven: 0
+  m_RoadOffset: {x: 3, y: -1}

@@ -26,4 +26,4 @@ MonoBehaviour:
   m_GenerateResourceTime: 1
   m_ResourceProduced: 1
   m_AmtResourceGiven: 2
-  m_RoadOffset: {x: 1, y: -1}
+  m_RoadOffset: {x: 2, y: -1}
