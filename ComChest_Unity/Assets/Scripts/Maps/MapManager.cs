@@ -279,7 +279,8 @@ public class MapManager : MonoBehaviour
             SetRemovalBrush(false);
             m_TemplateBuilding.gameObject.SetActive(true);
             m_TemplateBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_TemplateBuildingID));
-            PlayerOpenAddEditorMode();
+
+            PlayerOpenAddEditorMode(m_TemplateBuilding);
         }
         else
         {
@@ -329,13 +330,26 @@ public class MapManager : MonoBehaviour
 
         if (NPCManager.Instance != null)
             NPCManager.Instance.PlayerEditorModeActive(false);
+
+        IngameUIManager.instance.BuildModeUIClose();
     }
 
-    public void PlayerOpenAddEditorMode()
+    public void PlayerOpenAddEditorMode(BaseBuildingsClass building)
     {
         //open NPC player editor mode
         if (NPCManager.Instance != null)
             NPCManager.Instance.PlayerEditorModeActive(true);
+
+        //set UI
+        if (building != null)
+        {
+            SpriteRenderer buildingSprite = building.GetSpriteRenderer();
+            if (buildingSprite != null)
+            {
+                Vector2 uiOffset = new Vector2(0.0f, buildingSprite.bounds.size.y / 2.0f);
+                IngameUIManager.instance.BuildModeUIOpen(building.GetSpriteGO().transform, uiOffset, building.GetBuildingSizeOnMap());
+            }
+        }
     }
 
     /// <summary>

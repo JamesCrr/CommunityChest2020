@@ -2,15 +2,6 @@
 
 public class PlaceItemInteractButton : InteractableObjBase
 {
-    [SerializeField] Transform m_MainParent;
-
-    public void OnDisable()
-    {
-        //go to the original parent
-        if (m_MainParent != null)
-            transform.SetParent(m_MainParent);
-    }
-
     //place building when clicked
     public override void OnInteract()
     {
