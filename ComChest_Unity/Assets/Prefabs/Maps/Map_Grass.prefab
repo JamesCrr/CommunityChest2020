@@ -60,6 +60,11 @@ MonoBehaviour:
     buildingID: 3
     debugColor: {r: 0.018689923, g: 0.7924528, b: 0.7102368, a: 1}
     spawnGridPositions: []
+  m_ListOfStartingResources:
+  - resourceID: 0
+    value: 500
+  - resourceID: 1
+    value: 100
   m_DrawDebug: 1
   m_DebugColor: {r: 0, g: 0, b: 1, a: 1}
 --- !u!1 &1255820143789706107

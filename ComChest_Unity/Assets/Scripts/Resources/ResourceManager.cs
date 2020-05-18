@@ -12,7 +12,11 @@ public class ResourceManager : MonoBehaviour
 
         R_NONE
     }
+    // To hold all of the resources
     Dictionary<RESOURCES, int> m_DictOfResources = new Dictionary<RESOURCES, int>();
+    // Resources Changed Action
+    public delegate void ResourceChangedAction();
+    public static event ResourceChangedAction OnResourceChanged;
 
     static ResourceManager m_Instance = null;
     public static ResourceManager GetInstance() { return m_Instance; }
@@ -25,11 +29,18 @@ public class ResourceManager : MonoBehaviour
         }
         m_Instance = this;
         DontDestroyOnLoad(gameObject);
+        // Allocate Dict space
+        for(int i = 0; i < (int)RESOURCES.R_NONE; ++i)
+        {
+            m_DictOfResources.Add((RESOURCES)i, 0);
+        } 
     }
 
-    void SetResource(RESOURCES _id, int _value)
+    public void SetResource(RESOURCES _id, int _value)
     {
         m_DictOfResources[_id] = _value;
+        // Fire resource changed event
+        OnResourceChanged();
     }
-    int GetResource(RESOURCES _id) { return m_DictOfResources[_id]; }
+    public int GetResource(RESOURCES _id) { return m_DictOfResources[_id]; }
 }

@@ -11,6 +11,9 @@ public class BaseMapClass : MonoBehaviour
     [Header("Map Details")]
     [SerializeField]
     List<MapStartingBuildings> m_ListOfBuildingsToBuildAtSpawn = new List<MapStartingBuildings>();
+    [Header("Resource Details")]
+    [SerializeField]
+    List<MapStartingResource> m_ListOfStartingResources = new List<MapStartingResource>();
     [Header("Debug")]
     [SerializeField]
     bool m_DrawDebug = false;
@@ -36,12 +39,18 @@ public class BaseMapClass : MonoBehaviour
 
     protected virtual void MapWasGenerated()
     {
+        // Spawn buildings to build at spawn
         foreach (MapStartingBuildings building in m_ListOfBuildingsToBuildAtSpawn)
         {
             foreach (Vector2Int pos in building.spawnGridPositions)
             {
                 MapManager.GetInstance().PlaceNewBuildingIntoMap(pos, building.buildingID);
             }
+        }
+        // Allocate resources
+        foreach(MapStartingResource resource in m_ListOfStartingResources)
+        {
+            ResourceManager.GetInstance().SetResource(resource.resourceID, resource.value);
         }
     }
 
@@ -100,5 +109,10 @@ public class MapStartingBuildings
     public BuildingDataBase.BUILDINGS buildingID = BuildingDataBase.BUILDINGS.B_TOTAL;
     public Color debugColor = Color.red;
     public List<Vector2Int> spawnGridPositions = new List<Vector2Int>();
-    
+}
+[System.Serializable]
+public class MapStartingResource
+{
+    public ResourceManager.RESOURCES resourceID;
+    public int value;
 }
