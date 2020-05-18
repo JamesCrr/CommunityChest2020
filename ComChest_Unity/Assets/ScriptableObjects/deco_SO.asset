@@ -26,6 +26,6 @@ MonoBehaviour:
   m_IsSoldInShop: 1
   m_ShopItemType: 0
   m_GenerateResourceTime: 0
-  m_ResourceProduced: 0
+  m_ResourceProduced: 1
   m_AmtResourceGiven: 0
   m_RoadOffset: {x: 0, y: 0}

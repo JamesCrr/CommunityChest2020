@@ -72,6 +72,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b279fff1f43753e4592ecb24dcccebd0, type: 2}
   - {fileID: 11400000, guid: dc7a56a495968714e9d3ff23536dfc23, type: 2}
   - {fileID: 11400000, guid: 420676219430f08449e33f72718a9c70, type: 2}
+  - {fileID: 11400000, guid: 866219375a59d2b43a831f95dfcdd160, type: 2}
+  - {fileID: 11400000, guid: bcf393754a8c4eb4db672ecac61128ba, type: 2}
   m_RoadSpriteInfo:
   - m_RoadType: 0
     m_RoadSprite: {fileID: -5289148843455750591, guid: 793c6b70b89963a4b946d62eff7ea838,
@@ -243,7 +245,7 @@ MonoBehaviour:
   bDontDestroyOnLoad: 0
   bUseRootTransform: 0
   m_ResourceSpriteData:
-  - m_ResourceType: 1
+  - m_ResourceType: 0
     m_ResourceImage: {fileID: 21300000, guid: f7e4c13f509b08641b5b4d3b50f20145, type: 3}
   m_ResourceBubblePrefab: {fileID: 231376717111878049, guid: 7291cf61f0b06834ea4114066caaf682,
     type: 3}

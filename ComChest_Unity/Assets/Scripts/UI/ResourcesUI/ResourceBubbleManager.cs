@@ -5,7 +5,7 @@ using System;
 [Serializable]
 public struct ResourceSprites
 {
-    public BuildingDataBase.RESOURCES m_ResourceType;
+    public ResourceManager.RESOURCES m_ResourceType;
     public Sprite m_ResourceImage;
 }
 
@@ -13,7 +13,7 @@ public class ResourceBubbleManager : SingletonBase<ResourceBubbleManager>
 {
     public List<ResourceSprites> m_ResourceSpriteData;
     public GameObject m_ResourceBubblePrefab;
-    private Dictionary<BuildingDataBase.RESOURCES, Sprite> m_ResourceSpriteStorage = new Dictionary<BuildingDataBase.RESOURCES, Sprite>();
+    private Dictionary<ResourceManager.RESOURCES, Sprite> m_ResourceSpriteStorage = new Dictionary<ResourceManager.RESOURCES, Sprite>();
 
     List<GameObject> m_ResourceUIList = new List<GameObject>();
 
@@ -25,7 +25,7 @@ public class ResourceBubbleManager : SingletonBase<ResourceBubbleManager>
         }
     }
 
-    public void InitResourceBubbleUI(BuildingDataBase.RESOURCES type, int amt, Vector2 pos, ResourceBuildings resourceBuildingObj)
+    public void InitResourceBubbleUI(ResourceManager.RESOURCES type, int amt, Vector2 pos, ResourceBuildings resourceBuildingObj)
     {
         ResourceBubbleUI resourceBubble = GetBubbleUI(type);
         if (resourceBubble == null)
@@ -35,7 +35,7 @@ public class ResourceBubbleManager : SingletonBase<ResourceBubbleManager>
             resourceBubble.Init(type, amt, pos, m_ResourceSpriteStorage[type], resourceBuildingObj);
     }
 
-    public ResourceBubbleUI GetBubbleUI(BuildingDataBase.RESOURCES type)
+    public ResourceBubbleUI GetBubbleUI(ResourceManager.RESOURCES type)
     {
         foreach (GameObject resourceUI in m_ResourceUIList)
         {

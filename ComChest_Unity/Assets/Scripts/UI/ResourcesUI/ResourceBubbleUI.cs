@@ -4,12 +4,12 @@ public class ResourceBubbleUI : InteractableObjBase
 {
     public SpriteRenderer m_ResourceSprite;
 
-    private BuildingDataBase.RESOURCES m_ResourceType;
+    private ResourceManager.RESOURCES m_ResourceType;
     private int m_AmtGiven;
 
     private ResourceBuildings m_ResourcedBuildingOwner; //who it belongs to
 
-    public void Init(BuildingDataBase.RESOURCES type, int amt, Vector2 pos, Sprite resourceSprite, ResourceBuildings resourceBuildingOwner)
+    public void Init(ResourceManager.RESOURCES type, int amt, Vector2 pos, Sprite resourceSprite, ResourceBuildings resourceBuildingOwner)
     {
         m_ResourceType = type;
         m_AmtGiven = amt;
@@ -26,7 +26,7 @@ public class ResourceBubbleUI : InteractableObjBase
 
     public override void OnInteract()
     {
-        if (m_ResourceType == BuildingDataBase.RESOURCES.R_MONEY)
+        if (m_ResourceType == ResourceManager.RESOURCES.R_MONEY)
             PlayerDataManager.Instance.GetSetTotalMoney = PlayerDataManager.Instance.GetSetTotalMoney + m_AmtGiven;
 
         if (m_ResourcedBuildingOwner != null)

@@ -19,12 +19,6 @@ public class BuildingDataBase : MonoBehaviour
         B_TOTAL
     }
 
-    public enum RESOURCES        //possible resources produced
-    {
-        R_NONE,
-        R_MONEY
-    }
-
     [System.Serializable]
     public struct RoadTypeInfo
     {

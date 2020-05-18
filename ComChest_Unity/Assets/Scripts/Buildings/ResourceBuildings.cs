@@ -4,7 +4,7 @@ public class ResourceBuildings : RoadBuildings
 {
     [Header("Resource Info")]
     float m_GenerateResourceTime = 0.0f;
-    BuildingDataBase.RESOURCES m_ResourceTypeProduced = BuildingDataBase.RESOURCES.R_NONE;
+    ResourceManager.RESOURCES m_ResourceTypeProduced = ResourceManager.RESOURCES.R_NONE;
     int m_AmtResourceProduce = 0;
     Vector2 m_ResourceUIOffset;
 

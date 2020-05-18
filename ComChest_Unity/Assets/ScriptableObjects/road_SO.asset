@@ -19,9 +19,13 @@ MonoBehaviour:
     type: 3}
   m_BuildingType: 6
   m_CustomBuildingObject: {fileID: 0}
-  m_BuildingDescription: 
   m_HasUI: 1
   m_UIObject: {fileID: 0}
+  m_BuildingDescription: 
+  m_BuildingPrice: 100
+  m_IsSoldInShop: 1
+  m_ShopItemType: 0
   m_GenerateResourceTime: 0
-  m_ResourceProduced: 0
+  m_ResourceProduced: 1
   m_AmtResourceGiven: 0
+  m_RoadOffset: {x: 0, y: 0}

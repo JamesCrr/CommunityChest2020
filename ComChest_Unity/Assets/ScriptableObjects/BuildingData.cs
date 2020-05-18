@@ -41,7 +41,7 @@ public class BuildingData : ScriptableObject
     [SerializeField]
     float m_GenerateResourceTime = 0.0f;
     [SerializeField]
-    BuildingDataBase.RESOURCES m_ResourceProduced = BuildingDataBase.RESOURCES.R_NONE;
+    ResourceManager.RESOURCES m_ResourceProduced = ResourceManager.RESOURCES.R_NONE;
     [SerializeField]
     int m_AmtResourceGiven = 0;
     Vector2 m_ResourceUIOffset;
@@ -109,7 +109,7 @@ public class BuildingData : ScriptableObject
         get { return m_AmtResourceGiven; }
     }
 
-    public BuildingDataBase.RESOURCES GetResourceTypeProduced
+    public ResourceManager.RESOURCES GetResourceTypeProduced
     {
         get { return m_ResourceProduced; }
     }
