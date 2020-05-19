@@ -24,7 +24,8 @@ MonoBehaviour:
   m_BuildingDescription: Sometimes grass avoids these parts. Maybe a dog was here.
   m_BuildingPrice: 5
   m_IsSoldInShop: 1
-  m_ShopItemType: 0
+  m_ShopItemType: 1
+  m_ListOfResourcesNeeded: []
   m_GenerateResourceTime: 0
   m_ResourceProduced: 1
   m_AmtResourceGiven: 0

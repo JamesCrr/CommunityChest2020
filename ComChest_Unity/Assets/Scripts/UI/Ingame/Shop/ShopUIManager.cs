@@ -5,23 +5,27 @@ public enum ShopItemType
 {
     BUILDINGS,
     DECORATIONS,
+    ROAD,
     TOTAL_TYPE,
 }
 
-public class ShopUIManager : MonoBehaviour
+[System.Serializable]
+public class ShopUIManager
 {
-    [SerializeField] Transform[] m_ShopCategoriesParents; //get the parents of the different categories
+    [SerializeField] Transform[] m_ShopCategoriesParents; //where to spawn the pages
+    [SerializeField] GameObject[] m_ShopPages; //the gameobject sections
     [SerializeField] GameObject m_ItemCardUIPrefab;
     [Tooltip("The first shop page the player will always go to")]
-    [SerializeField] ShopItemType m_MainShopCategory = ShopItemType.BUILDINGS;
+    [SerializeField] ShopItemType m_DefaultShopCategory = ShopItemType.BUILDINGS;
+    [SerializeField] ShopButton[] m_ShopButtons;
 
-    public void OnEnable()
+    public void Active()
     {
-        InitCategoryShown();
+        InitCategoryShown(m_DefaultShopCategory);
     }
 
     // Start is called before the first frame update
-    void Start()
+    public void Init()
     {
         //get from the building database the different buildings
         //make an array of list to store the different categories
@@ -59,7 +63,7 @@ public class ShopUIManager : MonoBehaviour
             //spawn the prefabs and add to the correct parent
             foreach (BuildingData buildingData in tempBuildingDataStorage[i])
             {
-                GameObject itemCard = Instantiate(m_ItemCardUIPrefab, m_ShopCategoriesParents[i]);
+                GameObject itemCard = GameObject.Instantiate(m_ItemCardUIPrefab, m_ShopCategoriesParents[i]);
 
                 //init the UI with the building info accordingly
                 ShopItemCardUI shopItemCardUI = itemCard.GetComponent<ShopItemCardUI>();
@@ -74,18 +78,28 @@ public class ShopUIManager : MonoBehaviour
         }
 
         //set the shop category inactive and active accordingly
-        InitCategoryShown();
+        InitCategoryShown(m_DefaultShopCategory);
     }
 
     //shows the default page 
-    public void InitCategoryShown()
+    public void InitCategoryShown(ShopItemType category)
     {
-        for (int i = 0; i < m_ShopCategoriesParents.Length; ++i)
+        //show the correct category
+        for (int i = 0; i < m_ShopPages.Length; ++i)
         {
-            if (m_ShopCategoriesParents[i] == null)
+            if (m_ShopPages[i] == null)
                 continue;
 
-            m_ShopCategoriesParents[i].gameObject.SetActive(i == (int)m_MainShopCategory);
+            m_ShopPages[i].SetActive(i == (int)category);
+        }
+
+        //show the buttons properly
+        for (int i = 0; i < m_ShopButtons.Length; ++i)
+        {
+            if (m_ShopButtons[i] == null)
+                continue;
+
+            m_ShopButtons[i].PutBackground(i == (int)category);
         }
     }
 

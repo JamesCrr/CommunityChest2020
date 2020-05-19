@@ -17,6 +17,9 @@ public class IngameUIManager : MonoBehaviour
     [SerializeField] GameObject m_InGameMenu; //things on the UI like build button etc.
     [SerializeField] BuildingModeUIManager m_BuildingModeUIManager = new BuildingModeUIManager();
 
+    [Header("UI Managers")]
+    [SerializeField] ShopUIManager m_ShopUIManager = new ShopUIManager();
+
     private void Awake()
     {
         if (instance != null)
@@ -27,7 +30,11 @@ public class IngameUIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        m_ShopMenu.SetActive(false);
+        if (m_ShopUIManager != null)
+            m_ShopUIManager.Init();
+
+        if (m_ShopMenu != null)
+            m_ShopMenu.SetActive(false);
     }
 
     #region MenuTogglers
@@ -35,6 +42,18 @@ public class IngameUIManager : MonoBehaviour
     {
         if (m_ShopMenu != null) 
             m_ShopMenu.SetActive(active);
+
+        if (active)
+        {
+            if (m_ShopUIManager != null)
+                m_ShopUIManager.Active(); //init default category
+        }
+    }
+
+    public void ChangeShopCategory(ShopItemType shopMenuCategory)
+    {
+        if (m_ShopUIManager != null)
+            m_ShopUIManager.InitCategoryShown(shopMenuCategory);
     }
 
     public void SetInGameMenuActive(bool active)

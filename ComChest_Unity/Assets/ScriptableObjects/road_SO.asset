@@ -24,7 +24,8 @@ MonoBehaviour:
   m_BuildingDescription: 
   m_BuildingPrice: 100
   m_IsSoldInShop: 1
-  m_ShopItemType: 0
+  m_ShopItemType: 2
+  m_ListOfResourcesNeeded: []
   m_GenerateResourceTime: 0
   m_ResourceProduced: 1
   m_AmtResourceGiven: 0

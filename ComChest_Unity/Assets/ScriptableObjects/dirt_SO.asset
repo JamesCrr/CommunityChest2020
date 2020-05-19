@@ -23,7 +23,8 @@ MonoBehaviour:
   m_BuildingDescription: Common dirt. Could this be the start of a great foundation?
   m_BuildingPrice: 10
   m_IsSoldInShop: 1
-  m_ShopItemType: 0
+  m_ShopItemType: 1
+  m_ListOfResourcesNeeded: []
   m_GenerateResourceTime: 0
   m_ResourceProduced: 1
   m_AmtResourceGiven: 0
