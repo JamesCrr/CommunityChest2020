@@ -20,12 +20,14 @@ MonoBehaviour:
   m_CustomBuildingObject: {fileID: 0}
   m_HasUI: 0
   m_UIObject: {fileID: 0}
-  m_BuildingDescription: Decorations are important. Without these, how could one
-    even call themselves a cultured human?
-  m_BuildingPrice: 50
+  m_BuildingDescription: 'Decorations are important. '
+  m_BuildingPrice: 600
   m_IsSoldInShop: 1
   m_ShopItemType: 1
-  m_ListOfResourcesNeeded: []
+  m_ListOfResourcesNeeded:
+  - resourceID: 0
+    amount: 600
+    toDeduct: 1
   m_GenerateResourceTime: 0
   m_ResourceProduced: 1
   m_AmtResourceGiven: 0

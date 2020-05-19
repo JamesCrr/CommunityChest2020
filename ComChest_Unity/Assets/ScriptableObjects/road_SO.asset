@@ -21,11 +21,14 @@ MonoBehaviour:
   m_CustomBuildingObject: {fileID: 0}
   m_HasUI: 1
   m_UIObject: {fileID: 0}
-  m_BuildingDescription: 
-  m_BuildingPrice: 100
+  m_BuildingDescription: The foundations of a city
+  m_BuildingPrice: 1
   m_IsSoldInShop: 1
   m_ShopItemType: 2
-  m_ListOfResourcesNeeded: []
+  m_ListOfResourcesNeeded:
+  - resourceID: 0
+    amount: 1
+    toDeduct: 1
   m_GenerateResourceTime: 0
   m_ResourceProduced: 1
   m_AmtResourceGiven: 0

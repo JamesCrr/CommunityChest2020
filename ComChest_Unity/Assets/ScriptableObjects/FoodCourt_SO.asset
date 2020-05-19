@@ -22,9 +22,13 @@ MonoBehaviour:
   m_HasUI: 0
   m_UIObject: {fileID: 0}
   m_BuildingDescription: 
-  m_BuildingPrice: 100
+  m_BuildingPrice: 300
   m_IsSoldInShop: 1
   m_ShopItemType: 0
+  m_ListOfResourcesNeeded:
+  - resourceID: 0
+    amount: 300
+    toDeduct: 1
   m_GenerateResourceTime: 10
   m_ResourceProduced: 0
   m_AmtResourceGiven: 5

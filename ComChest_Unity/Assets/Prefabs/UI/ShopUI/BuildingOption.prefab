@@ -469,6 +469,7 @@ GameObject:
   - component: {fileID: 4847643568921224709}
   - component: {fileID: 4847643568921224708}
   - component: {fileID: 832399206106064629}
+  - component: {fileID: 3605181248057456451}
   m_Layer: 5
   m_Name: BuildingOption
   m_TagString: Untagged
@@ -605,6 +606,25 @@ MonoBehaviour:
   m_DescriptionText: {fileID: 4847643569388192015}
   m_PriceText: {fileID: 4847643568278617159}
   m_ItemImage: {fileID: 4847643568483104939}
+--- !u!95 &3605181248057456451
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4847643568921224706}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 53c5099ee7e332e49ab4adbc238265a0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4847643569388192013
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,7 +22,7 @@ MonoBehaviour:
   m_HasUI: 0
   m_UIObject: {fileID: 0}
   m_BuildingDescription: 
-  m_BuildingPrice: 50
+  m_BuildingPrice: 100
   m_IsSoldInShop: 0
   m_ShopItemType: 0
   m_ListOfResourcesNeeded:
