@@ -21,7 +21,6 @@ public class BaseBuildingsClass : MonoBehaviour
     [SerializeField]
     protected Vector2Int m_BuildingSize = Vector2Int.zero;
     protected Vector2 m_BottomLeftCornerOffset = Vector2.zero;
-    //[Header("For UI")]
 
 
     public virtual void SetNewBuildingType(BuildingData buildingData)

@@ -91,9 +91,6 @@ public class BuildingDataBase : MonoBehaviour
         m_ListOfBuildingSO.Clear();
     }
 
-    //public GameObject GetBuildingGO(BUILDINGS buildingType) { return m_DictOfBuildingSO[buildingType].gameObject; }
-    //public BaseBuildingsClass GetBuildingCom(BUILDINGS buildingType) { return m_DictOfBuildingSO[buildingType]; }
-
     public BuildingData GetBuildingData(BUILDINGS buildingType) { return m_DictOfBuildingSO[buildingType]; }
     public GameObject GetBaseBuildingGO() { return m_BaseBuildingGO; }
 

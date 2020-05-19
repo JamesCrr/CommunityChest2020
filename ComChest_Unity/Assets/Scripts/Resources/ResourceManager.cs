@@ -43,4 +43,32 @@ public class ResourceManager : MonoBehaviour
         OnResourceChanged();
     }
     public int GetResource(RESOURCES _id) { return m_DictOfResources[_id]; }
+
+    /// <summary>
+    /// Returns if you have enough resources to place the building
+    /// </summary>
+    /// <param name="buildingID">What type of building to check against</param>
+    /// <returns></returns>
+    public bool EnoughResourcesForBuilding(BuildingDataBase.BUILDINGS buildingID)
+    {
+        foreach(ResourcesNeeded resourceNeeded in BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetResourcesNeeded())
+        {
+            if (GetResource(resourceNeeded.resourceID) < resourceNeeded.amount)
+                return false;
+        }
+        return true;
+    }
+    /// <summary>
+    /// Deducts your current resources against the resourcesNeeded for the buildingType
+    /// </summary>
+    /// <param name="buildingID"></param>
+    public void DeductResourcesFromBuildingData(BuildingDataBase.BUILDINGS buildingID)
+    {
+        foreach (ResourcesNeeded resourceNeeded in BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetResourcesNeeded())
+        {
+            if (!resourceNeeded.toDeduct)
+                continue;
+            SetResource(resourceNeeded.resourceID, GetResource(resourceNeeded.resourceID) - resourceNeeded.amount);
+        }
+    }
 }

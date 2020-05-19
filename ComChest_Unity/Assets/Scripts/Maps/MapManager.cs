@@ -109,7 +109,9 @@ public class MapManager : MonoBehaviour
     {
         BaseBuildingsClass PlacedBuilding = PlaceBuildingToGrid(ref m_TemplateBuilding, doChecking);
 
-        // Success in placing building, create new building for next placment
+        // Success in placing building, Deduct resources
+        ResourceManager.GetInstance().DeductResourcesFromBuildingData(m_TemplateBuildingID);
+        // Success in placing building, Create new building for next placment
         BuildingDataBase.BUILDINGS oldID = m_TemplateBuilding.GetBuildingType();
         m_TemplateBuilding = Instantiate(BuildingDataBase.GetInstance().GetBaseBuildingGO(), Camera.main.transform.position, Quaternion.identity).GetComponent<BaseBuildingsClass>();
         m_TemplateBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(oldID));
@@ -117,7 +119,14 @@ public class MapManager : MonoBehaviour
 
         return PlacedBuilding;
     }
-    public BaseBuildingsClass PlaceNewBuildingIntoMap(Vector2 spawnWorldPosition, BuildingDataBase.BUILDINGS buildingID)
+    /// <summary>
+    /// Attempts to place a new Building of type buildingID into the map 
+    /// WITHOUT checking and deducting if have resources needed
+    /// </summary>
+    /// <param name="spawnWorldPosition">World position of the Building</param>
+    /// <param name="buildingID">What type of building to place</param>
+    /// <returns></returns>
+    public BaseBuildingsClass PlaceNewBuildingIntoMap_WithoutResources(Vector2 spawnWorldPosition, BuildingDataBase.BUILDINGS buildingID)
     {
         // Convert World to Grid Coordinates
         BaseMapClass gridLayout = GetCurrentMap();
@@ -127,7 +136,7 @@ public class MapManager : MonoBehaviour
         // Check if we can place building Down
         Vector3 buildingBottomLeft = spawnWorldPosition + BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetBottomLeftCorner_PositionOffset();
         Vector2Int buildingSize = BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetBuildingSizeOnMap();
-        if (!CanPlaceBuilding(buildingBottomLeft, buildingSize))
+        if (!CanPlaceBuildingOnMap(buildingBottomLeft, buildingSize))
         {
             Debug.LogError("Unable to Place Building, Canceling...");
             return null;
@@ -162,7 +171,7 @@ public class MapManager : MonoBehaviour
     /// <param name="activeBuildingCom">The Building GO to place</param>
     /// <param name="doChecking">Are any of the spots taken by another building already?</param>
     /// <returns></returns>
-    BaseBuildingsClass PlaceBuildingToGrid(ref BaseBuildingsClass activeBuildingCom, bool doChecking = false)
+    BaseBuildingsClass PlaceBuildingToGrid(ref BaseBuildingsClass activeBuildingCom, bool doCheckingGridTaken = false)
     {
         // Check if we need to create a Custom Building GO
         if (BuildingDataBase.GetInstance().GetBuildingData(activeBuildingCom.GetBuildingType()).GetOwnCustomBuildingObject())
@@ -179,8 +188,8 @@ public class MapManager : MonoBehaviour
         Vector2Int buildingSize = activeBuildingCom.GetBuildingSizeOnMap();
         //Debug.Log("GRID POS: " + m_GridGO.WorldToCell(buildingWorldPos));
         // Can we place it there?
-        if (doChecking)
-            if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
+        if (doCheckingGridTaken)
+            if (!CanPlaceBuildingOnMap(buildingBottomLeftWorldPos, buildingSize))
                 return null;
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
@@ -204,7 +213,7 @@ public class MapManager : MonoBehaviour
 
         return activeBuildingCom;
     }
-    BaseBuildingsClass PlaceBuildingToGrid(Vector2 spawnWorldPos, BuildingDataBase.BUILDINGS buildingID, bool doChecking = false)
+    BaseBuildingsClass PlaceBuildingToGrid(Vector2 spawnWorldPos, BuildingDataBase.BUILDINGS buildingID, bool doCheckingGridTaken = false)
     {
         // Check if we need to create a Custom Building GO
         BaseBuildingsClass newBuilding = null;
@@ -220,8 +229,8 @@ public class MapManager : MonoBehaviour
         Vector3 buildingBottomLeftWorldPos = newBuilding.GetBottomLeftGridPosition();
         Vector2Int buildingSize = newBuilding.GetBuildingSizeOnMap();
         // Can we place it there?
-        if (doChecking)
-            if (!CanPlaceBuilding(buildingBottomLeftWorldPos, buildingSize))
+        if (doCheckingGridTaken)
+            if (!CanPlaceBuildingOnMap(buildingBottomLeftWorldPos, buildingSize))
                 return null;
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
@@ -391,13 +400,13 @@ public class MapManager : MonoBehaviour
     /// <returns>True if can place Building</returns>
     public bool CanPlaceTemplateBuilding()
     {
-        return CanPlaceBuilding(m_TemplateBuilding.GetBottomLeftGridPosition(), m_TemplateBuilding.GetBuildingSizeOnMap());
+        return CanPlaceBuildingOnMap(m_TemplateBuilding.GetBottomLeftGridPosition(), m_TemplateBuilding.GetBuildingSizeOnMap());
     }
-    public bool CanPlaceBuilding(BaseBuildingsClass activeBuildingCom)
+    bool CanPlaceBuildingOnMap(BaseBuildingsClass activeBuildingCom)
     {
-        return CanPlaceBuilding(activeBuildingCom.GetBottomLeftGridPosition(), activeBuildingCom.GetBuildingSizeOnMap());
+        return CanPlaceBuildingOnMap(activeBuildingCom.GetBottomLeftGridPosition(), activeBuildingCom.GetBuildingSizeOnMap());
     }
-    public bool CanPlaceBuilding(Vector3 buildingBottomLeftWorldPos, Vector2Int buildingSize)
+    bool CanPlaceBuildingOnMap(Vector3 buildingBottomLeftWorldPos, Vector2Int buildingSize)
     {
         Vector2Int buildingGridPos = (Vector2Int)m_GridGO.WorldToCell(buildingBottomLeftWorldPos);
         Vector2Int testGridPos = buildingGridPos;

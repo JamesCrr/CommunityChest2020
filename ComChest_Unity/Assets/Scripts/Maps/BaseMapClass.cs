@@ -44,7 +44,7 @@ public class BaseMapClass : MonoBehaviour
         {
             foreach (Vector2Int pos in building.spawnGridPositions)
             {
-                MapManager.GetInstance().PlaceNewBuildingIntoMap(pos, building.buildingID);
+                MapManager.GetInstance().PlaceNewBuildingIntoMap_WithoutResources(pos, building.buildingID);
             }
         }
         // Allocate resources

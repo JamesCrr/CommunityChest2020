@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Building")]
 public class BuildingData : ScriptableObject
@@ -36,7 +37,10 @@ public class BuildingData : ScriptableObject
     [SerializeField]
     ShopItemType m_ShopItemType = ShopItemType.BUILDINGS;
 
-    //for resources
+    // Resources
+    [Header("Resources Needed Data")]
+    [SerializeField]
+    List<ResourcesNeeded> m_ListOfResourcesNeeded = new List<ResourcesNeeded>();
     [Header("Resources Produced Data")]
     [SerializeField]
     float m_GenerateResourceTime = 0.0f;
@@ -98,7 +102,11 @@ public class BuildingData : ScriptableObject
     public GameObject GetOwnCustomBuildingObject() { return m_CustomBuildingObject; }
     #endregion
 
-    #region Resource Getters
+    #region Resource Needed Getters
+    public List<ResourcesNeeded> GetResourcesNeeded() { return m_ListOfResourcesNeeded; }
+    #endregion
+
+    #region Resource Produced Getters
     public float GetResourceTime
     {
         get { return m_GenerateResourceTime; }
@@ -139,4 +147,12 @@ public class BuildingData : ScriptableObject
     }
     #endregion
 
+}
+
+[System.Serializable]
+public class ResourcesNeeded
+{
+    public ResourceManager.RESOURCES resourceID = ResourceManager.RESOURCES.R_MONEY;
+    public int amount = 1;
+    public bool toDeduct = true;    // To Deduct from the resources Or simply have enough
 }
