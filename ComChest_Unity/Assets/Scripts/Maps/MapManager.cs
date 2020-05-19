@@ -198,7 +198,7 @@ public class MapManager : MonoBehaviour
         activeBuildingCom.BuildingPlaced();
 
         // Change Sprite Layer back to building layer
-        activeBuildingCom.SetSpriteObjectLayer(1);
+        activeBuildingCom.SetSpriteObjectLayer(0);
         activeBuildingCom.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(activeBuildingCom.GetBuildingType()).GetBuildingName();
 
         //set the correct parent
