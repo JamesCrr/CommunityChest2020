@@ -49,10 +49,10 @@ public class InGame_PlayerInput : MonoBehaviour
 #if UNITY_EDITOR || UNITY_STANDALONE
         DEBUG_MoveCameraInput();
 
-        if (Input.GetKeyUp(KeyCode.Q))
-            MapManager.GetInstance().SetPlacementBrush(!MapManager.GetInstance().GetPlacementBrushActive(), BuildingDataBase.BUILDINGS.B_POND);
-        else if (Input.GetKeyUp(KeyCode.W))
-            MapManager.GetInstance().SetRemovalBrush(!MapManager.GetInstance().GetRemovalBrushActive());
+        //if (Input.GetKeyUp(KeyCode.Q))
+        //    MapManager.GetInstance().SetPlacementBrush(!MapManager.GetInstance().GetPlacementBrushActive(), BuildingDataBase.BUILDINGS.B_POND);
+        //else if (Input.GetKeyUp(KeyCode.W))
+        //    MapManager.GetInstance().SetRemovalBrush(!MapManager.GetInstance().GetRemovalBrushActive());
 
 
         // Is Placement Brush Active?
@@ -83,10 +83,10 @@ public class InGame_PlayerInput : MonoBehaviour
                 MapManager.GetInstance().RemoveBuildingsFromMapUnderList();
         }
 
-        //if (Input.GetKeyUp(KeyCode.Z))
-        //    SaveSystem.SaveMap(MapManager.GetInstance().GetBuildingsOnMap(), MapManager.GetInstance().GetRoadManager().GetSavedRoads());
-        //else if (Input.GetKeyUp(KeyCode.X))
-        //    SaveSystem.LoadSavedBuildingsToMap();
+        if (Input.GetKeyUp(KeyCode.Z))
+            SaveSystem.SaveToFile();
+        else if (Input.GetKeyUp(KeyCode.X))
+            SaveSystem.LoadFromFile();
 
 #endif
 

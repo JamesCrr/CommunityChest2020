@@ -160,6 +160,8 @@ public class MapManager : MonoBehaviour
         for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
         {
             RemoveBuildingFromGrid(m_ListOfBuildingsToRemove[i]);
+
+            m_ListOfBuildingsToRemove[i].BuildingRemoved();
             Destroy(m_ListOfBuildingsToRemove[i].transform.gameObject);
         }
         m_ListOfBuildingsToRemove.Clear();
@@ -254,6 +256,27 @@ public class MapManager : MonoBehaviour
 
         return newBuilding;
     }
+
+    /// <summary>
+    /// Removes all Buildings quietly from the Map, which simply means
+    /// ==> DOES NOT Call BaseBuildingsClass.BuildingRemoved();
+    /// </summary>
+    void RemoveAllBuildingsFromMap()
+    {
+        m_ListOfBuildingsToRemove.Clear();
+        foreach (KeyValuePair<Vector2Int, BaseBuildingsClass> entry in m_DictOfBuildingsOnMap)
+        {
+            m_ListOfBuildingsToRemove.Add(entry.Value);
+        }
+        m_DictOfBuildingsOnMap.Clear();
+        for (int i = 0; i < m_ListOfBuildingsToRemove.Count; ++i)
+        {
+            RemoveBuildingFromGrid(m_ListOfBuildingsToRemove[i]);
+            Destroy(m_ListOfBuildingsToRemove[i].transform.gameObject);
+        }
+        m_ListOfBuildingsToRemove.Clear();
+
+    }
     /// <summary>
     /// Removes the Building from Grid by setting it's array spots back to untaken, then returns it
     /// </summary>
@@ -266,7 +289,6 @@ public class MapManager : MonoBehaviour
         // Set all the grids taken by building to false, since no longer there
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, false);
         RemoveBuildingFromTrackingDictionary(activeBuildingCom);
-        activeBuildingCom.BuildingRemoved();
 
         return activeBuildingCom.gameObject;
     }
@@ -534,8 +556,11 @@ public class MapManager : MonoBehaviour
     #endregion
 
     #region Load From File
-    public void SaveFileWasLoaded(Save_BuildingsOnMap[] saveFileBuildingsData, Save_RoadsOnMap[] saveFileRoadsData)
+    public void SaveFileWasLoaded(BuildingsOnMap[] saveFileBuildingsData, RoadsOnMap[] saveFileRoadsData)
     {
+        // Removes existing buildings first
+        RemoveAllBuildingsFromMap();
+
         BaseBuildingsClass savedBuilding = null;
         Vector3 savedPosition = Vector3.zero;
         for(int i = 0; i < saveFileBuildingsData.Length; ++i)
@@ -598,7 +623,7 @@ public class MapManager : MonoBehaviour
         }
         return listOfBuildings;
     }
-    public Save_RoadsOnMap[] GetSavedRoads()
+    public RoadsOnMap[] GetSavedRoads()
     { 
         if (m_RoadManager != null)
             return m_RoadManager.GetSavedRoads();

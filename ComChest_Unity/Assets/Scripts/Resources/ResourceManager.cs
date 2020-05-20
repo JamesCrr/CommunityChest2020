@@ -42,6 +42,12 @@ public class ResourceManager : MonoBehaviour
         // Fire resource changed event
         OnResourceChanged();
     }
+    public void ModifyResource(RESOURCES _id, int valueToAdd)
+    {
+        m_DictOfResources[_id] += valueToAdd;
+        // Fire resource changed event
+        OnResourceChanged();
+    }
     public int GetResource(RESOURCES _id) { return m_DictOfResources[_id]; }
 
     /// <summary>

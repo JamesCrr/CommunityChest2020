@@ -689,9 +689,9 @@ public class RoadManager
 #endregion
 
     #region SavingAndLoading
-    public Save_RoadsOnMap[] GetSavedRoads()
+    public RoadsOnMap[] GetSavedRoads()
     {
-        Save_RoadsOnMap[] saveRoadsData = new Save_RoadsOnMap[m_RoadSpriteRendererMap.Count];
+        RoadsOnMap[] saveRoadsData = new RoadsOnMap[m_RoadSpriteRendererMap.Count];
 
         int index = 0;
         foreach (KeyValuePair<Vector2Int, BaseBuildingsClass> road in m_RoadSpriteRendererMap)
@@ -700,7 +700,7 @@ public class RoadManager
             if (baseRoad == null)
                 continue;
 
-            saveRoadsData[index] = new Save_RoadsOnMap();
+            saveRoadsData[index] = new RoadsOnMap();
             saveRoadsData[index].worldPosX = baseRoad.transform.position.x;
             saveRoadsData[index].worldPosY = baseRoad.transform.position.y;
 

@@ -27,7 +27,7 @@ public class ResourceBubbleUI : InteractableObjBase
     public override void OnInteract()
     {
         if (m_ResourceType == ResourceManager.RESOURCES.R_MONEY)
-            PlayerDataManager.Instance.GetSetTotalMoney = PlayerDataManager.Instance.GetSetTotalMoney + m_AmtGiven;
+            ResourceManager.GetInstance().ModifyResource(ResourceManager.RESOURCES.R_MONEY, m_AmtGiven);
 
         if (m_ResourcedBuildingOwner != null)
             m_ResourcedBuildingOwner.GetSetResourceCollected = true;
