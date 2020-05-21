@@ -309,7 +309,7 @@ public class MapManager : MonoBehaviour
         m_TemplateBuildingID = selectedBuildingID;
         if (m_PlacmentBrushActive)
         {
-            SetRemovalBrush(false);
+            //SetRemovalBrush(false);
             m_TemplateBuilding.gameObject.SetActive(true);
             m_TemplateBuilding.SetNewBuildingType(BuildingDataBase.GetInstance().GetBuildingData(m_TemplateBuildingID));
 
@@ -337,7 +337,7 @@ public class MapManager : MonoBehaviour
     {
         if (newValue)
         {
-            SetPlacementBrush(false);
+            //SetPlacementBrush(false);
             PlayerOpenRemovalEditorModeStop();
         }
         else

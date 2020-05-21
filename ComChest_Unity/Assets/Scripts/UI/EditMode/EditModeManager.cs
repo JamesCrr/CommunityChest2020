@@ -14,7 +14,7 @@ public class EditModeManager : MonoBehaviour
     [SerializeField] EDITMODES m_DefaultMode = EDITMODES.MOVE_OBJECTS;
 
     [Header("Button Modes UI")]
-    [SerializeField] Button[] m_ButtonModes;
+    [SerializeField] Image[] m_ButtonModesImage;
     [SerializeField] Color m_GreyedOutColor;
 
     EDITMODES m_CurrentMode = EDITMODES.MOVE_OBJECTS;
@@ -28,28 +28,25 @@ public class EditModeManager : MonoBehaviour
     private void OnEnable()
     {
         //activate default mode
-        ChangeMode(m_DefaultMode);
+        ChangeMode((int)m_DefaultMode);
     }
 
-    public void ChangeMode(EDITMODES modes)
+    public void ChangeMode(int modes)
     {
-        m_CurrentMode = modes;
+        m_CurrentMode = (EDITMODES)modes;
 
+        //activate proper mode in mapmanager
         if (m_CurrentMode == EDITMODES.DESTROY)
         {
-            //make the button for the other mode dulled out
-            //make button for current mode proper
-
-            //activate proper mode in mapmanager
             OpenDeleteBrush(true);
-
         }
         else if (m_CurrentMode == EDITMODES.MOVE_OBJECTS)
         {
             OpenDeleteBrush(false);
-
         }
 
+        //make the button for the other mode dulled out
+        //make button for current mode proper
         UpdateModeChangeUI();
     }
 
@@ -59,7 +56,16 @@ public class EditModeManager : MonoBehaviour
         //check current mode
         //show correct popup to confirm
         //activate
-        
+        //TEMP
+        if (m_CurrentMode == EDITMODES.DESTROY)
+        {
+            //remove the buildings
+            MapManager.GetInstance().RemoveBuildingsFromMapUnderList();
+        }
+        else if (m_CurrentMode == EDITMODES.MOVE_OBJECTS)
+        {
+
+        }
     }
 
     //when players want to go back to the previous page and cancel their change
@@ -81,10 +87,13 @@ public class EditModeManager : MonoBehaviour
 
     public void UpdateModeChangeUI()
     {
-        //for (int i = 0; i < m_ButtonModes.Length; ++i)
-        //{
-        //    m_ButtonModes[i].colors = m_GreyedOutColor;
-        //}
+        for (int i = 0; i < m_ButtonModesImage.Length; ++i)
+        {
+            if (i != (int)m_CurrentMode)
+                m_ButtonModesImage[i].color = m_GreyedOutColor;
+            else
+                m_ButtonModesImage[i].color = Color.white;
+        }
     }
 
     #region Delete Mode
