@@ -7,6 +7,26 @@ public class BuildingModeUIManager
     [SerializeField] GameObject m_BuildingGridHelper; //shows a grid around the build size of the item
     [SerializeField] GameObject m_MainParent;
 
+    [Header("Grid Background")]
+    [SerializeField] GameObject m_Grid;
+    [SerializeField] Material m_GridMaterial;
+
+    public void Init()
+    {
+        //set the building grid background accordingly
+        BaseMapClass map = MapManager.GetInstance().GetCurrentMap();
+        if (map != null)
+        {
+            Vector2Int size = map.GetTileMapSize();
+
+            if (m_Grid != null)
+                m_Grid.transform.localScale = new Vector3(size.x, size.y, 1.0f);
+
+            if (m_GridMaterial != null)
+                m_GridMaterial.SetVector("_Tiling", new Vector4(size.x, size.y, 1.0f,1.0f));
+        }
+    }
+
     public void AttachToBuilding(Transform building, Vector2 offset, Vector2Int buildingSizeOnMap)
     {
         if (building == null)

@@ -64,6 +64,8 @@ public class MapManager : MonoBehaviour
 
         m_RoadManager.Init(m_currentMap.GetTileMapSize(), mainRoadPos);
 
+        IngameUIManager.instance.InitMapUI();
+
         if (m_MainRoad != null)
             PlaceBuildingToGrid(ref m_MainRoad);
     }

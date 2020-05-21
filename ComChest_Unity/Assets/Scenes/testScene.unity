@@ -499,6 +499,8 @@ MonoBehaviour:
     m_PlacementButtons: {fileID: 645904279}
     m_BuildingGridHelper: {fileID: 1738389443}
     m_MainParent: {fileID: 1613170103}
+    m_Grid: {fileID: 548415656}
+    m_GridMaterial: {fileID: 2100000, guid: d8230dd4b3b449d498f734b1e9d598b1, type: 2}
   m_ShopUIManager:
     m_ShopCategoriesParents:
     - {fileID: 755676683}
@@ -1051,6 +1053,12 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -9}
   m_SizeDelta: {x: 0, y: -21.000008}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &548415656 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8300151667013526532, guid: 6f90562f7e8668a469f4b6dacdd729e0,
+    type: 3}
+  m_PrefabInstance: {fileID: 745320168}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &615654867
 GameObject:
   m_ObjectHideFlags: 0

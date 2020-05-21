@@ -37,6 +37,12 @@ public class IngameUIManager : MonoBehaviour
             m_ShopMenu.SetActive(false);
     }
 
+    public void InitMapUI()
+    {
+        if (m_BuildingModeUIManager != null)
+            m_BuildingModeUIManager.Init();
+    }
+
     #region MenuTogglers
     public void SetShopMenuActive(bool active)
     {
