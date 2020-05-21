@@ -15,6 +15,7 @@ public class IngameUIManager : MonoBehaviour
     [Header("UI Pages")]
     [SerializeField] GameObject m_ShopMenu;//the shop menu
     [SerializeField] GameObject m_InGameMenu; //things on the UI like build button etc.
+    [SerializeField] GameObject m_EditModeMenu;
     [SerializeField] BuildingModeUIManager m_BuildingModeUIManager = new BuildingModeUIManager();
 
     [Header("UI Managers")]
@@ -35,6 +36,8 @@ public class IngameUIManager : MonoBehaviour
 
         if (m_ShopMenu != null)
             m_ShopMenu.SetActive(false);
+
+        SetEditModeMenuActive(false);
     }
 
     public void InitMapUI()
@@ -68,11 +71,23 @@ public class IngameUIManager : MonoBehaviour
             m_InGameMenu.SetActive(active);
     }
 
+    public void SetEditModeMenuActive(bool active)
+    {
+        if (m_EditModeMenu != null)
+            m_EditModeMenu.SetActive(active);
+    }
+
     public void OpenShopMenu(bool open)
     {
         SetShopMenuActive(open);
 
         //close some of the ingame menus
+        SetInGameMenuActive(!open);
+    }
+
+    public void OpenEditMode(bool open)
+    {
+        SetEditModeMenuActive(open);
         SetInGameMenuActive(!open);
     }
 

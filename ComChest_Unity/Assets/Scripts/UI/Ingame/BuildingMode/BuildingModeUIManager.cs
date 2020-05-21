@@ -9,7 +9,7 @@ public class BuildingModeUIManager
 
     [Header("Grid Background")]
     [SerializeField] GameObject m_Grid;
-    [SerializeField] Material m_GridMaterial;
+    [SerializeField] Material m_GridMaterial;    
 
     public void Init()
     {
