@@ -16,6 +16,7 @@ public class IngameUIManager : MonoBehaviour
     [SerializeField] GameObject m_ShopMenu;//the shop menu
     [SerializeField] GameObject m_InGameMenu; //things on the UI like build button etc.
     [SerializeField] GameObject m_EditModeMenu;
+    EditModeManager m_EditModeManager;
     [SerializeField] BuildingModeUIManager m_BuildingModeUIManager = new BuildingModeUIManager();
 
     [Header("UI Managers")]
@@ -26,6 +27,8 @@ public class IngameUIManager : MonoBehaviour
         if (instance != null)
             Debug.LogWarning("More than 1 IngameUIManager instance exists!");
         instance = this;
+
+        m_EditModeManager = m_EditModeMenu.GetComponent<EditModeManager>();
     }
 
     // Start is called before the first frame update
@@ -75,6 +78,13 @@ public class IngameUIManager : MonoBehaviour
     {
         if (m_EditModeMenu != null)
             m_EditModeMenu.SetActive(active);
+
+        // Disable EditMenu Brushes if disabling Edit Menu
+        if (!active)
+        {
+            m_EditModeManager.OpenDeleteBrush(false);
+            m_EditModeManager.OpenMoveBuildingsBrush(false);
+        }
     }
 
     public void OpenShopMenu(bool open)

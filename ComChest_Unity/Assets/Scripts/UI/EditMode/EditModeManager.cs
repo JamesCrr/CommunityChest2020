@@ -38,11 +38,13 @@ public class EditModeManager : MonoBehaviour
         //activate proper mode in mapmanager
         if (m_CurrentMode == EDITMODES.DESTROY)
         {
+            OpenMoveBuildingsBrush(false);
             OpenDeleteBrush(true);
         }
         else if (m_CurrentMode == EDITMODES.MOVE_OBJECTS)
         {
             OpenDeleteBrush(false);
+            OpenMoveBuildingsBrush(true);
         }
 
         //make the button for the other mode dulled out
@@ -64,7 +66,11 @@ public class EditModeManager : MonoBehaviour
         }
         else if (m_CurrentMode == EDITMODES.MOVE_OBJECTS)
         {
-
+            if (MapManager.GetInstance().GetBuildingToMove() == null)
+                return;
+            if (!MapManager.GetInstance().CanPlaceBuildingToMove())
+                return;
+            MapManager.GetInstance().ConfirmRemovementOfBuilding();
         }
     }
 
@@ -100,6 +106,12 @@ public class EditModeManager : MonoBehaviour
     public void OpenDeleteBrush(bool open)
     {
         MapManager.GetInstance().SetRemovalBrush(open);
+    }
+    #endregion
+    #region Move Buildings Mode
+    public void OpenMoveBuildingsBrush(bool open)
+    {
+        MapManager.GetInstance().SetMovementBrush(open);
     }
     #endregion
 }

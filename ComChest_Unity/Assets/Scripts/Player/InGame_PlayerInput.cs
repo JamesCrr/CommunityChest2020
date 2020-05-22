@@ -13,6 +13,9 @@ public class InGame_PlayerInput : MonoBehaviour
     // Placment Buildings
     [Header("Placement of Buildings")]    
     Vector2 m_BuildingPlacementOffset = Vector2.zero;
+    // Moving Buildings
+    [Header("Movement of Placed Buildings")]
+    Vector2 m_MovingPlacedBuildingOffset = Vector2.zero;
 
     // Miscs
     bool m_MovingPlacementBuilding = false;     // Are we currently moving the Placement Building or the Camera?
@@ -41,8 +44,7 @@ public class InGame_PlayerInput : MonoBehaviour
     {
         // Slerp Camera towards TargetPos
         Camera.main.transform.position = Vector3.Slerp(Camera.main.transform.position, m_TargetCameraPosition, Time.deltaTime * 20.0f);
-        SetPlacementBuildingToGridPosition();   // Move Building with Camera
-
+        
         // Detect Fingers, for mobile input
         DetectFingerInput();
 
@@ -58,6 +60,8 @@ public class InGame_PlayerInput : MonoBehaviour
         // Is Placement Brush Active?
         if (MapManager.GetInstance().GetPlacementBrushActive())
         {
+            SetPlacementBuildingToGridPosition();   // Move Building with Camera
+
             RenderPlacementBuilding();
 
             //if (Input.GetKeyUp(KeyCode.Space))
@@ -66,8 +70,9 @@ public class InGame_PlayerInput : MonoBehaviour
             //    MapManager.GetInstance().IncrementPlacingBuildingID();
         }
         // Is Removal Brush Active?
-        if (MapManager.GetInstance().GetRemovalBrushActive())
+        else if (MapManager.GetInstance().GetRemovalBrushActive())
         {
+            // THIS ONLY WORKS ON PC
             if (Input.GetMouseButtonUp(0))
             {
                 RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 20.0f, 1 << 0);
@@ -88,11 +93,59 @@ public class InGame_PlayerInput : MonoBehaviour
             //else if (Input.GetKeyUp(KeyCode.E))
             //    MapManager.GetInstance().RemoveBuildingsFromMapUnderList();
         }
+        // Is Movement Brush Active?
+        else if (MapManager.GetInstance().GetMovementBrushActive())
+        {
+            if (MapManager.GetInstance().GetBuildingToMove() == null)
+            {
+                // THIS ONLY WORKS ON PC
+                if (Input.GetMouseButtonUp(0))
+                {
+                    RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 20.0f, 1 << 0);
+                    if (hit.collider == null)
+                        return;
+                    // Debug.Log("Raycast2D hit: " + hit.transform.gameObject.name);
 
-        //if (Input.GetKeyUp(KeyCode.Z))
-        //    SaveSystem.SaveToFile();
-        //else if (Input.GetKeyUp(KeyCode.X))
-        //    SaveSystem.LoadFromFile();
+                    // Should put buildings on seperate layer honestly...
+                    BaseBuildingsClass hitBuilding = hit.transform.parent.gameObject.GetComponent<BaseBuildingsClass>();
+                    if (hitBuilding == null)
+                        return;
+                    // Can building be Moved?
+                    if (!hitBuilding.GetCanBeMoved())
+                        return;
+                    // Attach it and calculate offset
+                    MapManager.GetInstance().SetNewBuildingToMove(hitBuilding);
+                    m_MovingPlacedBuildingOffset = hitBuilding.transform.position - Camera.main.transform.position;
+                }
+                return;
+            }
+            // Make building to move follow camera and grid position
+            SetMovingBuildingToGridPosition();
+
+            // PC INPUTS
+            // Can place?
+            if (MapManager.GetInstance().CanPlaceBuildingToMove())
+            {
+                MapManager.GetInstance().GetBuildingToMove().transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.cyan;
+                //// Confirm
+                //if (Input.GetKeyUp(KeyCode.O))
+                //{
+                //    MapManager.GetInstance().ConfirmRemovementOfBuilding();
+                //}
+            }
+            else
+            {
+                MapManager.GetInstance().GetBuildingToMove().transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.gray;
+            }
+            // Cancel
+            if (Input.GetKeyUp(KeyCode.P))
+                MapManager.GetInstance().CancelRemovementOfBuilding();
+        }
+
+        if (Input.GetKeyUp(KeyCode.Z))
+            SaveSystem.SaveToFile();
+        else if (Input.GetKeyUp(KeyCode.X))
+            SaveSystem.LoadFromFile();
 
 #endif
 
@@ -113,6 +166,7 @@ public class InGame_PlayerInput : MonoBehaviour
     {
         // Calculate actual Position on Grid
         BaseMapClass gridLayout = MapManager.GetInstance().GetCurrentMap();
+        // Follow Camera Position
         Vector3Int gridPos = gridLayout.GetTileMapCom().WorldToCell(Camera.main.transform.position + (Vector3)m_BuildingPlacementOffset);
         Vector3 newPos = gridLayout.GetTileMapCom().CellToWorld(gridPos);
         newPos += gridLayout.GetTileMapCom().cellSize * 0.5f;
@@ -128,10 +182,23 @@ public class InGame_PlayerInput : MonoBehaviour
     }
     #endregion
 
-    #region Movement
+    #region Moving Placed Buildings
+    void SetMovingBuildingToGridPosition()
+    {
+        // Calculate actual Position on Grid
+        BaseMapClass gridLayout = MapManager.GetInstance().GetCurrentMap();
+        // Follow Camera Position
+        Vector3Int gridPos = gridLayout.GetTileMapCom().WorldToCell(Camera.main.transform.position + (Vector3)m_MovingPlacedBuildingOffset);
+        Vector3 newPos = gridLayout.GetTileMapCom().CellToWorld(gridPos);
+        newPos += gridLayout.GetTileMapCom().cellSize * 0.5f;
+        MapManager.GetInstance().GetBuildingToMove().transform.position = newPos;
+    }
+    #endregion
+
+    #region Detect Touch Input
     void DetectFingerInput()
     {
-        // Check for Input
+        // Check for Touch Input
         if (MobileInput.GetInstance().GetTouchCount() == 1 && 
             MobileInput.GetInstance().GetTouchPhase() != TouchPhase.Began)     // Only one Finger
         {
@@ -139,10 +206,20 @@ public class InGame_PlayerInput : MonoBehaviour
             if(!m_MovingSomething)
             {
                 // Move Camera or Building?
-                if (!MobileInput.GetInstance().IsFingerTouching_GO(MapManager.GetInstance().GetTemplateBuilding().GetSpriteGO(), 0, LayerMask.NameToLayer("BuildingPlaceRef")))
-                    m_MovingPlacementBuilding = false;
+                if (MapManager.GetInstance().GetPlacementBrushActive())
+                {
+                    if (!MobileInput.GetInstance().IsFingerTouching_GO(MapManager.GetInstance().GetTemplateBuilding().GetSpriteGO(), 0, LayerMask.NameToLayer("BuildingPlaceRef")))
+                        m_MovingPlacementBuilding = false;
+                    else
+                        m_MovingPlacementBuilding = true;
+                }
+                else if(MapManager.GetInstance().GetMovementBrushActive())
+                {
+
+                }
                 else
-                    m_MovingPlacementBuilding = true;
+                    m_MovingPlacementBuilding = false;
+             
                 // Keep on moving that Object, DO NOT need to check again on next frame
                 m_MovingSomething = true;
             }
