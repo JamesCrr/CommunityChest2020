@@ -40,11 +40,13 @@ public class BaseMapClass : MonoBehaviour
     protected virtual void MapWasGenerated()
     {
         // Spawn buildings to build at spawn
+        BaseBuildingsClass newBuilding = null;
         foreach (MapStartingBuildings building in m_ListOfBuildingsToBuildAtSpawn)
         {
             foreach (Vector2Int pos in building.spawnGridPositions)
             {
-                MapManager.GetInstance().PlaceNewBuildingIntoMap_WithoutResources(pos, building.buildingID);
+                newBuilding = MapManager.GetInstance().PlaceNewBuildingIntoMap_WithoutResources(pos, building.buildingID);
+                newBuilding.SetBuildingPlayerOptions(building.isMovable, building.isRemovable);
             }
         }
         // Allocate resources
@@ -108,6 +110,9 @@ public class MapStartingBuildings
     public string name;
     public BuildingDataBase.BUILDINGS buildingID = BuildingDataBase.BUILDINGS.B_TOTAL;
     public Color debugColor = Color.red;
+    public bool isMovable = true;
+    public bool isRemovable= true;
+    [Header("Spawn Positions")]
     public List<Vector2Int> spawnGridPositions = new List<Vector2Int>();
 }
 [System.Serializable]

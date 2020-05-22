@@ -318,7 +318,7 @@ public class MapManager : MonoBehaviour
         else
         {
             m_TemplateBuilding.gameObject.SetActive(false);
-            PlayerCloseAddEditorMode();
+            // PlayerCloseAddEditorMode();
         }
     }
     public void IncrementPlacingBuildingID()
@@ -498,7 +498,7 @@ public class MapManager : MonoBehaviour
         Vector2Int key = (Vector2Int)m_GridGO.WorldToCell(activeBuildingCom.GetBottomLeftGridPosition());
         if(m_DictOfBuildingsOnMap.ContainsKey(key))
         {
-            Debug.LogError("Duplicate Key in MapManager Building Storage!!");
+            Debug.LogError("Duplicate Key in MapManager Building Storage!!\n2 Buildings occupying same Position!");
             return;
         }
 

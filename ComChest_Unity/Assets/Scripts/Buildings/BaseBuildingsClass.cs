@@ -9,7 +9,9 @@ public class BaseBuildingsClass : MonoBehaviour
     protected SpriteRenderer m_BuildingSpriteRenderer = null;
     [SerializeField]
     protected BoxCollider2D m_Collider = null;
-    protected bool m_BuildingPlaced = false;
+    protected bool m_BuildingPlaced = false;    // Is building placed on Map
+    protected bool m_CanBeRemoved = true;       // Can building be Removed from Map
+    protected bool m_CanBeMoved = true;         // Can building be Moved around the Map
     [Header("Debug")]
     [SerializeField]
     protected bool m_DrawDebug = false;
@@ -35,6 +37,11 @@ public class BaseBuildingsClass : MonoBehaviour
         m_Collider.size = buildingData.GetBuildingSpriteSize();
         m_BottomLeftCornerOffset = buildingData.GetBottomLeftCorner_PositionOffset();
     }
+    public virtual void SetBuildingPlayerOptions(bool canBeMoved = true, bool canBeRemoved = true)
+    {
+        m_CanBeMoved = canBeMoved;
+        m_CanBeRemoved = canBeRemoved;
+    }
 
     // Sprite Renderer
     public GameObject GetSpriteGO() { return m_BuildingSpriteRenderer.gameObject; }
@@ -46,6 +53,9 @@ public class BaseBuildingsClass : MonoBehaviour
     public Vector2Int GetBuildingSizeOnMap() { return m_BuildingSize; }
     public BuildingDataBase.BUILDINGS GetBuildingType() { return m_BuildingType; }
     public Vector2 GetBottomLeftGridPosition() { return (Vector2)transform.position + m_BottomLeftCornerOffset; }
+    public bool GetIsBuildingPlacedOnMap() { return m_BuildingPlaced; }
+    public bool GetCanBeRemoved() { return m_CanBeRemoved; }
+    public bool GetCanBeMoved() { return m_CanBeMoved; }
 
     // Called when you place a building down and remove the building
     public virtual void BuildingPlaced()

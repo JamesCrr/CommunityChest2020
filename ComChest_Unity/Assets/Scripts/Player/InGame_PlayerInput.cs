@@ -60,11 +60,10 @@ public class InGame_PlayerInput : MonoBehaviour
         {
             RenderPlacementBuilding();
 
-            if (Input.GetKeyUp(KeyCode.Space))
-                PlaceBuildings();
-
-            if (Input.GetKeyUp(KeyCode.R))
-                MapManager.GetInstance().IncrementPlacingBuildingID();
+            //if (Input.GetKeyUp(KeyCode.Space))
+            //    PlaceBuildings();
+            //if (Input.GetKeyUp(KeyCode.R))
+            //    MapManager.GetInstance().IncrementPlacingBuildingID();
         }
         // Is Removal Brush Active?
         if (MapManager.GetInstance().GetRemovalBrushActive())
@@ -75,18 +74,25 @@ public class InGame_PlayerInput : MonoBehaviour
                 if (hit.collider == null)
                     return;
                 // Debug.Log("Raycast2D hit: " + hit.transform.gameObject.name);
-
+                
+                // Should put buildings on seperate layer honestly...
+                BaseBuildingsClass hitBuilding = hit.transform.parent.gameObject.GetComponent<BaseBuildingsClass>();
+                if (hitBuilding == null)
+                    return;
+                // Can building be Removed?
+                if (!hitBuilding.GetCanBeRemoved()) 
+                    return;
                 hit.transform.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
                 MapManager.GetInstance().AddBuildingToBeRemoved(hit.transform.parent.gameObject.GetComponent<BaseBuildingsClass>());
             }
-            else if (Input.GetKeyUp(KeyCode.E))
-                MapManager.GetInstance().RemoveBuildingsFromMapUnderList();
+            //else if (Input.GetKeyUp(KeyCode.E))
+            //    MapManager.GetInstance().RemoveBuildingsFromMapUnderList();
         }
 
-        if (Input.GetKeyUp(KeyCode.Z))
-            SaveSystem.SaveToFile();
-        else if (Input.GetKeyUp(KeyCode.X))
-            SaveSystem.LoadFromFile();
+        //if (Input.GetKeyUp(KeyCode.Z))
+        //    SaveSystem.SaveToFile();
+        //else if (Input.GetKeyUp(KeyCode.X))
+        //    SaveSystem.LoadFromFile();
 
 #endif
 
@@ -121,8 +127,6 @@ public class InGame_PlayerInput : MonoBehaviour
             MapManager.GetInstance().GetTemplateBuilding().SetSpriteObjectColor(Color.gray);
     }
     #endregion
-
-
 
     #region Movement
     void DetectFingerInput()
