@@ -378,7 +378,7 @@ public class MapManager : MonoBehaviour
         else
         {
             m_TemplateBuilding.gameObject.SetActive(false);
-            // PlayerCloseAddEditorMode();
+            PlayerCloseAddEditorMode();
         }
     }
     public void IncrementPlacingBuildingID()
@@ -440,6 +440,9 @@ public class MapManager : MonoBehaviour
         // Store Info
         m_BuildingToMove_OldPosition = m_BuildingToMove.transform.position;
         m_BuildingToMove_OldColor = m_BuildingToMove.transform.GetChild(0).GetComponent<SpriteRenderer>().color;
+
+        //set UI
+        SetBuildModeUI(m_BuildingToMove);
     }
 
     /// <summary>
@@ -463,16 +466,7 @@ public class MapManager : MonoBehaviour
         if (NPCManager.Instance != null)
             NPCManager.Instance.PlayerEditorModeActive(true);
 
-        //set UI
-        if (building != null)
-        {
-            SpriteRenderer buildingSprite = building.GetSpriteRenderer();
-            if (buildingSprite != null)
-            {
-                Vector2 uiOffset = new Vector2(0.0f, buildingSprite.bounds.size.y / 2.0f);
-                IngameUIManager.instance.BuildModeUIOpen(building.GetSpriteGO().transform, uiOffset, building.GetBuildingSizeOnMap());
-            }
-        }
+        SetBuildModeUI(building);
     }
 
     /// <summary>
@@ -504,6 +498,20 @@ public class MapManager : MonoBehaviour
     //    Debug.Log("GridPOs: " + gridPos + "\n" + m_currentMap.GetTileMapCom().HasTile(gridPos));
     //    Debug.Log("Tile at : " + gridPos + "\n" + m_currentMap.GetTileMapCom().GetTile(gridPos));
     //}
+
+    public void SetBuildModeUI(BaseBuildingsClass building)
+    {
+        //set UI
+        if (building != null)
+        {
+            SpriteRenderer buildingSprite = building.GetSpriteRenderer();
+            if (buildingSprite != null)
+            {
+                Vector2 uiOffset = new Vector2(0.0f, buildingSprite.bounds.size.y / 2.0f);
+                IngameUIManager.instance.BuildModeUIOpen(building.GetSpriteGO().transform, uiOffset, building.GetBuildingSizeOnMap());
+            }
+        }
+    }
 
     #region Misc
     /// <summary>

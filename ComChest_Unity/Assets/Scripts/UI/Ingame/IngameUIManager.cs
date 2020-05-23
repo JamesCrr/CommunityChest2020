@@ -49,6 +49,11 @@ public class IngameUIManager : MonoBehaviour
             m_BuildingModeUIManager.Init();
     }
 
+    public BuildingModeUIManager GetBuildingModeUIManager()
+    {
+        return m_BuildingModeUIManager;
+    }
+
     #region MenuTogglers
     public void SetShopMenuActive(bool active)
     {

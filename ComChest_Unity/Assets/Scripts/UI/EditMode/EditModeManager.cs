@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public enum EDITMODES
@@ -40,11 +38,16 @@ public class EditModeManager : MonoBehaviour
         {
             OpenMoveBuildingsBrush(false);
             OpenDeleteBrush(true);
+
+            //only open the grid menu
+            IngameUIManager.instance.GetBuildingModeUIManager().ShowBackgroundGridOnly();
         }
         else if (m_CurrentMode == EDITMODES.MOVE_OBJECTS)
         {
             OpenDeleteBrush(false);
             OpenMoveBuildingsBrush(true);
+
+
         }
 
         //make the button for the other mode dulled out

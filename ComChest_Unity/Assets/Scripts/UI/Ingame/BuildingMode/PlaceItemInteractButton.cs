@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class PlaceItemInteractButton : InteractableObjBase
+﻿public class PlaceItemInteractButton : InteractableObjBase
 {
     //place building when clicked
     public override void OnInteract()
