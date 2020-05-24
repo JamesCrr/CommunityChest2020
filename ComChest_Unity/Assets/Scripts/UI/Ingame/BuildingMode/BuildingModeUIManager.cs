@@ -72,8 +72,7 @@ public class BuildingModeUIManager
             Vector2 sizeOfGrid = MapManager.GetInstance().GetCellSize();
             Vector2 midPtOfBuildingSizeOnMap = new Vector2((buildingSizeOnMap.x * sizeOfGrid.x) / 2.0f, (buildingSizeOnMap.y * sizeOfGrid.y) / 2.0f);
             Vector2 midPtOfBuildingActual = new Vector2((buildingSpriteSize.x * sizeOfGrid.x) / 2.0f, (buildingSpriteSize.y * sizeOfGrid.y) / 2.0f);
-
-            m_BuildingGridHelper.transform.localPosition = midPtOfBuildingSizeOnMap - midPtOfBuildingActual;
+            m_BuildingGridHelper.transform.localPosition = midPtOfBuildingSizeOnMap - midPtOfBuildingActual; //get the offset and adjust the position accordingly
 
             m_BuildingGridHelper.transform.localScale = new Vector3(buildingSizeOnMap.x, buildingSizeOnMap.y, 1.0f);
         }
