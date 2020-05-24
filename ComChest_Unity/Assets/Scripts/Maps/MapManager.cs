@@ -513,7 +513,7 @@ public class MapManager : MonoBehaviour
             if (buildingSprite != null)
             {
                 Vector2 uiOffset = new Vector2(0.0f, buildingSprite.bounds.size.y / 2.0f);
-                IngameUIManager.instance.BuildModeUIOpen(building.GetSpriteGO().transform, uiOffset, building.GetBuildingSizeOnMap());
+                IngameUIManager.instance.BuildModeUIOpen(building.GetSpriteGO().transform, uiOffset, building.GetBuildingSizeOnMap(), building.GetBuildingSpriteSize());
             }
         }
     }
@@ -717,6 +717,7 @@ public class MapManager : MonoBehaviour
     //public Grid GetGrid() { return m_GridGO; }
     public Vector2Int GetWorldPosToCellPos(Vector2 pos) { return (Vector2Int)m_GridGO.WorldToCell(pos); }
     public Vector2 GetCellCentrePosToWorld(Vector2Int pos) { return m_GridGO.GetCellCenterWorld((Vector3Int)pos);  }
+    public Vector2 GetCellSize() { return m_GridGO.cellSize; }
     public BaseMapClass GetCurrentMap() { return m_currentMap;  }
     public BaseBuildingsClass GetTemplateBuilding() { return m_TemplateBuilding; }
     public BaseBuildingsClass GetBuildingToMove() { return m_BuildingToMove; }

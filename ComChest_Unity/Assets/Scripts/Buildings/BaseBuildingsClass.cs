@@ -22,6 +22,7 @@ public class BaseBuildingsClass : MonoBehaviour
     protected BuildingDataBase.BUILDINGS m_BuildingType = BuildingDataBase.BUILDINGS.B_TOTAL;
     [SerializeField]
     protected Vector2Int m_BuildingSize = Vector2Int.zero;
+    protected Vector2Int m_SpriteSize = Vector2Int.zero;
     protected Vector2 m_BottomLeftCornerOffset = Vector2.zero;
     protected Vector2Int m_RoadOffset = Vector2Int.zero;
 
@@ -31,6 +32,7 @@ public class BaseBuildingsClass : MonoBehaviour
         // Other Data
         m_BuildingType = buildingData.GetBuildingType();
         m_BuildingSize = buildingData.GetBuildingSizeOnMap();
+        m_SpriteSize = buildingData.GetBuildingSpriteSize();
         // Sprite
         m_BuildingSpriteRenderer.gameObject.transform.localPosition = buildingData.GetSpriteGO_PositionOffset();
         m_BuildingSpriteRenderer.sprite = buildingData.GetBuildingSprite();
@@ -53,6 +55,7 @@ public class BaseBuildingsClass : MonoBehaviour
     public void SetSpriteObjectColor(Color newColor) { m_BuildingSpriteRenderer.color = newColor; }
     // Building Details
     public Vector2Int GetBuildingSizeOnMap() { return m_BuildingSize; }
+    public Vector2Int GetBuildingSpriteSize() { return m_SpriteSize; }
     public BuildingDataBase.BUILDINGS GetBuildingType() { return m_BuildingType; }
     public Vector2 GetBottomLeftGridPosition() { return (Vector2)transform.position + m_BottomLeftCornerOffset; }
     public bool GetIsBuildingPlacedOnMap() { return m_BuildingPlaced; }

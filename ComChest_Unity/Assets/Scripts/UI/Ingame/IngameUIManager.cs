@@ -118,13 +118,13 @@ public class IngameUIManager : MonoBehaviour
     }
 
     //when player is placing down deco or buildings
-    public void BuildModeUIOpen(Transform building, Vector2 offset, Vector2Int buildingSizeOnMap)
+    public void BuildModeUIOpen(Transform building, Vector2 offset, Vector2Int buildingSizeOnMap, Vector2Int buildingSpriteSize)
     {
         //set up the build mode UI
         if (m_BuildingModeUIManager == null)
             return;
 
-        m_BuildingModeUIManager.AttachToBuilding(building, offset, buildingSizeOnMap);
+        m_BuildingModeUIManager.AttachToBuilding(building, offset, buildingSizeOnMap, buildingSpriteSize);
 
         //close up the original UI
         SetInGameMenuActive(false);

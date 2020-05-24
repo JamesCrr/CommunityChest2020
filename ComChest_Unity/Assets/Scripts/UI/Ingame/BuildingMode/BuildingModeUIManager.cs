@@ -29,7 +29,7 @@ public class BuildingModeUIManager
         m_Grid.SetActive(false);
     }
 
-    public void AttachToBuilding(Transform building, Vector2 offset, Vector2Int buildingSizeOnMap)
+    public void AttachToBuilding(Transform building, Vector2 offset, Vector2Int buildingSizeOnMap, Vector2Int buildingSpriteSize)
     {
         if (building == null)
             return;
@@ -38,7 +38,7 @@ public class BuildingModeUIManager
         m_Grid.SetActive(true);
 
         //attach the 'buttons' to the object
-        SetParents(building, offset, buildingSizeOnMap);
+        SetParents(building, offset, buildingSizeOnMap, buildingSpriteSize);
     }
 
     public void Detach(bool setGridActive = false)
@@ -56,7 +56,7 @@ public class BuildingModeUIManager
             m_PlacementButtons.transform.SetParent(parent);
     }
 
-    public void SetParents(Transform parent, Vector2 offset, Vector2Int buildingSizeOnMap)
+    public void SetParents(Transform parent, Vector2 offset, Vector2Int buildingSizeOnMap, Vector2Int buildingSpriteSize)
     {
         if (m_PlacementButtons != null)
         {
@@ -67,7 +67,14 @@ public class BuildingModeUIManager
         if (m_BuildingGridHelper != null)
         {
             m_BuildingGridHelper.transform.SetParent(parent);
-            m_BuildingGridHelper.transform.localPosition = Vector3.zero;
+
+            //get grid size * by row/col to get mid pt of x and y
+            Vector2 sizeOfGrid = MapManager.GetInstance().GetCellSize();
+            Vector2 midPtOfBuildingSizeOnMap = new Vector2((buildingSizeOnMap.x * sizeOfGrid.x) / 2.0f, (buildingSizeOnMap.y * sizeOfGrid.y) / 2.0f);
+            Vector2 midPtOfBuildingActual = new Vector2((buildingSpriteSize.x * sizeOfGrid.x) / 2.0f, (buildingSpriteSize.y * sizeOfGrid.y) / 2.0f);
+
+            m_BuildingGridHelper.transform.localPosition = midPtOfBuildingSizeOnMap - midPtOfBuildingActual;
+
             m_BuildingGridHelper.transform.localScale = new Vector3(buildingSizeOnMap.x, buildingSizeOnMap.y, 1.0f);
         }
     }

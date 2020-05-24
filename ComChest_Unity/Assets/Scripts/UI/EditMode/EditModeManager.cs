@@ -17,12 +17,6 @@ public class EditModeManager : MonoBehaviour
 
     EDITMODES m_CurrentMode = EDITMODES.MOVE_OBJECTS;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     private void OnEnable()
     {
         //activate default mode
@@ -73,23 +67,6 @@ public class EditModeManager : MonoBehaviour
                 return;
             MapManager.GetInstance().ConfirmRemovementOfBuilding();
         }
-    }
-
-    //when players want to go back to the previous page and cancel their change
-    public void CancelChangeOpenPopup()
-    {
-        //show popup
-    }
-
-    //player in pop up mode, confirm
-    public void PopupConfirm()
-    {
-        //activate changes
-    }
-
-    public void PopupCancel()
-    {
-        //close popup, go back to the edit page
     }
 
     public void UpdateModeChangeUI()
