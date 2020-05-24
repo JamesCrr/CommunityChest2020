@@ -326,6 +326,7 @@ public class MapManager : MonoBehaviour
         PlaceMovedBuildingBackToMap();
         // Reset
         m_BuildingToMove.transform.GetChild(0).GetComponent<SpriteRenderer>().color = m_BuildingToMove_OldColor;
+        m_BuildingToMove.BuildingMoved();
         m_BuildingToMove = null;
         m_BuildingToMove_OldPosition = Vector3.zero;
         m_BuildingToMove_OldColor = Color.white;

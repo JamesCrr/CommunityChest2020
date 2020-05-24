@@ -6,10 +6,6 @@
         if (MapManager.GetInstance() == null)
             return;
 
-        // Can place there?
-        if (!MapManager.GetInstance().CanPlaceTemplateBuilding())
-            return;
-
         // Place the Template Building
         if (MapManager.GetInstance().GetMovementBrushActive())
         {
@@ -23,6 +19,10 @@
         }
         else if (MapManager.GetInstance().GetPlacementBrushActive())
         {
+            // Can place there?
+            if (!MapManager.GetInstance().CanPlaceTemplateBuilding())
+                return;
+
             MapManager.GetInstance().PlaceTemplateBuilding();
             IngameUIManager.instance.SetInGameMenuActive(true);
             //close the UI for placing the items and stuff

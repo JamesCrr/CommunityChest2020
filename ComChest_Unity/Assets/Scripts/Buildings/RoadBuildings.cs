@@ -39,6 +39,23 @@ public class RoadBuildings : BaseBuildingsClass
             NPCManager.Instance.RemoveBuildingEntrance(m_RoadGridPos); //remove the entrance to the road
     }
 
+    public override void BuildingMoved()
+    {
+        base.BuildingMoved();
+
+        //remove the prev entrance, put the new one
+        if (NPCManager.Instance != null)
+        {
+            NPCManager.Instance.RemoveBuildingEntrance(m_RoadGridPos);
+
+            //check and update road connection
+            m_RoadGridPos = MapManager.GetInstance().GetWorldPosToCellPos(GetBottomLeftGridPosition()) + m_RoadOffset;
+            m_RoadConnected = false;
+            CheckRoadConnectionAfterRoadAdded(); //check if there are any roads connected already
+            NPCManager.Instance.AddBuildingEntrance(m_RoadGridPos); //add the entrance to the road
+        }
+    }
+
     public void CheckRoadConnectionAfterRoadAdded()
     {
         if (m_RoadConnected)

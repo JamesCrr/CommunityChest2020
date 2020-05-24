@@ -149,8 +149,8 @@ SortingGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5262389215657745914}
   m_Enabled: 1
-  m_SortingLayerID: 33024851
-  m_SortingLayer: 2
+  m_SortingLayerID: 1459933869
+  m_SortingLayer: 3
   m_SortingOrder: 10
 --- !u!114 &4810686451138098538
 MonoBehaviour:

@@ -23,6 +23,7 @@ public class BaseBuildingsClass : MonoBehaviour
     [SerializeField]
     protected Vector2Int m_BuildingSize = Vector2Int.zero;
     protected Vector2 m_BottomLeftCornerOffset = Vector2.zero;
+    protected Vector2Int m_RoadOffset = Vector2Int.zero;
 
 
     public virtual void SetNewBuildingType(BuildingData buildingData)
@@ -36,6 +37,7 @@ public class BaseBuildingsClass : MonoBehaviour
         // Collider
         m_Collider.size = buildingData.GetBuildingSpriteSize();
         m_BottomLeftCornerOffset = buildingData.GetBottomLeftCorner_PositionOffset();
+        m_RoadOffset = buildingData.GetRoadOffset;
     }
     public virtual void SetBuildingPlayerOptions(bool canBeMoved = true, bool canBeRemoved = true)
     {
@@ -65,6 +67,11 @@ public class BaseBuildingsClass : MonoBehaviour
     public virtual void BuildingRemoved()
     {
         m_BuildingPlaced = false;
+    }
+
+    public virtual void BuildingMoved()
+    {
+        return;
     }
 
     private void OnDrawGizmos()

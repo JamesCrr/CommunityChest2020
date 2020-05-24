@@ -104,7 +104,9 @@ public class IngameUIManager : MonoBehaviour
     {
         SetEditModeMenuActive(open);
         SetInGameMenuActive(!open);
-        BuildModeUIClose();
+
+        if (!open)
+            BuildModeUIClose();
     }
 
     //when player is placing down deco or buildings
