@@ -33,6 +33,13 @@ public class NPC : MonoBehaviour
         UpdateMovementAnimation();
     }
 
+    public void OnDisable()
+    {
+        //this is to prevent problem where npc enter building and player goes to build mode, causing a bug
+        if (m_GoingIntoBuilding)
+            gameObject.SetActive(false);
+    }
+
     public void Init(Vector2Int currentTilePos, AnimatorOverrideController animator = null)
     {
         m_CurrentTile = currentTilePos;
@@ -207,7 +214,8 @@ public class NPC : MonoBehaviour
     //when player remove roads in editor, NPC check if road still exist
     public void PlayerRemoveRoads()
     {
-        if (!CheckRoadPathExists())
+        //if roads dont exist or npcs was trying to enter a house
+        if (!CheckRoadPathExists() || m_GoingIntoBuilding)
             gameObject.SetActive(false); //set inactive if doesnt exist
 
         //clear roads visited
