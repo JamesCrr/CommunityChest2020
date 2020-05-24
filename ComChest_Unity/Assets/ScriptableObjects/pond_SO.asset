@@ -25,7 +25,10 @@ MonoBehaviour:
   m_BuildingPrice: 100
   m_IsSoldInShop: 1
   m_ShopItemType: 1
-  m_ListOfResourcesNeeded: []
+  m_ListOfResourcesNeeded:
+  - resourceID: 0
+    amount: 100
+    toDeduct: 1
   m_GenerateResourceTime: 0
   m_ResourceProduced: 1
   m_AmtResourceGiven: 0

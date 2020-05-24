@@ -21,12 +21,12 @@ MonoBehaviour:
   m_HasUI: 0
   m_UIObject: {fileID: 0}
   m_BuildingDescription: 'Decorations are important. '
-  m_BuildingPrice: 600
+  m_BuildingPrice: 100
   m_IsSoldInShop: 1
   m_ShopItemType: 1
   m_ListOfResourcesNeeded:
   - resourceID: 0
-    amount: 600
+    amount: 100
     toDeduct: 1
   m_GenerateResourceTime: 0
   m_ResourceProduced: 1

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BuildingName: Museum
   m_BuildingSpriteSize: {x: 5, y: 6}
-  m_BuildingSizeOnMap: {x: 5, y: 6}
+  m_BuildingSizeOnMap: {x: 5, y: 5}
   m_BuildingSprite: {fileID: 21300000, guid: df3a44fc69c1a014397c0c1501ec3ae3, type: 3}
   m_BuildingType: 8
   m_CustomBuildingObject: {fileID: 4728680955077328796, guid: 5fc3e1a6fd37941419a08ce4878b517d,
