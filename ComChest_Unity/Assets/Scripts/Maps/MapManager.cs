@@ -29,8 +29,6 @@ public class MapManager : MonoBehaviour
     public static event MapGeneratedAction OnMapGenerated;
 
     [Header("Roads")]
-    [SerializeField]
-    BaseBuildingsClass m_MainRoad; //the main road, not deleatable
     [SerializeField] Transform m_RoadParent;
     RoadManager m_RoadManager = new RoadManager();
 
@@ -62,17 +60,7 @@ public class MapManager : MonoBehaviour
 
         CreateNewMap(MapDataBase.MAPS.M_GRASS);
 
-        //init road stuff
-        Vector2Int mainRoadPos = Vector2Int.zero;
-        if (m_MainRoad != null)
-            mainRoadPos = (Vector2Int)m_GridGO.WorldToCell(m_MainRoad.GetBottomLeftGridPosition());
-
-        m_RoadManager.Init(m_currentMap.GetTileMapSize(), mainRoadPos);
-
         IngameUIManager.instance.InitMapUI();
-
-        if (m_MainRoad != null)
-            PlaceBuildingToGrid(ref m_MainRoad);
     }
 
     #region Map Related
@@ -101,6 +89,20 @@ public class MapManager : MonoBehaviour
 
         // Fire the Map Generated Event
         OnMapGenerated();
+
+        //Get starting route from one of the routes build at spawn
+
+        List<MapStartingBuildings> startingBuildingsList = m_currentMap.GetStartingBuildings();
+        Vector2Int mainRoadPos = Vector2Int.zero;
+        foreach (MapStartingBuildings startingbuild in startingBuildingsList)
+        {
+            if (startingbuild.buildingID == BuildingDataBase.BUILDINGS.B_ROAD)
+            {
+                mainRoadPos = startingbuild.spawnGridPositions[0];
+                break;
+            }
+        }
+        m_RoadManager.Init(m_currentMap.GetTileMapSize(), mainRoadPos);
 
         return true;
     }

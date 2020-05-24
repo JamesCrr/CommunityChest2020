@@ -14,6 +14,8 @@ public class RoadBuildings : BaseBuildingsClass
             roadManager.OnRoadModifiedAndAddedCallback += CheckRoadConnectionAfterRoadAdded;
             roadManager.OnRoadModifiedAndDeleatedCallback += CheckRoadConnectionAfterRoadRemoval;
         }
+
+        CheckRoadConnectionAfterRoadAdded(); //check if already connected to main road
     }
 
     public override void SetNewBuildingType(BuildingData buildingData)
@@ -73,7 +75,7 @@ public class RoadBuildings : BaseBuildingsClass
     public void UpdateRoadDisconnectedUI()
     {
         //TODO, TEMP CHANGE SPRITE TO black
-        SetSpriteObjectColor(Color.black);
+        SetSpriteObjectColor(Color.grey);
     }
 
     public void UpdateRoadConnectedUI()

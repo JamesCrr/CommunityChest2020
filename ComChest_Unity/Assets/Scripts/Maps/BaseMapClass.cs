@@ -60,6 +60,7 @@ public class BaseMapClass : MonoBehaviour
     public Vector2Int GetTileMapSize() { return m_MapDimensions; }
     public Vector2Int GetTileMapHalfSize() { return m_MapDimensions / 2; }
     public Tilemap GetTileMapCom() { return m_TileMap; }
+    public List<MapStartingBuildings> GetStartingBuildings() { return m_ListOfBuildingsToBuildAtSpawn; }
     #endregion
 
 #if UNITY_EDITOR
