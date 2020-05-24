@@ -11,9 +11,22 @@
             return;
 
         // Place the Template Building
-        MapManager.GetInstance().PlaceTemplateBuilding();
+        if (MapManager.GetInstance().GetMovementBrushActive())
+        {
+            if (MapManager.GetInstance().GetBuildingToMove() == null)
+                return;
+            if (!MapManager.GetInstance().CanPlaceBuildingToMove())
+                return;
 
-        //close the UI for placing the items and stuff
-        IngameUIManager.instance.PlayerInBuildModeUI(false);
+            MapManager.GetInstance().ConfirmRemovementOfBuilding();
+            IngameUIManager.instance.BuildModeUIClose(true);
+        }
+        else if (MapManager.GetInstance().GetPlacementBrushActive())
+        {
+            MapManager.GetInstance().PlaceTemplateBuilding();
+            IngameUIManager.instance.SetInGameMenuActive(true);
+            //close the UI for placing the items and stuff
+            IngameUIManager.instance.PlayerInBuildModeUI(false);
+        }
     }
 }

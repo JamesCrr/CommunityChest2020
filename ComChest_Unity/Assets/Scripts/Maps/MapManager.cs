@@ -422,6 +422,8 @@ public class MapManager : MonoBehaviour
         else
         {
             CancelRemovementOfBuilding();
+            //turn ofF UI
+            IngameUIManager.instance.BuildModeUIClose(true);
         }
 
         m_MovementBrushActive = newValue;

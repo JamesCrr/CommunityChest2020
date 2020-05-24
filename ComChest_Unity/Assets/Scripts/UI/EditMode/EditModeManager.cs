@@ -27,6 +27,9 @@ public class EditModeManager : MonoBehaviour
     {
         //activate default mode
         ChangeMode((int)m_DefaultMode);
+
+        //only open the grid menu
+        IngameUIManager.instance.GetBuildingModeUIManager().ShowBackgroundGridOnly();
     }
 
     public void ChangeMode(int modes)
@@ -38,16 +41,11 @@ public class EditModeManager : MonoBehaviour
         {
             OpenMoveBuildingsBrush(false);
             OpenDeleteBrush(true);
-
-            //only open the grid menu
-            IngameUIManager.instance.GetBuildingModeUIManager().ShowBackgroundGridOnly();
         }
         else if (m_CurrentMode == EDITMODES.MOVE_OBJECTS)
         {
             OpenDeleteBrush(false);
             OpenMoveBuildingsBrush(true);
-
-
         }
 
         //make the button for the other mode dulled out

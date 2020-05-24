@@ -104,6 +104,7 @@ public class IngameUIManager : MonoBehaviour
     {
         SetEditModeMenuActive(open);
         SetInGameMenuActive(!open);
+        BuildModeUIClose();
     }
 
     //when player is placing down deco or buildings
@@ -127,14 +128,12 @@ public class IngameUIManager : MonoBehaviour
         SetInGameMenuActive(false);
     }
 
-    public void BuildModeUIClose()
+    public void BuildModeUIClose(bool gridActive = false)
     {
-        SetInGameMenuActive(true);
-
         if (m_BuildingModeUIManager == null)
             return;
 
-        m_BuildingModeUIManager.Detach();
+        m_BuildingModeUIManager.Detach(gridActive);
     }
     #endregion !MenuTogglers
 }

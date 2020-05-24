@@ -41,13 +41,13 @@ public class BuildingModeUIManager
         SetParents(building, offset, buildingSizeOnMap);
     }
 
-    public void Detach()
+    public void Detach(bool setGridActive = false)
     {
         m_PlacementButtons.transform.SetParent(m_MainParent.transform);
         m_BuildingGridHelper.transform.SetParent(m_MainParent.transform);
 
         m_MainParent.SetActive(false);
-        m_Grid.SetActive(false);
+        m_Grid.SetActive(setGridActive);
     }
 
     public void SetParents(Transform parent)
