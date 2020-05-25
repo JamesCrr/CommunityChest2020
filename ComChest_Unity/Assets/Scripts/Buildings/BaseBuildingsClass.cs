@@ -51,6 +51,7 @@ public class BaseBuildingsClass : MonoBehaviour
     public GameObject GetSpriteGO() { return m_BuildingSpriteRenderer.gameObject; }
     public SpriteRenderer GetSpriteRenderer() { return m_BuildingSpriteRenderer; }
     public void SetSprite(Sprite sprite) { m_BuildingSpriteRenderer.sprite = sprite; }
+    public void SetSpriteSortingOrder(int newOrder) { m_BuildingSpriteRenderer.sortingOrder = newOrder; }
     public void SetSpriteObjectLayer(int newLayer) { m_BuildingSpriteRenderer.gameObject.layer = newLayer; }
     public void SetSpriteObjectColor(Color newColor) { m_BuildingSpriteRenderer.color = newColor; }
     // Building Details

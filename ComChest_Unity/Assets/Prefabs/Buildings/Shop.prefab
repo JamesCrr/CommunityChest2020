@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2135523192854053635}
-  - component: {fileID: 7508745428170075681}
   - component: {fileID: 3075163720933655507}
   m_Layer: 0
   m_Name: Shop
@@ -33,17 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!210 &7508745428170075681
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2709446892460361304}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 10
 --- !u!114 &3075163720933655507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,7 +48,7 @@ MonoBehaviour:
   m_Collider: {fileID: 2042255276677820431}
   m_DrawDebug: 0
   m_DebugColor: {r: 0, g: 0, b: 1, a: 1}
-  m_BuildingID: 6
+  m_BuildingType: 9
   m_BuildingSize: {x: 3, y: 3}
 --- !u!1 &7582662957507166188
 GameObject:

@@ -182,13 +182,16 @@ public class MapManager : MonoBehaviour
                 return null;
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
-
         AddBuildingIntoTrackingDictionary(activeBuildingCom); //roads and buildings store accordingly
         activeBuildingCom.BuildingPlaced();
 
         // Change Sprite Layer back to building layer
         activeBuildingCom.SetSpriteObjectLayer(0);
         activeBuildingCom.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(activeBuildingCom.GetBuildingType()).GetBuildingName();
+        // Set Sprite's Sorting Order
+        int newOrder = (int)activeBuildingCom.GetBottomLeftGridPosition().y;
+        newOrder = -newOrder;
+        activeBuildingCom.SetSpriteSortingOrder(newOrder);
 
         //set the correct parent
         if (activeBuildingCom.GetBuildingType() == BuildingDataBase.BUILDINGS.B_ROAD)
@@ -236,13 +239,16 @@ public class MapManager : MonoBehaviour
         }
         // Set all the grids taken by new building to true
         SetGridTakenArray(buildingBottomLeftWorldPos, buildingSize, true);
-
         AddBuildingIntoTrackingDictionary(newBuilding); //roads and buildings store accordingly
         newBuilding.BuildingPlaced();
 
         // Change Sprite Layer back to default
         newBuilding.SetSpriteObjectLayer(0);
         newBuilding.gameObject.name = BuildingDataBase.GetInstance().GetBuildingData(buildingID).GetBuildingName();
+        // Set Sprite's Sorting Order
+        int newOrder = (int)newBuilding.GetBottomLeftGridPosition().y;
+        newOrder = -newOrder;
+        newBuilding.SetSpriteSortingOrder(newOrder);
 
         //set the correct parent
         if (newBuilding.GetBuildingType() == BuildingDataBase.BUILDINGS.B_ROAD)

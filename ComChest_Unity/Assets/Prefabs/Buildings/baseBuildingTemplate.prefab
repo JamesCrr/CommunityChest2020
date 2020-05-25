@@ -117,7 +117,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8159616030347237537}
-  - component: {fileID: 336165392758666627}
   - component: {fileID: 4810686451138098538}
   m_Layer: 0
   m_Name: baseBuildingTemplate
@@ -141,17 +140,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!210 &336165392758666627
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5262389215657745914}
-  m_Enabled: 1
-  m_SortingLayerID: 1459933869
-  m_SortingLayer: 3
-  m_SortingOrder: 10
 --- !u!114 &4810686451138098538
 MonoBehaviour:
   m_ObjectHideFlags: 0

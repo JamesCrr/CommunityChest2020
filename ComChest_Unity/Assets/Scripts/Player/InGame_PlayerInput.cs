@@ -51,12 +51,6 @@ public class InGame_PlayerInput : MonoBehaviour
 #if UNITY_EDITOR || UNITY_STANDALONE
         DEBUG_MoveCameraInput();
 
-        //if (Input.GetKeyUp(KeyCode.Q))
-        //    MapManager.GetInstance().SetPlacementBrush(!MapManager.GetInstance().GetPlacementBrushActive(), BuildingDataBase.BUILDINGS.B_POND);
-        //else if (Input.GetKeyUp(KeyCode.W))
-        //    MapManager.GetInstance().SetRemovalBrush(!MapManager.GetInstance().GetRemovalBrushActive());
-
-
         // Is Placement Brush Active?
         if (MapManager.GetInstance().GetPlacementBrushActive())
         {
@@ -142,11 +136,11 @@ public class InGame_PlayerInput : MonoBehaviour
                 MapManager.GetInstance().CancelRemovementOfBuilding();
         }
 
-        if (Input.GetKeyUp(KeyCode.Z))
-            SaveSystem.SaveToFile();
-        else if (Input.GetKeyUp(KeyCode.X))
-            SaveSystem.LoadFromFile();
-
+        // Saving and Loading
+        //if (Input.GetKeyUp(KeyCode.Z))
+        //    SaveSystem.SaveToFile();
+        //else if (Input.GetKeyUp(KeyCode.X))
+        //    SaveSystem.LoadFromFile();
 #endif
 
 
@@ -179,6 +173,11 @@ public class InGame_PlayerInput : MonoBehaviour
             MapManager.GetInstance().GetTemplateBuilding().SetSpriteObjectColor(Color.white);
         else
             MapManager.GetInstance().GetTemplateBuilding().SetSpriteObjectColor(Color.gray);
+
+        // Set Sprite's Sorting Order
+        int newOrder = (int)MapManager.GetInstance().GetTemplateBuilding().GetBottomLeftGridPosition().y;
+        newOrder = -newOrder;
+        MapManager.GetInstance().GetTemplateBuilding().SetSpriteSortingOrder(newOrder);
     }
     #endregion
 
