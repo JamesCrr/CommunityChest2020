@@ -20,8 +20,42 @@ public class BuildingUIManager : SingletonBase<BuildingUIManager>
         
     }
 
-    public void CreateUI(BuildingData _buildData)
+    /// <summary>
+    /// Not sure if im gonna need it yet
+    /// </summary>
+    void SetupUIObject()
     {
-        currentUIObject = Instantiate(_buildData.GetUIObject(), this.transform);
+
+    }
+
+    public bool DeleteUI()
+    {
+        // Destroy current UI Object;
+       Destroy(currentUIObject);
+
+        currentUIObject = null;
+
+        IngameUIManager.instance.SetInGameMenuActive(true);
+
+        return true;
+    }
+
+    public bool CreateUI(BuildingData _buildData)
+    {
+        // A UI Object is already created
+        if (currentUIObject != null)
+            return false;
+    
+        // If it has a UI object to build
+        if (_buildData.GetUIObject())
+        {
+            currentUIObject = Instantiate(_buildData.GetUIObject(), this.transform);
+
+            IngameUIManager.instance.SetInGameMenuActive(false);
+
+            return true;
+        }
+
+        return false;
     }
 }

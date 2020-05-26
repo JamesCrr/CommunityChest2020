@@ -69,7 +69,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1459933869
-  m_SortingLayer: 1
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: c04c10a5c02ac494faa63eca66e540b2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -118,6 +118,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3134514589357339512}
   - component: {fileID: 3134514589357339513}
+  - component: {fileID: 8172959205088644116}
   m_Layer: 0
   m_Name: CommunityCentreBuilding
   m_TagString: Untagged
@@ -158,3 +159,16 @@ MonoBehaviour:
   m_DebugColor: {r: 0, g: 0, b: 1, a: 1}
   m_BuildingType: 7
   m_BuildingSize: {x: 0, y: 0}
+--- !u!114 &8172959205088644116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3134514589357339514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 563ea32e0e9d8664aacccb267d022570, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_buildClass: {fileID: 3134514589357339513}

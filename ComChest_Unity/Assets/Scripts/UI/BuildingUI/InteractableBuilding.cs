@@ -20,7 +20,11 @@ public class InteractableBuilding : InteractableObjBase
     // Update is called once per frame
     void Update()
     {
-        
+        // For Debugging
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            OnInteract();
+        }
     }
 
     public override void OnInteract()
@@ -32,4 +36,5 @@ public class InteractableBuilding : InteractableObjBase
         if (buildingData.GetUIStatus())
             BuildingUIManager.Instance.CreateUI(buildingData);
     }
+    
 }

@@ -231,6 +231,12 @@ public class InGame_PlayerInput : MonoBehaviour
                 {
                     interactableObj.OnInteract();
                 }
+                else
+                {
+                    interactableObj = gameObj.GetComponent<InteractableObjBase>();
+                    if (interactableObj)
+                        interactableObj.OnInteract();
+                }
             }
 
             // Move that Object
