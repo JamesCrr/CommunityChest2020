@@ -5,6 +5,8 @@ using UnityEngine;
 public class InteractableBuilding : InteractableObjBase
 {
     public BaseBuildingsClass m_buildClass;
+    public BuildingType buildingType;
+
     BuildingData buildingData;
     
     GameObject UIObject = null;
@@ -34,7 +36,8 @@ public class InteractableBuilding : InteractableObjBase
         Debug.Log("Tapped");
         // m_buildClass.GetBuildingID();
         if (buildingData.GetUIStatus())
-            BuildingUIManager.Instance.CreateUI(buildingData);
+            IngameUIManager.instance.ShowBuildingUI(buildingData);
+            //BuildingUIManager.Instance.CreateUI(buildingData);
     }
     
 }

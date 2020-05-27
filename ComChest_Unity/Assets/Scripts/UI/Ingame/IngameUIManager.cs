@@ -16,11 +16,15 @@ public class IngameUIManager : MonoBehaviour
     [SerializeField] GameObject m_ShopMenu;//the shop menu
     [SerializeField] GameObject m_InGameMenu; //things on the UI like build button etc.
     [SerializeField] GameObject m_EditModeMenu;
+    [System.NonSerialized] public GameObject m_BuildingUI;
+    
+    // [SerializeField] GameObject m_BuildingUI;
     EditModeManager m_EditModeManager;
     [SerializeField] BuildingModeUIManager m_BuildingModeUIManager = new BuildingModeUIManager();
 
     [Header("UI Managers")]
     [SerializeField] ShopUIManager m_ShopUIManager = new ShopUIManager();
+    [SerializeField] BuildingUIManager m_BuildingUIManager = new BuildingUIManager();
 
     private void Awake()
     {
@@ -36,6 +40,9 @@ public class IngameUIManager : MonoBehaviour
     {
         if (m_ShopUIManager != null)
             m_ShopUIManager.Init();
+
+        if (m_BuildingUIManager != null)
+            m_BuildingUIManager.Init();
 
         if (m_ShopMenu != null)
             m_ShopMenu.SetActive(false);
@@ -136,6 +143,29 @@ public class IngameUIManager : MonoBehaviour
             return;
 
         m_BuildingModeUIManager.Detach(gridActive);
+    }
+
+
+    // Inits the UI for the building to pop up
+    public void ShowBuildingUI(BuildingData building)
+    {
+        m_BuildingUIManager.InitBuiilingUI(building);
+
+        // Disable the build buttons and stuff
+        SetInGameMenuActive(false);
+    }
+
+    public void CreateUI(BuildingData building)
+    {
+        m_BuildingUI = Instantiate(building.GetUIObject(), this.transform);
+
+        //return newUIObject;
+    }
+
+    public void CloseBuildingUI()
+    {
+        Destroy(m_BuildingUI);
+        m_BuildingUI = null;
     }
     #endregion !MenuTogglers
 }

@@ -18,6 +18,6 @@ public class CC_UIManager : MonoBehaviour
 
     public void CloseUI()
     {
-        BuildingUIManager.Instance.DeleteUI();
+        IngameUIManager.instance.CloseBuildingUI();
     }
 }

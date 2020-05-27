@@ -2,60 +2,78 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildingUIManager : SingletonBase<BuildingUIManager>
+// How many unique buildings are there with UI information
+public enum BuildingType
+{
+    COMMUNITYCENTER,
+    MUSEUM,
+    TOTAL_TYPE,
+}
+
+public class BuildingUIManager
 {
     // Keep tracks of the current active UI Object
-    GameObject currentUIObject = null;
+
+    IngameUIManager UIManager;
+
     bool isCreated = false;
 
     // Start is called before the first frame update
-    void Start()
+    public void Init()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        UIManager = IngameUIManager.instance;
     }
 
     /// <summary>
     /// Not sure if im gonna need it yet
     /// </summary>
-    void SetupUIObject()
+    public bool InitBuiilingUI(BuildingData building)
     {
-
-    }
-
-    public bool DeleteUI()
-    {
-        // Destroy current UI Object;
-       Destroy(currentUIObject);
-
-        currentUIObject = null;
-
-        IngameUIManager.instance.SetInGameMenuActive(true);
-
-        return true;
-    }
-
-    public bool CreateUI(BuildingData _buildData)
-    {
-        // A UI Object is already created
-        if (currentUIObject != null)
+        if (UIManager.m_BuildingUI != null)
             return false;
-    
-        // If it has a UI object to build
-        if (_buildData.GetUIObject())
-        {
-            currentUIObject = Instantiate(_buildData.GetUIObject(), this.transform);
 
-            IngameUIManager.instance.SetInGameMenuActive(false);
+        if (building.GetUIObject())
+        {
+            IngameUIManager.instance.CreateUI(building);
+           // isCreated = true;
 
             return true;
         }
 
+
         return false;
     }
+
+   
+
+    //public bool DeleteUI()
+    //{
+    //    // Destroy current UI Object;
+    //   Destroy(currentUIObject);
+
+    //    currentUIObject = null;
+
+    //    IngameUIManager.instance.SetInGameMenuActive(true);
+
+    //    return true;
+    //}
+
+    //public bool CreateUI(BuildingData _buildData)
+    //{
+    //    // A UI Object is already created
+    //    if (currentUIObject != null)
+    //        return false;
+    
+    //    // If it has a UI object to build
+    //    if (_buildData.GetUIObject())
+    //    {
+    //        //currentUIObject = Instantiate(_buildData.GetUIObject(), this.transform);
+
+    //        IngameUIManager.instance.SetInGameMenuActive(false);
+
+    //        return true;
+    //    }
+
+    //    return false;
+    //}
 }
