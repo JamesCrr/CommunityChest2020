@@ -11,14 +11,14 @@ public class InGame_PlayerInput : MonoBehaviour
     float m_MaxZoomOut = 6;
     Vector3 m_TargetCameraPosition;
     // Placment Buildings
-    [Header("Placement of Buildings")]    
-    Vector2 m_BuildingPlacementOffset = Vector2.zero;
+    [Header("Placement of Template Buildings")]    
+    Vector2 m_TemplateBuildingPlacementOffset = Vector2.zero;
     // Moving Buildings
     [Header("Movement of Placed Buildings")]
     Vector2 m_MovingPlacedBuildingOffset = Vector2.zero;
 
     // Miscs
-    bool m_MovingPlacementBuilding = false;     // Are we currently moving the Placement Building or the Camera?
+    bool m_MovingTemplateBuilding = false;     // Are we currently moving the Template Building or the Camera?
     bool m_MovingSomething = false;         // Have we started moving?
 
     // Instance
@@ -54,14 +54,9 @@ public class InGame_PlayerInput : MonoBehaviour
         // Is Placement Brush Active?
         if (MapManager.GetInstance().GetPlacementBrushActive())
         {
-            SetPlacementBuildingToGridPosition();   // Move Building with Camera
+            SetTemplateBuildingToGridPosition();   // Move Building with Camera
 
-            RenderPlacementBuilding();
-
-            //if (Input.GetKeyUp(KeyCode.Space))
-            //    PlaceBuildings();
-            //if (Input.GetKeyUp(KeyCode.R))
-            //    MapManager.GetInstance().IncrementPlacingBuildingID();
+            RenderTemplateBuilding();
         }
         // Is Removal Brush Active?
         else if (MapManager.GetInstance().GetRemovalBrushActive())
@@ -156,17 +151,24 @@ public class InGame_PlayerInput : MonoBehaviour
         // Place the Template Building
         MapManager.GetInstance().PlaceTemplateBuilding();
     }
-    void SetPlacementBuildingToGridPosition()
+    /// <summary>
+    /// Snaps the Template to a Grid Position
+    /// </summary>
+    void SetTemplateBuildingToGridPosition()
     {
         // Calculate actual Position on Grid
         BaseMapClass gridLayout = MapManager.GetInstance().GetCurrentMap();
         // Follow Camera Position
-        Vector3Int gridPos = gridLayout.GetTileMapCom().WorldToCell(Camera.main.transform.position + (Vector3)m_BuildingPlacementOffset);
+        Vector3Int gridPos = gridLayout.GetTileMapCom().WorldToCell(Camera.main.transform.position + (Vector3)m_TemplateBuildingPlacementOffset);
         Vector3 newPos = gridLayout.GetTileMapCom().CellToWorld(gridPos);
         newPos += gridLayout.GetTileMapCom().cellSize * 0.5f;
         MapManager.GetInstance().GetTemplateBuilding().transform.position = newPos;
     }
-    void RenderPlacementBuilding()
+    /// <summary>
+    /// Darkens the Template Building if unable to place
+    /// Modifies the Sorting order of the Building
+    /// </summary>
+    void RenderTemplateBuilding()
     {
         // Darken if not able to place
         if (MapManager.GetInstance().CanPlaceTemplateBuilding())
@@ -195,6 +197,9 @@ public class InGame_PlayerInput : MonoBehaviour
     #endregion
 
     #region Detect Touch Input
+    /// <summary>
+    /// Detects Player Input and decides what to do with it
+    /// </summary>
     void DetectFingerInput()
     {
         // Check for Touch Input
@@ -208,16 +213,16 @@ public class InGame_PlayerInput : MonoBehaviour
                 if (MapManager.GetInstance().GetPlacementBrushActive())
                 {
                     if (!MobileInput.GetInstance().IsFingerTouching_GO(MapManager.GetInstance().GetTemplateBuilding().GetSpriteGO(), 0, LayerMask.NameToLayer("BuildingPlaceRef")))
-                        m_MovingPlacementBuilding = false;
+                        m_MovingTemplateBuilding = false;
                     else
-                        m_MovingPlacementBuilding = true;
+                        m_MovingTemplateBuilding = true;
                 }
                 else if(MapManager.GetInstance().GetMovementBrushActive())
                 {
 
                 }
                 else
-                    m_MovingPlacementBuilding = false;
+                    m_MovingTemplateBuilding = false;
              
                 // Keep on moving that Object, DO NOT need to check again on next frame
                 m_MovingSomething = true;
@@ -240,10 +245,10 @@ public class InGame_PlayerInput : MonoBehaviour
             }
 
             // Move that Object
-            if (!m_MovingPlacementBuilding)
+            if (!m_MovingTemplateBuilding)
                 MoveCameraInput();
             else
-                MovePlacementBuildingInput();
+                MovePlacementTemplateBuildingInput();
         } 
         else if(MobileInput.GetInstance().GetTouchCount() > 1)  // More than one finger
             ZoomCameraInput();
@@ -278,11 +283,11 @@ public class InGame_PlayerInput : MonoBehaviour
 
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - zoomDiff, m_MinZoomOut, m_MaxZoomOut);
     }
-    void MovePlacementBuildingInput()
+    void MovePlacementTemplateBuildingInput()
     {
         Vector2 lastTouched_WorldPos = Camera.main.ScreenToWorldPoint(MobileInput.GetInstance().GetLastTouchedPosition());
         Vector2 startTouch_WorldPos = Camera.main.transform.position;//Camera.main.ScreenToWorldPoint(MobileInput.GetInstance().GetStartTouchPosition());
-        m_BuildingPlacementOffset = lastTouched_WorldPos - startTouch_WorldPos;
+        m_TemplateBuildingPlacementOffset = lastTouched_WorldPos - startTouch_WorldPos;
     }
 
     void DEBUG_MoveCameraInput()

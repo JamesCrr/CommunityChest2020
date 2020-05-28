@@ -6,14 +6,14 @@ using UnityEngine.Tilemaps;
 public class BaseMapClass : MonoBehaviour
 {
     [Header("Critical Map Data")]
-    Vector2Int m_MapDimensions = Vector2Int.zero;
-    Tilemap m_TileMap = null;
+    protected Vector2Int m_MapDimensions = Vector2Int.zero;
+    protected Tilemap m_TileMap = null;
     [Header("Map Details")]
     [SerializeField]
-    List<MapStartingBuildings> m_ListOfBuildingsToBuildAtSpawn = new List<MapStartingBuildings>();
+    protected List<MapStartingBuildings> m_ListOfBuildingsToBuildAtSpawn = new List<MapStartingBuildings>();
     [Header("Resource Details")]
     [SerializeField]
-    List<MapStartingResource> m_ListOfStartingResources = new List<MapStartingResource>();
+    protected List<MapStartingResource> m_ListOfStartingResources = new List<MapStartingResource>();
     [Header("Debug")]
     [SerializeField]
     bool m_DrawDebug = false;
